@@ -1,3 +1,17 @@
+<p align="center">
+  <a href="https://mhshaon98.github.io/agent-skills/">
+    <img src="assets/banner.svg" alt="Agent Skills Catalog — animated terminal installing skills" width="100%">
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://mhshaon98.github.io/agent-skills/"><b>🔍 Browse the catalog GUI →</b></a>
+  &nbsp;·&nbsp;
+  <a href="AGENTS.md">For agents: AGENTS.md</a>
+  &nbsp;·&nbsp;
+  <a href="skills.json">skills.json</a>
+</p>
+
 # Agent Skills Catalog
 
 A catalog of battle-tested [Claude Code](https://docs.anthropic.com/en/docs/claude-code)
@@ -23,7 +37,7 @@ selection is your call.
 
 ```bash
 git clone --depth 1 https://github.com/mhshaon98/agent-skills
-cd REPO
+cd agent-skills
 
 ./install.sh                 # interactive: lists the catalog, install what you pick
 ./install.sh verify-work spawn-agent   # install named skills
