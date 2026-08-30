@@ -8,7 +8,7 @@ what they picked.**
 ## Protocol
 
 1. **Fetch the catalog.** Read `skills.json` at the repo root (raw URL:
-   `https://raw.githubusercontent.com/OWNER/REPO/main/skills.json`). Each entry has
+   `https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills.json`). Each entry has
    `name`, `description`, `category`, and `files` (file count).
 2. **Present options.** Show the user a numbered list grouped by `category`, one line
    per skill: name + description. Ask which they want (multiple allowed, or "all").
@@ -19,7 +19,7 @@ what they picked.**
    - Codex CLI: `~/.codex/skills/<name>/`
    Preferred method (no full clone):
    ```bash
-   git clone --depth 1 --filter=blob:none --sparse https://github.com/OWNER/REPO /tmp/skills-catalog
+   git clone --depth 1 --filter=blob:none --sparse https://github.com/mhshaon98/agent-skills /tmp/skills-catalog
    cd /tmp/skills-catalog && git sparse-checkout set skills/<name> [skills/<other>...]
    cp -R skills/<name> ~/.claude/skills/
    ```

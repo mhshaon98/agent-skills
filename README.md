@@ -22,7 +22,7 @@ selection is your call.
 ### Or install it yourself (humans)
 
 ```bash
-git clone --depth 1 https://github.com/OWNER/REPO
+git clone --depth 1 https://github.com/mhshaon98/agent-skills
 cd REPO
 
 ./install.sh                 # interactive: lists the catalog, install what you pick
