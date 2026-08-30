@@ -1,0 +1,18 @@
+{
+  "_comment": "Plan facts + recorded /usage readings. Anthropic does not publish the 5h/weekly caps as token counts and Claude Code stores no local copy, so absolute budgets stay null unless a low-rounding calibration is done (see SKILL.md). The window anchors below are NOT optional — the limits are fixed blocks, not rolling windows, and getting them wrong silently inflates every number. Fill in your own plan and weekly reset anchor from a /usage reading before trusting the percentages.",
+  "plan": null,
+
+  "weekly_reset_weekday": null,
+  "weekly_reset_hour_local": null,
+  "_weekly_reset_note": "Read these off '/usage' (it shows e.g. 'Resets Thu 7:00 PM') and fill them in. The weekly window is a fixed block starting at the previous reset, NOT the last rolling 7 days.",
+
+  "five_hour_block_hours": 5,
+  "_five_hour_note": "The 5h block is a fixed window too. '/usage' reports time-to-reset; pass it as --block-resets-in 4h30m so the report anchors the window correctly. Without it the script falls back to a rolling 5h window and will over-count.",
+
+  "five_hour_token_budget": null,
+  "weekly_all_models_token_budget": null,
+  "weekly_fable_token_budget": null,
+
+  "_observations_note": "Append /usage readings here as objects (at_local, plan, five_hour_pct, five_hour_resets_in, weekly_all_pct, weekly_resets, and the script's local totals) to build toward a calibration. A reading is only usable when the 5h block is 20-40% used and this machine is the only active client — a 1% reading carries about +/-50% rounding error, and candidate units (raw tokens vs tokens-excluding-cache-reads vs USD-equivalent) can disagree by more than 3x.",
+  "observations": []
+}

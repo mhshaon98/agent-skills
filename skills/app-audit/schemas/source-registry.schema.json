@@ -1,0 +1,158 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/app-audit/schemas/source-registry.schema.json",
+  "title": "app-audit source registry",
+  "description": "Registry of authoritative sources relied on by an audit (requirements section E). Root may be a bare array of entries or an object with an 'entries' array plus freshness metadata.",
+  "anyOf": [
+    { "$ref": "#/$defs/registryObject" },
+    { "$ref": "#/$defs/entryArray" }
+  ],
+  "$defs": {
+    "entryArray": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/entry" }
+    },
+    "registryObject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["entries"],
+      "properties": {
+        "registry_version": { "type": "string" },
+        "generated_at": { "type": "string" },
+        "audit_id": { "type": "string" },
+        "freshness_windows": { "$ref": "#/$defs/freshnessWindows" },
+        "entries": { "$ref": "#/$defs/entryArray" }
+      }
+    },
+    "freshnessWindows": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Configurable defaults, in days. Stale entries become SOURCE_REVIEW_REQUIRED and must be re-researched before being relied on.",
+      "properties": {
+        "platform_policy": { "type": "integer", "minimum": 1 },
+        "active_regulation": { "type": "integer", "minimum": 1 },
+        "statute": { "type": "integer", "minimum": 1 },
+        "engineering": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "rule_id",
+        "authority_type",
+        "authority_name",
+        "source",
+        "last_verified",
+        "status"
+      ],
+      "properties": {
+        "rule_id": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Stable id referenced from findings, e.g. 'CCPA-THRESHOLDS'."
+        },
+        "jurisdiction": {
+          "type": "string",
+          "description": "e.g. US-Federal, US-CA, EU, global, platform:Apple."
+        },
+        "authority_type": {
+          "type": "string",
+          "enum": [
+            "statute",
+            "regulation",
+            "regulator_guidance",
+            "government_guidance",
+            "enforcement_action",
+            "platform_policy",
+            "court_decision",
+            "primary_other",
+            "engineering_reference",
+            "secondary_analysis"
+          ],
+          "description": "Authority order for compliance research: statutory/regulatory text > regulator/enforcement agency > official government guidance > official platform policy > court decisions > other primary material > secondary analysis (context only)."
+        },
+        "authority_name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "e.g. FTC, California Legislature, CPPA, U.S. Copyright Office, Apple Developer, Google Play Developer."
+        },
+        "citation_or_section": { "type": "string" },
+        "source": {
+          "type": "string",
+          "minLength": 1,
+          "description": "URL or precise document locator."
+        },
+        "last_verified": {
+          "type": "string",
+          "format": "date",
+          "description": "YYYY-MM-DD. Drives the freshness window check."
+        },
+        "effective_date": {
+          "type": ["string", "null"],
+          "format": "date"
+        },
+        "compliance_deadline": {
+          "type": ["string", "null"],
+          "format": "date"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "CURRENT",
+            "UPCOMING",
+            "SUPERSEDED",
+            "VACATED",
+            "REPEALED",
+            "UNDER_CHALLENGE",
+            "UNKNOWN"
+          ]
+        },
+        "confidence": {
+          "type": "string",
+          "enum": ["VERY_HIGH", "HIGH", "MEDIUM", "LOW"]
+        },
+        "notes": { "type": "string" },
+
+        "freshness_class": {
+          "type": "string",
+          "enum": [
+            "platform_policy",
+            "active_regulation",
+            "statute",
+            "engineering"
+          ],
+          "description": "Selects the freshness window. When absent, freshness_check.py infers it from authority_type."
+        },
+        "freshness_window_days": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Per-entry override of the class default window."
+        },
+        "review_required": {
+          "type": "boolean",
+          "description": "Set true when the entry is known SOURCE_REVIEW_REQUIRED regardless of dates."
+        },
+        "superseded_by": { "type": ["string", "null"] },
+        "verified_by": {
+          "type": "string",
+          "description": "Which agent verified it, e.g. app-audit-source-verifier."
+        },
+        "adversarial_checks": {
+          "type": "array",
+          "description": "Which adversarial status checks were performed (amended, vacated, repealed, superseded, injunction, court challenge, new regulation, updated policy).",
+          "items": { "type": "string" }
+        },
+        "conflicts": {
+          "type": "array",
+          "description": "Recorded conflicts between regulator guidance and platform guidance, or between sources.",
+          "items": { "type": "string" }
+        },
+        "used_by_findings": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  }
+}

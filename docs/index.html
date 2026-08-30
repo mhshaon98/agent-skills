@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agent Skills Catalog</title>
+<style>
+  :root {
+    --slug: "OWNER/REPO";
+    --bg: #fbfbfa;
+    --surface: #ffffff;
+    --text: #1a1a1a;
+    --muted: #6b6b6b;
+    --border: #e6e5e2;
+    --accent: #1f6feb;
+    --accent-soft: #eaf1fd;
+    --tag-bg: #f0efec;
+    --shadow: 0 1px 2px rgba(0,0,0,.05);
+    --radius: 10px;
+    --maxw: 1080px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #17171a;
+      --surface: #202024;
+      --text: #ededed;
+      --muted: #9a9a9f;
+      --border: #33333a;
+      --accent: #58a6ff;
+      --accent-soft: #1b2c44;
+      --tag-bg: #2b2b31;
+      --shadow: 0 1px 2px rgba(0,0,0,.3);
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 32px 20px 64px; }
+  header { margin-bottom: 28px; }
+  .repo { font-size: 13px; color: var(--muted); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  h1 { font-size: 28px; margin: 6px 0 10px; letter-spacing: -0.02em; }
+  .pitch { color: var(--muted); max-width: 60ch; margin: 0 0 16px; }
+  .gh {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 14px; font-weight: 500; text-decoration: none;
+    color: var(--text); border: 1px solid var(--border);
+    background: var(--surface); padding: 7px 12px; border-radius: 8px;
+  }
+  .gh:hover { border-color: var(--accent); color: var(--accent); }
+  .controls { display: flex; flex-direction: column; gap: 12px; margin: 24px 0 20px; }
+  #search {
+    width: 100%; padding: 11px 14px; font-size: 15px;
+    border: 1px solid var(--border); border-radius: 8px;
+    background: var(--surface); color: var(--text);
+  }
+  #search:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    font-size: 13px; padding: 6px 12px; border-radius: 999px;
+    border: 1px solid var(--border); background: var(--surface);
+    color: var(--muted); cursor: pointer; text-transform: capitalize;
+    font-family: inherit;
+  }
+  .chip:hover { border-color: var(--accent); }
+  .chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .count { font-size: 13px; color: var(--muted); margin: 0 0 16px; }
+  .grid {
+    display: grid; gap: 14px;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px 16px 14px;
+    box-shadow: var(--shadow); display: flex; flex-direction: column;
+  }
+  .card-top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+  .card h3 { margin: 0; font-size: 15px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; word-break: break-word; }
+  .tag {
+    flex: none; font-size: 11px; text-transform: capitalize;
+    background: var(--tag-bg); color: var(--muted);
+    padding: 2px 8px; border-radius: 999px;
+  }
+  .desc { font-size: 13.5px; color: var(--muted); margin: 10px 0 14px; }
+  .card-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: auto; }
+  .files { font-size: 12px; color: var(--muted); }
+  .copy {
+    font-size: 12.5px; font-weight: 500; font-family: inherit;
+    border: 1px solid var(--border); background: transparent; color: var(--text);
+    padding: 6px 10px; border-radius: 7px; cursor: pointer; white-space: nowrap;
+  }
+  .copy:hover { border-color: var(--accent); color: var(--accent); }
+  .copy.done { border-color: var(--accent); color: var(--accent); }
+  .empty { color: var(--muted); padding: 40px 0; text-align: center; }
+  footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 13px; color: var(--muted); }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+  @media (max-width: 520px) {
+    h1 { font-size: 23px; }
+    .grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="repo" id="repo-slug">OWNER/REPO</div>
+    <h1>Agent Skills Catalog</h1>
+    <p class="pitch">Battle-tested Claude Code skills in the <code>SKILL.md</code> format —
+      session continuity, verification, data safety, release review, delegation,
+      formatting, and auditing. Also works with OpenAI Codex CLI.</p>
+    <a class="gh" id="gh-link" href="#" target="_blank" rel="noopener">View on GitHub &rarr;</a>
+  </header>
+
+  <div class="controls">
+    <input id="search" type="search" placeholder="Search skills&hellip;" autocomplete="off" aria-label="Search skills">
+    <div class="chips" id="chips"></div>
+  </div>
+
+  <p class="count" id="count"></p>
+  <div class="grid" id="grid"></div>
+  <p class="empty" id="empty" hidden>No skills match your filter.</p>
+
+  <footer>
+    Agents: read <a id="agents-link" href="#" target="_blank" rel="noopener">AGENTS.md</a>
+    for the install protocol &middot; MIT licensed
+  </footer>
+</div>
+
+<script>
+(function () {
+  // The GitHub slug placeholder — substituted before publish. Everything derived
+  // from it is computed at runtime so substitution keeps working.
+  var SLUG = "OWNER/REPO";
+  var DIRNAME = SLUG.split("/")[1] || "REPO";
+  var RAW = "https://raw.githubusercontent.com/" + SLUG + "/main/skills.json";
+  var REPO_URL = "https://github.com/" + SLUG;
+
+  document.getElementById("repo-slug").textContent = SLUG;
+  document.getElementById("gh-link").href = REPO_URL;
+  document.getElementById("agents-link").href = REPO_URL + "/blob/main/AGENTS.md";
+
+  var grid = document.getElementById("grid");
+  var chipsEl = document.getElementById("chips");
+  var searchEl = document.getElementById("search");
+  var countEl = document.getElementById("count");
+  var emptyEl = document.getElementById("empty");
+
+  var skills = [];
+  var activeCat = "all";
+
+  function installCmd(name) {
+    return "git clone --depth 1 " + REPO_URL + " && " + DIRNAME + "/install.sh " + name;
+  }
+
+  function render() {
+    var q = searchEl.value.trim().toLowerCase();
+    var shown = skills.filter(function (s) {
+      if (activeCat !== "all" && s.category !== activeCat) return false;
+      if (!q) return true;
+      return (s.name + " " + s.description + " " + s.category).toLowerCase().indexOf(q) !== -1;
+    });
+
+    grid.innerHTML = "";
+    emptyEl.hidden = shown.length !== 0;
+    countEl.textContent = shown.length + " of " + skills.length + " skill" + (skills.length === 1 ? "" : "s");
+
+    shown.forEach(function (s) {
+      var card = document.createElement("div");
+      card.className = "card";
+
+      var top = document.createElement("div");
+      top.className = "card-top";
+      var h3 = document.createElement("h3");
+      h3.textContent = s.name;
+      var tag = document.createElement("span");
+      tag.className = "tag";
+      tag.textContent = s.category;
+      top.appendChild(h3);
+      top.appendChild(tag);
+
+      var desc = document.createElement("p");
+      desc.className = "desc";
+      desc.textContent = s.description;
+
+      var foot = document.createElement("div");
+      foot.className = "card-foot";
+      var files = document.createElement("span");
+      files.className = "files";
+      files.textContent = s.files + " file" + (s.files === 1 ? "" : "s");
+      var btn = document.createElement("button");
+      btn.className = "copy";
+      btn.type = "button";
+      btn.textContent = "Copy install";
+      btn.addEventListener("click", function () { copyInstall(btn, s.name); });
+      foot.appendChild(files);
+      foot.appendChild(btn);
+
+      card.appendChild(top);
+      card.appendChild(desc);
+      card.appendChild(foot);
+      grid.appendChild(card);
+    });
+  }
+
+  function copyInstall(btn, name) {
+    var text = installCmd(name);
+    var done = function () {
+      var prev = btn.textContent;
+      btn.textContent = "Copied ✓";
+      btn.classList.add("done");
+      setTimeout(function () { btn.textContent = prev; btn.classList.remove("done"); }, 1600);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, function () { fallbackCopy(text, done); });
+    } else {
+      fallbackCopy(text, done);
+    }
+  }
+
+  function fallbackCopy(text, done) {
+    var ta = document.createElement("textarea");
+    ta.value = text;
+    ta.setAttribute("readonly", "");
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand("copy"); done(); } catch (e) {}
+    document.body.removeChild(ta);
+  }
+
+  function buildChips() {
+    var cats = ["all"];
+    skills.forEach(function (s) { if (cats.indexOf(s.category) === -1) cats.push(s.category); });
+    chipsEl.innerHTML = "";
+    cats.forEach(function (c) {
+      var chip = document.createElement("button");
+      chip.className = "chip";
+      chip.type = "button";
+      chip.textContent = c;
+      chip.setAttribute("aria-pressed", c === activeCat ? "true" : "false");
+      chip.addEventListener("click", function () {
+        activeCat = c;
+        Array.prototype.forEach.call(chipsEl.children, function (el) {
+          el.setAttribute("aria-pressed", el === chip ? "true" : "false");
+        });
+        render();
+      });
+      chipsEl.appendChild(chip);
+    });
+  }
+
+  function load() {
+    fetch("../skills.json")
+      .then(function (r) { if (!r.ok) throw new Error("local miss"); return r.json(); })
+      .catch(function () { return fetch(RAW).then(function (r) { return r.json(); }); })
+      .then(function (data) {
+        skills = Array.isArray(data) ? data : [];
+        buildChips();
+        render();
+      })
+      .catch(function () {
+        countEl.textContent = "";
+        emptyEl.hidden = false;
+        emptyEl.textContent = "Could not load skills.json.";
+      });
+  }
+
+  searchEl.addEventListener("input", render);
+  load();
+})();
+</script>
+</body>
+</html>

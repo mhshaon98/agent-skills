@@ -1,0 +1,14 @@
+{
+  "type": "saas-web-app",
+  "platforms": "web",
+  "user_accounts": "yes",
+  "payments": true,
+  "sensitive_data": "email",
+  "third_party_processors": [
+    { "name": "Stripe", "category": "billing" }
+  ],
+  "data_flows": [
+    { "collection_point": "signup form", "sensitivity": "SUPER_HIGH" }
+  ],
+  "totally_unknown_field": 1
+}

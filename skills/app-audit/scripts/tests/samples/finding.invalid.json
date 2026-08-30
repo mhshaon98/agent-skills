@@ -1,0 +1,24 @@
+[
+  {
+    "id": "BAD-001",
+    "module": "security",
+    "title": "Status value is not in the allowed enum",
+    "status": "FAILED",
+    "severity": "BLOCKER",
+    "confidence": "PRETTY_SURE",
+    "evidence": ["something looked wrong"],
+    "provenance": ["gut_feeling", "codex"],
+    "codex_review": { "agreement": "MAYBE", "summary": "missing the required performed flag" },
+    "disagreement_ref": 17
+  },
+  {
+    "id": "BAD-002",
+    "module": "privacy",
+    "title": "Missing required confidence and evidence fields",
+    "status": "REVIEW",
+    "severity": "HIGH",
+    "applicability": { "result": "MAYBE_APPLIES", "reason": "unclear", "facts_required": "should be an array" },
+    "safe_to_autofix": "yes",
+    "sevrity": "typo field that must be rejected"
+  }
+]

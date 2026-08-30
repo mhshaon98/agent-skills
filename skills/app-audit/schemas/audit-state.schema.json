@@ -1,0 +1,269 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/app-audit/schemas/audit-state.schema.json",
+  "title": "app-audit resumable state",
+  "description": "Machine-readable state for one audit run (<project>/.app-audit/state.json). Enables resumable fix/verify passes; time-sensitive sources must be re-verified on resume.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["audit_id", "timestamp", "mode", "launch_readiness"],
+  "properties": {
+    "schema_version": { "type": "string" },
+    "audit_id": { "type": "string", "minLength": 1 },
+    "timestamp": {
+      "type": "string",
+      "minLength": 1,
+      "description": "ISO 8601 timestamp of this state write. Absolute dates only."
+    },
+    "completed_at": { "type": ["string", "null"] },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "default",
+        "full",
+        "launch",
+        "fix",
+        "fix_critical",
+        "fix_safe",
+        "verify",
+        "research",
+        "security",
+        "privacy"
+      ]
+    },
+    "arguments_raw": { "type": "string" },
+    "project_path": { "type": "string" },
+    "phase": {
+      "type": "string",
+      "enum": [
+        "discovery",
+        "routing",
+        "research",
+        "analysis",
+        "scanning",
+        "codex_review",
+        "adversarial",
+        "deliberation",
+        "synthesis",
+        "fix",
+        "verify",
+        "complete",
+        "aborted"
+      ]
+    },
+    "profile_ref": {
+      "type": "string",
+      "description": "Relative path to the application profile JSON (e.g. '.app-audit/profile.json')."
+    },
+    "findings_ref": {
+      "type": "string",
+      "description": "Relative path to findings.json."
+    },
+    "source_registry_ref": { "type": "string" },
+    "disagreements_ref": { "type": "string" },
+    "report_refs": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+
+    "activated_modules": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/moduleEntry" }
+    },
+    "skipped_modules": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/moduleEntry" }
+    },
+
+    "agents_used": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["agent"],
+        "properties": {
+          "agent": { "type": "string", "minLength": 1 },
+          "model": { "type": "string" },
+          "purpose": { "type": "string" },
+          "runs": { "type": "integer", "minimum": 0 }
+        }
+      }
+    },
+
+    "disagreements": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/disagreement" }
+    },
+
+    "audit_trail": { "$ref": "#/$defs/auditTrail" },
+
+    "launch_readiness": {
+      "type": "string",
+      "enum": [
+        "BLOCKED",
+        "HIGH_RISK",
+        "CONDITIONAL",
+        "READY_WITH_KNOWN_RISKS",
+        "READY"
+      ],
+      "description": "READY never means legally compliant, secure, or hack-proof — the report must state that disclaimer explicitly."
+    },
+    "launch_readiness_rationale": { "type": "string" },
+
+    "unknown_facts_needed": {
+      "type": "array",
+      "description": "Batched questions for the user — genuinely unavailable material facts only.",
+      "items": { "type": "string" }
+    },
+    "codex": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Codex availability record for this run. Never downgrade the model silently; unavailability is a reported failure.",
+      "properties": {
+        "available": { "type": "boolean" },
+        "model": { "type": "string" },
+        "effort": { "type": "string" },
+        "checkpoints_run": {
+          "type": "array",
+          "items": { "type": "string", "enum": ["A", "B", "C", "D", "E"] }
+        },
+        "unavailable_reason": { "type": "string" }
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "notes": { "type": "string" }
+  },
+  "$defs": {
+    "moduleEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["module", "classification"],
+      "properties": {
+        "module": { "type": "string", "minLength": 1 },
+        "classification": {
+          "type": "string",
+          "enum": [
+            "APPLIES",
+            "POSSIBLY_APPLIES",
+            "NOT_APPLICABLE",
+            "INSUFFICIENT_EVIDENCE"
+          ]
+        },
+        "depth": {
+          "type": "string",
+          "enum": ["NONE", "LIGHT", "STANDARD", "DEEP", "FORENSIC"]
+        },
+        "reason": { "type": "string" },
+        "evidence": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "finding_ids": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "disagreement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "question"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "question": { "type": "string", "minLength": 1 },
+        "claude_position": { "type": "string" },
+        "codex_position": { "type": "string" },
+        "research_agent_positions": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              { "type": "string" },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["position"],
+                "properties": {
+                  "agent": { "type": "string" },
+                  "position": { "type": "string" },
+                  "confidence": {
+                    "type": "string",
+                    "enum": ["VERY_HIGH", "HIGH", "MEDIUM", "LOW"]
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "evidence_for": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "evidence_against": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "resolution": {
+          "type": ["string", "null"],
+          "description": "Evidence-based resolution, or null while unresolved. Model votes never decide."
+        },
+        "resolution_status": {
+          "type": "string",
+          "enum": ["RESOLVED", "UNRESOLVED", "DOCUMENTED_OPEN"]
+        },
+        "confidence": {
+          "type": ["string", "null"],
+          "enum": ["VERY_HIGH", "HIGH", "MEDIUM", "LOW", null]
+        },
+        "rounds": { "type": "integer", "minimum": 0, "maximum": 5 },
+        "decisive_test": { "type": "string" },
+        "finding_refs": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "materially_decision_relevant": { "type": "boolean" }
+      }
+    },
+    "auditTrail": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Counts only — never agent transcripts, never hidden reasoning.",
+      "properties": {
+        "research_agents_used": { "type": "integer", "minimum": 0 },
+        "codex_reviews": { "type": "integer", "minimum": 0 },
+        "sources_checked": { "type": "integer", "minimum": 0 },
+        "behavioral_tests": { "type": "integer", "minimum": 0 },
+        "static_checks": { "type": "integer", "minimum": 0 },
+        "criticals_challenged": {
+          "anyOf": [
+            { "type": "integer", "minimum": 0 },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["challenged", "total"],
+              "properties": {
+                "challenged": { "type": "integer", "minimum": 0 },
+                "total": { "type": "integer", "minimum": 0 }
+              }
+            }
+          ],
+          "description": "n challenged of n total critical findings."
+        },
+        "findings_total": { "type": "integer", "minimum": 0 },
+        "findings_by_severity": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "CRITICAL": { "type": "integer", "minimum": 0 },
+            "HIGH": { "type": "integer", "minimum": 0 },
+            "MEDIUM": { "type": "integer", "minimum": 0 },
+            "LOW": { "type": "integer", "minimum": 0 },
+            "INFO": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "stale_sources": { "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}

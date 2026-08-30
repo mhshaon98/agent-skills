@@ -1,0 +1,110 @@
+{
+  "profile_version": "1",
+  "generated_at": "2026-08-20T09:00:00Z",
+  "project_path": "fixtures/fixture-saas",
+  "project_name": "fixture-saas",
+  "type": "saas-web-app",
+  "maturity": "PRE_LAUNCH",
+  "platforms": ["web"],
+  "frameworks": ["Next.js 15", "React 19", "TypeScript"],
+  "frontend": "Next.js App Router",
+  "backend": ["Next.js route handlers", "Supabase Postgres functions"],
+  "public_api": false,
+  "database": "Supabase Postgres",
+  "storage": "Supabase Storage",
+  "authentication": "Supabase Auth",
+  "authorization_model": "ownership-based with RLS",
+  "payments": true,
+  "subscriptions": true,
+  "ai": true,
+  "analytics": true,
+  "advertising": false,
+  "tracking": true,
+  "user_accounts": true,
+  "user_uploads": true,
+  "ugc": false,
+  "messaging": false,
+  "children_possible": "UNKNOWN",
+  "sensitive_data": ["email", "private_files", "billing_identifiers"],
+  "mobile": false,
+  "cloud": ["Vercel", "Supabase"],
+  "ci_cd": "GitHub Actions",
+  "monitoring": null,
+  "background_jobs": false,
+  "webhooks": true,
+  "third_party_processors": [
+    {
+      "name": "Stripe",
+      "category": "payments",
+      "evidence": ["package.json:14 dependency: stripe"],
+      "data_shared": ["email", "billing identifiers"],
+      "disclosed_in_privacy_policy": true
+    },
+    {
+      "name": "PostHog",
+      "category": "analytics",
+      "evidence": ["package.json:12 dependency: posthog-js"],
+      "data_shared": ["usage events", "device identifiers"],
+      "disclosed_in_privacy_policy": false
+    },
+    {
+      "name": "OpenAI",
+      "category": "ai",
+      "evidence": ["package.json:13 dependency: openai"],
+      "data_shared": ["user-submitted text"],
+      "disclosed_in_privacy_policy": "UNKNOWN"
+    }
+  ],
+  "env_var_names": [
+    "STRIPE_SECRET_KEY",
+    "STRIPE_WEBHOOK_SECRET",
+    "NEXT_PUBLIC_POSTHOG_KEY",
+    "OPENAI_API_KEY",
+    "NEXT_PUBLIC_SUPABASE_URL"
+  ],
+  "data_flows": [
+    {
+      "data_category": "account email",
+      "collection_point": "signup form",
+      "purpose": "authentication and billing",
+      "storage_location": "Supabase Postgres auth.users",
+      "processors": ["Supabase", "Stripe"],
+      "external_sharing": "Stripe customer record",
+      "retention": "until account deletion",
+      "deletion_path": "settings -> delete account -> DELETE /api/account",
+      "sensitivity": "MEDIUM",
+      "privacy_disclosure": true,
+      "store_disclosure": "UNKNOWN"
+    },
+    {
+      "data_category": "uploaded documents",
+      "collection_point": "dashboard upload widget",
+      "purpose": "user-owned document storage and AI summarisation",
+      "storage_location": "Supabase Storage bucket user-uploads",
+      "processors": ["Supabase", "OpenAI"],
+      "external_sharing": "document text sent to OpenAI for summarisation",
+      "retention": "indefinite",
+      "deletion_path": "not traced to storage objects",
+      "sensitivity": "HIGH",
+      "privacy_disclosure": false,
+      "store_disclosure": "UNKNOWN"
+    }
+  ],
+  "trust_boundaries": [
+    {
+      "boundary": "anonymous_user",
+      "transitions": ["anonymous -> authenticated via Supabase Auth"],
+      "controls": ["email + password", "session cookie"],
+      "evidence": ["middleware.ts:8"]
+    },
+    {
+      "boundary": "third_party_webhook",
+      "transitions": ["Stripe -> /api/webhooks/stripe -> entitlements table"],
+      "controls": [],
+      "evidence": ["app/api/webhooks/stripe/route.ts:14"]
+    }
+  ],
+  "manifests_found": ["package.json", "pnpm-lock.yaml", "supabase/config.toml"],
+  "size": { "files": 84, "source_files": 51, "lines_of_code": 4210 },
+  "notes": "Selftest sample profile — not a real project."
+}

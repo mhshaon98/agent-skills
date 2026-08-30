@@ -1,0 +1,62 @@
+{
+  "registry_version": "1",
+  "generated_at": "2026-08-20T09:00:00Z",
+  "audit_id": "selftest-registry",
+  "freshness_windows": {
+    "platform_policy": 30,
+    "active_regulation": 30,
+    "statute": 90,
+    "engineering": 365
+  },
+  "entries": [
+    {
+      "rule_id": "PLAY-DATA-SAFETY",
+      "jurisdiction": "platform:Google",
+      "authority_type": "platform_policy",
+      "authority_name": "Google Play Developer",
+      "citation_or_section": "Data safety section requirements",
+      "source": "https://support.google.com/googleplay/android-developer/answer/10787469",
+      "last_verified": "2026-08-15",
+      "effective_date": "2022-07-20",
+      "compliance_deadline": null,
+      "status": "CURRENT",
+      "confidence": "HIGH",
+      "freshness_class": "platform_policy",
+      "verified_by": "app-audit-source-verifier",
+      "adversarial_checks": ["updated policy", "superseded"],
+      "notes": "Fresh entry — inside the 30 day platform window."
+    },
+    {
+      "rule_id": "CCPA-THRESHOLDS",
+      "jurisdiction": "US-CA",
+      "authority_type": "statute",
+      "authority_name": "California Legislature",
+      "citation_or_section": "Cal. Civ. Code 1798.140(d)",
+      "source": "https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?sectionNum=1798.140",
+      "last_verified": "2026-01-10",
+      "effective_date": "2023-01-01",
+      "compliance_deadline": null,
+      "status": "CURRENT",
+      "confidence": "MEDIUM",
+      "freshness_class": "statute",
+      "notes": "Deliberately stale for the selftest — well past the 90 day statute window."
+    },
+    {
+      "rule_id": "FTC-CLICK-TO-CANCEL",
+      "jurisdiction": "US-Federal",
+      "authority_type": "regulation",
+      "authority_name": "FTC",
+      "citation_or_section": "16 CFR Part 425 (Negative Option Rule)",
+      "source": "https://www.ftc.gov/legal-library/browse/rules",
+      "last_verified": "2026-08-18",
+      "effective_date": null,
+      "compliance_deadline": null,
+      "status": "VACATED",
+      "confidence": "HIGH",
+      "freshness_class": "active_regulation",
+      "adversarial_checks": ["vacated", "court challenge", "superseded"],
+      "conflicts": ["Secondary commentary still describes the rule as in force."],
+      "notes": "Recently verified but cannot be cited as current — must not be applied as a live rule."
+    }
+  ]
+}

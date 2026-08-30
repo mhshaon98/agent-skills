@@ -1,0 +1,147 @@
+[
+  {
+    "id": "PAY-001",
+    "module": "payments",
+    "title": "Stripe webhook handler does not verify the signature header",
+    "status": "FAIL_TECHNICAL",
+    "severity": "CRITICAL",
+    "confidence": "VERY_HIGH",
+    "applicability": {
+      "result": "APPLIES",
+      "reason": "Project ships a live Stripe webhook route that grants entitlements.",
+      "facts_required": []
+    },
+    "evidence": [
+      {
+        "kind": "file",
+        "file": "app/api/webhooks/stripe/route.ts",
+        "line": 14,
+        "description": "Handler parses request.json() directly; stripe.webhooks.constructEvent is never called."
+      },
+      "No STRIPE_WEBHOOK_SECRET is referenced anywhere in the repository."
+    ],
+    "behavioral_evidence": [
+      {
+        "kind": "request_response",
+        "description": "POST with a forged body and no stripe-signature header returned 200 and wrote an entitlement row."
+      }
+    ],
+    "authoritative_sources": [
+      {
+        "rule_id": "STRIPE-WEBHOOK-SIGNATURES",
+        "authority_name": "Stripe",
+        "citation_or_section": "Webhooks: verify signatures",
+        "source": "https://docs.stripe.com/webhooks",
+        "last_verified": "2026-08-18",
+        "status": "CURRENT"
+      }
+    ],
+    "research_summary": "Signature verification is the documented requirement for trusting webhook payloads; unverified handlers accept forged events.",
+    "codex_review": {
+      "performed": true,
+      "agreement": "AGREE",
+      "summary": "Independent review reached the same conclusion and added a replay-attack path.",
+      "checkpoint": "B",
+      "model": "gpt-5.6-sol",
+      "effort": "medium"
+    },
+    "risk": "Anyone who can reach the endpoint can grant themselves paid entitlements.",
+    "recommended_remediation": [
+      "Verify the stripe-signature header with stripe.webhooks.constructEvent before any processing.",
+      "Add an idempotency key on the Stripe event id."
+    ],
+    "safe_to_autofix": true,
+    "human_review_required": false,
+    "fix_safety_class": "SAFE_AUTOFIX",
+    "verification_steps": [
+      "Replay a forged request and confirm a 400 response.",
+      "Replay a genuine event twice and confirm one entitlement row."
+    ],
+    "provenance": ["claude_discovery", "security_agent", "behavioral_test", "codex"],
+    "disagreement_ref": null
+  },
+  {
+    "id": "PRIV-004",
+    "module": "ccpa",
+    "title": "CCPA business-threshold applicability cannot be determined from the repository",
+    "status": "UNKNOWN",
+    "severity": "MEDIUM",
+    "confidence": "LOW",
+    "applicability": {
+      "result": "INSUFFICIENT_EVIDENCE",
+      "reason": "Applicability turns on business facts that do not exist in the codebase.",
+      "facts_required": [
+        "Annual gross revenue for the prior calendar year",
+        "Number of California consumers whose personal information was processed",
+        "Whether personal information is sold or shared for cross-context behavioral advertising"
+      ]
+    },
+    "evidence": [
+      "Repository contains no revenue, customer-count, or data-sale records."
+    ],
+    "behavioral_evidence": [],
+    "authoritative_sources": [],
+    "research_summary": "California access by users alone does not establish applicability; thresholds must be checked against current statutory text.",
+    "codex_review": { "performed": false, "unavailable_reason": "not required for an UNKNOWN applicability record" },
+    "risk": "Unresolved applicability leaves the disclosure obligations unassessed.",
+    "recommended_remediation": [
+      "Provide the listed business facts so applicability can be assessed."
+    ],
+    "safe_to_autofix": false,
+    "human_review_required": true,
+    "fix_safety_class": "HUMAN_REVIEW",
+    "verification_steps": [],
+    "provenance": ["research_agent"],
+    "disagreement_ref": null,
+    "unknowns": ["Revenue", "California consumer count"]
+  },
+  {
+    "id": "STOR-002",
+    "module": "storage",
+    "title": "Public bucket contains only marketing logos",
+    "status": "PASS",
+    "severity": "INFO",
+    "confidence": "HIGH",
+    "applicability": {
+      "result": "APPLIES",
+      "reason": "Project uses object storage with one public bucket.",
+      "facts_required": []
+    },
+    "evidence": [
+      {
+        "kind": "config",
+        "file": "supabase/config.toml",
+        "line": 42,
+        "description": "Bucket 'public-assets' is public and contains only brand logo files."
+      }
+    ],
+    "behavioral_evidence": [
+      {
+        "kind": "authorization_reproduction",
+        "description": "Anonymous listing of the private 'user-uploads' bucket returned 403."
+      }
+    ],
+    "authoritative_sources": [],
+    "research_summary": "A public bucket is not by itself a vulnerability; only the contents decide.",
+    "codex_review": {
+      "performed": true,
+      "agreement": "AGREE",
+      "summary": "Independent review confirmed no user data in the public bucket.",
+      "checkpoint": "B",
+      "model": "gpt-5.6-sol",
+      "effort": "medium"
+    },
+    "risk": "None identified.",
+    "recommended_remediation": [],
+    "safe_to_autofix": false,
+    "human_review_required": false,
+    "verification_steps": ["Re-list both buckets anonymously after any storage change."],
+    "provenance": ["claude_discovery", "behavioral_test"],
+    "disagreement_ref": null,
+    "adversarial_challenge": {
+      "performed": true,
+      "outcome": "UPHELD",
+      "summary": "Challenged as a critical-control PASS; anonymous access to private objects stayed denied."
+    }
+  }
+]
