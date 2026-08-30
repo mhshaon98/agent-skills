@@ -1,0 +1,116 @@
+[
+  {
+    "name": "codex-bridge",
+    "description": "Delegate tasks to OpenAI Codex or get a cross-provider second review from inside Claude Code via the official codex plugin. Use when the user says \"ask codex\", \"have codex review/check this\", \"send to codex\", or before a release when a non-Claude reviewer adds value.",
+    "files": 1,
+    "category": "delegation"
+  },
+  {
+    "name": "cowork-relay",
+    "description": "Coordinate work split between Claude Cowork and Claude Code on the same project \u2014 Cowork does the maximum possible, sandbox-blocked steps go to Claude Code, and each side ends by writing a copy-paste relay prompt for the other.",
+    "files": 1,
+    "category": "delegation"
+  },
+  {
+    "name": "fable-conductor",
+    "description": "Operating mode for the ENTIRE session whenever the session model is a top-tier reasoning model: it acts only as architect/orchestrator, delegates ALL execution to cheaper subagent tiers, and verifies end-to-end.",
+    "files": 1,
+    "category": "delegation"
+  },
+  {
+    "name": "spawn-agent",
+    "description": "Use BEFORE spawning any subagent (research, implementation, review, debugging) or choosing a model for delegated work. Gate, brief-writing procedure, and model-tier routing; usage limits are a real budget.",
+    "files": 1,
+    "category": "delegation"
+  },
+  {
+    "name": "apply-richformat",
+    "description": "Rich formatting for any text-bearing surface \u2014 app screens, documents, reports, READMEs, chat answers, terminal output, data tables. Use on walls of undifferentiated text, when building or reviewing such a surface, or when the user says \"rich formatting\", \"text vomit\", \"needs better structure\", \"make this readable\".",
+    "files": 1,
+    "category": "formatting"
+  },
+  {
+    "name": "slop-clean",
+    "description": "Deep-dive sweep of the current project for AI slop, in design and in copy. Only runs when the user explicitly invokes /slop-clean; never self-trigger.",
+    "files": 1,
+    "category": "formatting"
+  },
+  {
+    "name": "app-audit",
+    "description": "Runs an automated technical and disclosure compliance-assistance audit of a project \u2014 profiling, domain routing, read-only specialist subagents, fresh authoritative research, optional independent peer review, and one consolidated report. Plain `/app-audit` with no arguments runs the full intelligent audit; the optional modes are full, launch, fix, fix critical, fix safe, verify, research, security, and privacy.",
+    "files": 110,
+    "category": "safety"
+  },
+  {
+    "name": "pre-release-review",
+    "description": "Use when the user says \"ship it\", \"release\", \"submit\", \"deploy\", \"push to production\", before any production push, or after any large diff. Mandatory independent review pass \u2014 never skip because \"the diff looks fine\".",
+    "files": 1,
+    "category": "safety"
+  },
+  {
+    "name": "safe-data-write",
+    "description": "Use BEFORE any write, migration, or deletion touching precious user data \u2014 data stores, schemas, user-owned files (Excel workbooks, databases, documents). User data is sacred; these rules were learned from shipped data-loss bugs.",
+    "files": 1,
+    "category": "safety"
+  },
+  {
+    "name": "security-pass",
+    "description": "Use when touching auth, API keys, secrets, RLS/policies, payment or personal data, any new endpoint that writes, or live backends \u2014 and before any release. Security and secrets checklist; every rule traces to a real production finding.",
+    "files": 1,
+    "category": "safety"
+  },
+  {
+    "name": "verify-work",
+    "description": "Use BEFORE claiming work is \"done\", \"complete\", \"working\", or \"fixed\", and before writing a handoff or completion summary. Verification ladder plus the honest Verified/NOT-verified ledger \u2014 \"verified\" is a claim about evidence, not confidence.",
+    "files": 1,
+    "category": "safety"
+  },
+  {
+    "name": "client-cms",
+    "description": "Analyze the current website project and intelligently add a secure, client-facing content-management/admin system so authorized nontechnical users can update approved website content without editing source code. Use when the user invokes /client-cms, asks to add an admin panel/dashboard for site content, or wants website content editable by a client/business owner.",
+    "files": 1,
+    "category": "tooling"
+  },
+  {
+    "name": "commissioning-logger",
+    "description": "Use ONLY when explicitly asked to log/document/track a multi-step hands-on process (commissioning, wiring, network bring-up, setup, troubleshooting, runbooks) \u2014 \"log this\", \"start a commissioning log\", \"write it up as we go\". Keeps a log.md plus a Word doc with annotated screenshots.",
+    "files": 5,
+    "category": "tooling"
+  },
+  {
+    "name": "usage-here",
+    "description": "Report what THIS session has cost \u2014 tokens and dollars by model, share of the 5-hour and weekly limits, and the three most expensive prompts. Use whenever the user says \"usage here\", \"what did this session cost\", \"how much have I burned\", \"token usage\", or asks about limits mid-session.",
+    "files": 4,
+    "category": "tooling"
+  },
+  {
+    "name": "bug-ledger",
+    "description": "Use whenever a bug is reported, discovered, fixed, or reopened, or before working in a historically bug-prone area. Maintains the cumulative bug ledger (BUG_LIST.md) \u2014 many \"new\" bugs are old ones recurring or a fix that regressed, so check it BEFORE debugging.",
+    "files": 1,
+    "category": "workflow"
+  },
+  {
+    "name": "call-handoff",
+    "description": "Cold-start a session from the project's newest handoff in a strict token budget. Use at session start or when the user says \"call handoff\", \"catch up\", or \"where did we leave off\" \u2014 reads the newest HANDOFF-*.md, open bugs, and project docs, reports a briefing, fixes generic session titles, and stops.",
+    "files": 1,
+    "category": "workflow"
+  },
+  {
+    "name": "new-project",
+    "description": "Bootstrap a brand-new project with proven architecture defaults and continuity scaffolding. Use when starting a new project from scratch, or when touching a legacy project that has no handoff/git/structure yet.",
+    "files": 1,
+    "category": "workflow"
+  },
+  {
+    "name": "session-start",
+    "description": "Use at the start of ANY work session on a project \u2014 before reading code or making changes \u2014 and when joining an unfamiliar or legacy project. Runs the startup ritual \u2014 newest handoff, bug ledger, project docs \u2014 then restates the goal.",
+    "files": 1,
+    "category": "workflow"
+  },
+  {
+    "name": "update-handoff",
+    "description": "End-of-session wrap-up in one efficient pass \u2014 updates the handoff, memory, changelog, and bug ledger as needed, and writes NEXT-SESSION-PROMPT.md so the next session starts instantly. Use when the user says \"update handoff\", \"wrap up\", \"end the session\", or before context runs out.",
+    "files": 1,
+    "category": "workflow"
+  }
+]

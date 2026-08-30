@@ -1,0 +1,187 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/app-audit/schemas/application-profile.schema.json",
+  "title": "app-audit application profile",
+  "description": "Machine-readable application profile produced by discovery (requirements section F). Boolean-ish fields accept true/false or the string \"UNKNOWN\" — an honest unknown must never be recorded as false.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "type",
+    "maturity",
+    "platforms",
+    "user_accounts",
+    "payments",
+    "ai"
+  ],
+  "properties": {
+    "profile_version": { "type": "string" },
+    "generated_at": { "type": "string" },
+    "project_path": { "type": "string" },
+    "project_name": { "type": "string" },
+
+    "type": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Application type, e.g. static-site, marketing-site, saas-web-app, mobile-app, api-service, cli, library, desktop-app, internal-tool."
+    },
+    "maturity": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Suggested values: PROTOTYPE, PRE_LAUNCH, LAUNCHED, MATURE, UNKNOWN."
+    },
+    "platforms": {
+      "type": "array",
+      "description": "e.g. web, ios, android, macos, windows, linux, server.",
+      "items": { "type": "string" }
+    },
+    "frameworks": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "frontend": { "$ref": "#/$defs/stack" },
+    "backend": { "$ref": "#/$defs/stack" },
+    "public_api": { "$ref": "#/$defs/triState" },
+    "database": { "$ref": "#/$defs/stack" },
+    "storage": { "$ref": "#/$defs/stack" },
+    "authentication": { "$ref": "#/$defs/stack" },
+    "authorization_model": {
+      "type": "string",
+      "description": "e.g. none, ownership-based, RBAC, ABAC, multi-tenant, admin-separated, UNKNOWN."
+    },
+    "payments": { "$ref": "#/$defs/triState" },
+    "subscriptions": { "$ref": "#/$defs/triState" },
+    "ai": { "$ref": "#/$defs/triState" },
+    "analytics": { "$ref": "#/$defs/triState" },
+    "advertising": { "$ref": "#/$defs/triState" },
+    "tracking": { "$ref": "#/$defs/triState" },
+    "user_accounts": { "$ref": "#/$defs/triState" },
+    "user_uploads": { "$ref": "#/$defs/triState" },
+    "ugc": { "$ref": "#/$defs/triState" },
+    "messaging": { "$ref": "#/$defs/triState" },
+    "children_possible": { "$ref": "#/$defs/triState" },
+    "sensitive_data": {
+      "type": "array",
+      "description": "Categories of sensitive data handled, e.g. email, precise_location, health, financial, biometric, government_id, minors_data, private_files.",
+      "items": { "type": "string" }
+    },
+    "mobile": { "$ref": "#/$defs/triState" },
+    "cloud": { "$ref": "#/$defs/stack" },
+    "ci_cd": { "$ref": "#/$defs/stack" },
+    "monitoring": { "$ref": "#/$defs/stack" },
+    "background_jobs": { "$ref": "#/$defs/triState" },
+    "webhooks": { "$ref": "#/$defs/triState" },
+
+    "third_party_processors": {
+      "type": "array",
+      "description": "Dynamically discovered processors (scan_processors.py output plus manual discovery).",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "category"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "category": {
+            "type": "string",
+            "enum": [
+              "analytics",
+              "payments",
+              "ai",
+              "auth",
+              "email",
+              "infra",
+              "monitoring",
+              "other"
+            ]
+          },
+          "evidence": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "data_shared": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "disclosed_in_privacy_policy": { "$ref": "#/$defs/triState" }
+        }
+      }
+    },
+    "env_var_names": {
+      "type": "array",
+      "description": "Environment variable NAMES only. Never record values.",
+      "items": { "type": "string" }
+    },
+    "data_flows": {
+      "type": "array",
+      "description": "Per data type: SOURCE -> CLIENT -> API -> PROCESSING -> DATABASE/STORAGE -> THIRD PARTIES -> RETENTION -> DELETION.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["data_category"],
+        "properties": {
+          "data_category": { "type": "string", "minLength": 1 },
+          "collection_point": { "type": "string" },
+          "purpose": { "type": "string" },
+          "storage_location": { "type": "string" },
+          "processors": { "type": "array", "items": { "type": "string" } },
+          "external_sharing": { "type": "string" },
+          "retention": { "type": "string" },
+          "deletion_path": { "type": "string" },
+          "sensitivity": {
+            "type": "string",
+            "enum": ["LOW", "MEDIUM", "HIGH", "UNKNOWN"]
+          },
+          "privacy_disclosure": { "$ref": "#/$defs/triState" },
+          "store_disclosure": { "$ref": "#/$defs/triState" }
+        }
+      }
+    },
+    "trust_boundaries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["boundary"],
+        "properties": {
+          "boundary": {
+            "type": "string",
+            "description": "e.g. anonymous_user, authenticated_user, admin, internal_service, third_party_webhook, ai_model, storage_service, database, background_worker, external_api."
+          },
+          "transitions": { "type": "array", "items": { "type": "string" } },
+          "controls": { "type": "array", "items": { "type": "string" } },
+          "evidence": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "manifests_found": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "size": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "files": { "type": "integer", "minimum": 0 },
+        "source_files": { "type": "integer", "minimum": 0 },
+        "lines_of_code": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "notes": { "type": "string" }
+  },
+  "$defs": {
+    "triState": {
+      "anyOf": [
+        { "type": "boolean" },
+        { "type": "string", "enum": ["UNKNOWN"] }
+      ],
+      "description": "true, false, or \"UNKNOWN\"."
+    },
+    "stack": {
+      "anyOf": [
+        { "type": "string" },
+        { "type": "array", "items": { "type": "string" } },
+        { "type": "null" }
+      ],
+      "description": "Named technology (or list of them); null when absent."
+    }
+  }
+}

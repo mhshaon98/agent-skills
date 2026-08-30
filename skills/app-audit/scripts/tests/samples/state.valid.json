@@ -1,0 +1,110 @@
+{
+  "schema_version": "1",
+  "audit_id": "20260820-090000-fixture-saas",
+  "timestamp": "2026-08-20T09:00:00Z",
+  "completed_at": "2026-08-20T09:41:00Z",
+  "mode": "default",
+  "arguments_raw": "",
+  "project_path": "fixtures/fixture-saas",
+  "phase": "complete",
+  "profile_ref": ".app-audit/profile.json",
+  "findings_ref": ".app-audit/findings.json",
+  "source_registry_ref": ".app-audit/source-registry.json",
+  "disagreements_ref": ".app-audit/disagreements.json",
+  "report_refs": ["APP-AUDIT.md", "APP-AUDIT.json"],
+  "activated_modules": [
+    {
+      "module": "payments",
+      "classification": "APPLIES",
+      "depth": "FORENSIC",
+      "reason": "Stripe integration with entitlement-granting webhook.",
+      "evidence": ["package.json:14", "app/api/webhooks/stripe/route.ts:14"],
+      "finding_ids": ["PAY-001"]
+    },
+    {
+      "module": "ccpa",
+      "classification": "INSUFFICIENT_EVIDENCE",
+      "depth": "STANDARD",
+      "reason": "Business thresholds are not determinable from the repository.",
+      "finding_ids": ["PRIV-004"]
+    },
+    {
+      "module": "storage",
+      "classification": "APPLIES",
+      "depth": "DEEP",
+      "reason": "Supabase Storage with one public and one private bucket.",
+      "finding_ids": ["STOR-002"]
+    }
+  ],
+  "skipped_modules": [
+    {
+      "module": "apple_app_store",
+      "classification": "NOT_APPLICABLE",
+      "depth": "NONE",
+      "reason": "No iOS target, no Info.plist, no App Store metadata in the project."
+    },
+    {
+      "module": "children_coppa",
+      "classification": "NOT_APPLICABLE",
+      "depth": "NONE",
+      "reason": "No child-directed branding, no age gate, no minors-oriented content or trackers."
+    }
+  ],
+  "agents_used": [
+    { "agent": "app-audit-recon", "model": "opus", "purpose": "discovery", "runs": 1 },
+    { "agent": "app-audit-security-reviewer", "model": "opus", "purpose": "web security", "runs": 1 },
+    { "agent": "app-audit-source-verifier", "model": "haiku", "purpose": "citation status", "runs": 2 }
+  ],
+  "disagreements": [
+    {
+      "id": "DIS-001",
+      "question": "Does the retry wrapper around the AI call create duplicate charges when the webhook races the client callback?",
+      "claude_position": "Duplicates are possible because the entitlement write is not keyed on the Stripe event id.",
+      "codex_position": "The unique index on (user_id, period) already prevents duplicate rows.",
+      "research_agent_positions": [
+        {
+          "agent": "app-audit-data-reviewer",
+          "position": "The unique index exists but the handler catches the conflict and retries without a key.",
+          "confidence": "HIGH"
+        }
+      ],
+      "evidence_for": ["app/api/webhooks/stripe/route.ts:31 catches 23505 and retries"],
+      "evidence_against": ["supabase/migrations/0003_entitlements.sql:12 unique index"],
+      "resolution": "Evidence supports Claude: the retry path can write a second row after the conflict is swallowed.",
+      "resolution_status": "RESOLVED",
+      "confidence": "HIGH",
+      "rounds": 2,
+      "decisive_test": "Replay the same Stripe event id twice and count entitlement rows.",
+      "finding_refs": ["PAY-001"],
+      "materially_decision_relevant": true
+    }
+  ],
+  "audit_trail": {
+    "research_agents_used": 6,
+    "codex_reviews": 3,
+    "sources_checked": 11,
+    "behavioral_tests": 4,
+    "static_checks": 2,
+    "criticals_challenged": { "challenged": 1, "total": 1 },
+    "findings_total": 3,
+    "findings_by_severity": { "CRITICAL": 1, "HIGH": 0, "MEDIUM": 1, "LOW": 0, "INFO": 1 },
+    "stale_sources": 1
+  },
+  "launch_readiness": "BLOCKED",
+  "launch_readiness_rationale": "One CRITICAL payments finding with reproduced impact remains open.",
+  "unknown_facts_needed": [
+    "Prior-year gross revenue",
+    "Number of California consumers processed in the last 12 months"
+  ],
+  "codex": {
+    "available": true,
+    "model": "gpt-5.6-sol",
+    "effort": "medium",
+    "checkpoints_run": ["A", "B", "E"]
+  },
+  "limitations": [
+    "No staging environment was available, so cross-tenant tests were read-only.",
+    "One statutory source was stale and is flagged SOURCE_REVIEW_REQUIRED."
+  ],
+  "notes": "Selftest sample state — not a real audit."
+}

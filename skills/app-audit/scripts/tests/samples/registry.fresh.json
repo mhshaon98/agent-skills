@@ -1,0 +1,26 @@
+[
+  {
+    "rule_id": "APPLE-PRIVACY-NUTRITION",
+    "jurisdiction": "platform:Apple",
+    "authority_type": "platform_policy",
+    "authority_name": "Apple Developer",
+    "citation_or_section": "App privacy details on the App Store",
+    "source": "https://developer.apple.com/app-store/app-privacy-details/",
+    "last_verified": "2026-08-19",
+    "status": "CURRENT",
+    "confidence": "HIGH",
+    "freshness_class": "platform_policy"
+  },
+  {
+    "rule_id": "OWASP-ASVS-SESSION",
+    "jurisdiction": "global",
+    "authority_type": "engineering_reference",
+    "authority_name": "OWASP",
+    "citation_or_section": "ASVS v4 chapter 3 (session management)",
+    "source": "https://owasp.org/www-project-application-security-verification-standard/",
+    "last_verified": "2026-03-01",
+    "status": "CURRENT",
+    "confidence": "HIGH",
+    "freshness_class": "engineering"
+  }
+]

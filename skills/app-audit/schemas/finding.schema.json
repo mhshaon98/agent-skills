@@ -1,0 +1,259 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/app-audit/schemas/finding.schema.json",
+  "title": "app-audit finding",
+  "description": "One audit finding. Encodes requirements section C. A file may contain a single finding object or an array of finding objects.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "module",
+    "title",
+    "status",
+    "severity",
+    "confidence",
+    "evidence"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Stable identifier for this finding, unique within one audit (e.g. 'PAY-001')."
+    },
+    "module": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Audit module this finding belongs to (e.g. 'payments', 'privacy', 'authz')."
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "description": "One-line summary of the finding. No chain-of-thought."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["PASS", "FAIL_TECHNICAL", "REVIEW", "UNKNOWN", "N_A"],
+      "description": "Uncertainty never becomes PASS. N_A only with established non-applicability."
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW", "INFO"]
+    },
+    "confidence": {
+      "type": "string",
+      "enum": ["VERY_HIGH", "HIGH", "MEDIUM", "LOW"],
+      "description": "Reflects evidence quality, not model conviction."
+    },
+    "applicability": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Router classification for the rule/domain behind this finding.",
+      "properties": {
+        "result": {
+          "type": ["string", "null"],
+          "enum": [
+            "APPLIES",
+            "POSSIBLY_APPLIES",
+            "NOT_APPLICABLE",
+            "INSUFFICIENT_EVIDENCE",
+            null
+          ]
+        },
+        "reason": { "type": "string" },
+        "facts_required": {
+          "type": "array",
+          "description": "Exact business facts that would resolve an INSUFFICIENT_EVIDENCE / UNKNOWN determination.",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "description": "Concrete evidence. FAIL_TECHNICAL ordinarily requires at least one concrete item (file+line, config, request/response, test result, network or database behavior, authorization reproduction, runtime trace).",
+      "items": {
+        "anyOf": [
+          { "type": "string", "minLength": 1 },
+          { "$ref": "#/$defs/evidenceItem" }
+        ]
+      }
+    },
+    "behavioral_evidence": {
+      "type": "array",
+      "description": "Evidence produced by actually exercising the system (network behavior, consent tests, authz reproduction).",
+      "items": {
+        "anyOf": [
+          { "type": "string", "minLength": 1 },
+          { "$ref": "#/$defs/evidenceItem" }
+        ]
+      }
+    },
+    "authoritative_sources": {
+      "type": "array",
+      "description": "Primary authorities relied on. Prefer registry references (rule_id) over bare URLs.",
+      "items": {
+        "anyOf": [
+          { "type": "string", "minLength": 1 },
+          { "$ref": "#/$defs/sourceRef" }
+        ]
+      }
+    },
+    "research_summary": {
+      "type": "string",
+      "description": "Conclusions and evidence only. No reasoning transcripts."
+    },
+    "codex_review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["performed"],
+      "description": "Independent Codex peer review. If Codex was unavailable, performed=false and the reason is recorded; never fabricate a review, never silently downgrade the model.",
+      "properties": {
+        "performed": { "type": "boolean" },
+        "agreement": {
+          "type": ["string", "null"],
+          "enum": ["AGREE", "PARTIAL", "DISAGREE", "UNRESOLVED", null]
+        },
+        "summary": { "type": "string" },
+        "checkpoint": {
+          "type": "string",
+          "enum": ["A", "B", "C", "D", "E"]
+        },
+        "model": { "type": "string" },
+        "effort": { "type": "string" },
+        "unavailable_reason": { "type": "string" }
+      }
+    },
+    "risk": { "type": "string" },
+    "recommended_remediation": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "safe_to_autofix": { "type": "boolean" },
+    "human_review_required": { "type": "boolean" },
+    "fix_safety_class": {
+      "type": "string",
+      "enum": [
+        "SAFE_AUTOFIX",
+        "PLAN_REQUIRED",
+        "HUMAN_REVIEW",
+        "PROHIBITED_AUTOFIX"
+      ]
+    },
+    "verification_steps": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "provenance": {
+      "type": "array",
+      "description": "Required in practice for every HIGH/CRITICAL finding.",
+      "items": {
+        "type": "string",
+        "enum": [
+          "claude_discovery",
+          "research_agent",
+          "security_agent",
+          "codex",
+          "behavioral_test",
+          "static_scanner"
+        ]
+      }
+    },
+    "disagreement_ref": {
+      "type": ["string", "null"],
+      "description": "Id of an entry in the audit state's disagreements array."
+    },
+    "false_positive_conditions": {
+      "type": "array",
+      "description": "Conditions under which this finding would be a false positive (security/compliance agent output format).",
+      "items": { "type": "string" }
+    },
+    "attack_precondition": { "type": "string" },
+    "attack_path": { "type": "string" },
+    "affected_boundary": { "type": "string" },
+    "reproduction": { "type": "string" },
+    "impact": { "type": "string" },
+    "recommended_test": { "type": "string" },
+    "unknowns": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "contrary_evidence": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "adversarial_challenge": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Result of the adversarial reviewer attacking this finding (or this PASS).",
+      "properties": {
+        "performed": { "type": "boolean" },
+        "outcome": {
+          "type": "string",
+          "enum": ["UPHELD", "DOWNGRADED", "UPGRADED", "WITHDRAWN", "UNRESOLVED"]
+        },
+        "summary": { "type": "string" }
+      }
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "created_at": { "type": "string" },
+    "updated_at": { "type": "string" }
+  },
+  "$defs": {
+    "evidenceItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["description"],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "file",
+            "config",
+            "request_response",
+            "test_result",
+            "network_behavior",
+            "database_behavior",
+            "authorization_reproduction",
+            "runtime_trace",
+            "static_scanner",
+            "document"
+          ]
+        },
+        "file": { "type": "string" },
+        "line": { "type": "integer", "minimum": 1 },
+        "end_line": { "type": "integer", "minimum": 1 },
+        "snippet": {
+          "type": "string",
+          "description": "Never include unredacted secret values."
+        },
+        "description": { "type": "string", "minLength": 1 }
+      }
+    },
+    "sourceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["authority_name"],
+      "properties": {
+        "rule_id": { "type": "string" },
+        "authority_name": { "type": "string", "minLength": 1 },
+        "citation_or_section": { "type": "string" },
+        "source": { "type": "string" },
+        "last_verified": { "type": "string", "format": "date" },
+        "status": {
+          "type": "string",
+          "enum": [
+            "CURRENT",
+            "UPCOMING",
+            "SUPERSEDED",
+            "VACATED",
+            "REPEALED",
+            "UNDER_CHALLENGE",
+            "UNKNOWN"
+          ]
+        }
+      }
+    }
+  }
+}

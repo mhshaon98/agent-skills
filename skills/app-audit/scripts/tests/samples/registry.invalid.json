@@ -1,0 +1,16 @@
+{
+  "entries": [
+    {
+      "jurisdiction": "US-CA",
+      "authority_type": "blog_post",
+      "authority_name": "Some Law Blog",
+      "source": "https://example.com/post",
+      "last_verified": "August 2026",
+      "status": "PROBABLY_STILL_GOOD",
+      "confidence": "PRETTY_HIGH",
+      "freshness_class": "vibes",
+      "made_up_field": true
+    }
+  ],
+  "unexpected_root_key": "should be rejected"
+}
