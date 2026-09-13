@@ -12,6 +12,8 @@
   <a href="skills.json">skills.json</a>
 </p>
 
+<p align="center"><sub>Last updated: 2026-09-13 · 22 skills · 11 playbooks</sub></p>
+
 # Agent Skills Catalog
 
 A catalog of battle-tested [Claude Code](https://docs.anthropic.com/en/docs/claude-code)
@@ -67,7 +69,8 @@ source of truth. Each skill links to its `SKILL.md`.
 
 | Skill | What it does |
 | --- | --- |
-| [app-audit](skills/app-audit/SKILL.md) | Runs an automated technical and disclosure compliance-assistance audit of a project — profiling, domain routing, read-only specialist subagents, fresh authoritative research, optional independent peer review, and one consolidated report. Plain `/app-audit` with no arguments runs the full intelligent audit; the optional modes are full, launch, fix, fix critical, fix safe, verify, research, security, and privacy. |
+| [app-audit](skills/app-audit/SKILL.md) | Runs an automated technical and disclosure compliance-assistance audit of a project — profiling, domain routing, read-only specialist subagents, fresh authoritative research, optional independent peer review, and one consolidated report. It also runs the `compliance-check` skill in embedded mode to verify what is actually live (store labels, published policies, deployed backend, retention jobs). Plain `/app-audit` with no arguments runs the full intelligent audit; the optional modes are full, launch, fix, fix critical, fix safe, verify, research, security, and privacy. |
+| [compliance-check](skills/compliance-check/SKILL.md) | Live compliance close-out for an app or website - verifies what is ACTUALLY live (store listing and privacy labels, published policy pages, deployed backend, retention jobs, deletion, consent notices, ops floor) against the code and the published words, reconciles audit finding statuses against current code, then works the remediation runbook item by item with production-safe patterns. Use on `/compliance-check`, "what's left on compliance", "close out the audit", before a store submission, or when app-audit calls it. Modes: check (default, read-only), closeout, store, retention, health-data, reconcile, embedded. |
 | [pre-release-review](skills/pre-release-review/SKILL.md) | Use when the user says "ship it", "release", "submit", "deploy", "push to production", before any production push, or after any large diff. Mandatory independent review pass — never skip because "the diff looks fine". |
 | [safe-data-write](skills/safe-data-write/SKILL.md) | Use BEFORE any write, migration, or deletion touching precious user data — data stores, schemas, user-owned files (Excel workbooks, databases, documents). User data is sacred; these rules were learned from shipped data-loss bugs. |
 | [security-pass](skills/security-pass/SKILL.md) | Use when touching auth, API keys, secrets, RLS/policies, payment or personal data, any new endpoint that writes, or live backends — and before any release. Security and secrets checklist; every rule traces to a real production finding. |
@@ -77,6 +80,8 @@ source of truth. Each skill links to its `SKILL.md`.
 
 | Skill | What it does |
 | --- | --- |
+| [antigravity-bridge](skills/antigravity-bridge/SKILL.md) | Delegate bounded work to Google's Antigravity CLI (agy, Gemini models) from inside Claude Code, and get a third-provider second opinion. Use when the user says "ask antigravity", "ask gemini", "send this to agy", when Claude and Codex disagree and a tie-breaker is needed, or when cheap bounded research/sweeps would otherwise burn Claude subagent budget. |
+| [astra-conductor](skills/astra-conductor/SKILL.md) | Operating mode for the ENTIRE session whenever the session model is GPT-6-Astra: Astra acts only as architect/orchestrator, delegates ALL execution to gpt-5.6/5.4/5.3 subagents via spawn_agent, and verifies end-to-end. |
 | [codex-bridge](skills/codex-bridge/SKILL.md) | Delegate tasks to OpenAI Codex or get a cross-provider second review from inside Claude Code via the official codex plugin. Use when the user says "ask codex", "have codex review/check this", "send to codex", or before a release when a non-Claude reviewer adds value. |
 | [cowork-relay](skills/cowork-relay/SKILL.md) | Coordinate work split between Claude Cowork and Claude Code on the same project — Cowork does the maximum possible, sandbox-blocked steps go to Claude Code, and each side ends by writing a copy-paste relay prompt for the other. |
 | [fable-conductor](skills/fable-conductor/SKILL.md) | Operating mode for the ENTIRE session whenever the session model is a top-tier reasoning model: it acts only as architect/orchestrator, delegates ALL execution to cheaper subagent tiers, and verifies end-to-end. |
@@ -97,6 +102,13 @@ source of truth. Each skill links to its `SKILL.md`.
 | [commissioning-logger](skills/commissioning-logger/SKILL.md) | Use ONLY when explicitly asked to log/document/track a multi-step hands-on process (commissioning, wiring, network bring-up, setup, troubleshooting, runbooks) — "log this", "start a commissioning log", "write it up as we go". Keeps a log.md plus a Word doc with annotated screenshots. |
 | [usage-here](skills/usage-here/SKILL.md) | Report what THIS session has cost — tokens and dollars by model, share of the 5-hour and weekly limits, and the three most expensive prompts. Use whenever the user says "usage here", "what did this session cost", "how much have I burned", "token usage", or asks about limits mid-session. |
 
+## Playbooks
+
+[`playbooks/`](playbooks/README.md) holds the longer reference docs the skills lean on —
+architecture defaults, verification, security, model/agent strategy, token efficiency,
+Cloudflare cost safety, and Remotion video recipes. Agents read the relevant one on
+demand; they are not installed. See the [playbooks index](playbooks/README.md).
+
 ## What a skill is
 
 A skill is a directory with a `SKILL.md` at its root. The file starts with YAML
@@ -115,7 +127,7 @@ templates, references — alongside the `SKILL.md`.
 These third-party skills are not vendored here — they live in their own repos and pair
 well with this catalog. Follow the links to install from source.
 
-- [hyperframes](https://github.com/heygen-com/hyperframes) — HTML-native video and motion-graphics framework for agents.
+- [remotion-dev/skills](https://github.com/remotion-dev/skills) — the recommended video framework: programmatic React video, captions, rendering (`npx skills add remotion-dev/skills`). Chosen over HyperFrames after a head-to-head on output quality.
 - [last30days](https://github.com/mvanhorn/last30days-skill) — broad multi-source social-sentiment research over the last 30 days.
 - [defuddle skill](https://github.com/kepano/obsidian-skills) — extract clean markdown from web pages, token-efficiently.
 - [agent-browser](https://github.com/vercel-labs/agent-browser) — browser-automation CLI built for AI agents.

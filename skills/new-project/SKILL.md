@@ -22,6 +22,25 @@ handoff alone.
 5. Decide architecture **with the next session in mind**: could a cold-start Claude
    continue from the handoff alone? If not, the structure is wrong.
 
+## Requirements interview: one question at a time
+
+Gather the spec by asking **exactly one question, then waiting** — never a questionnaire
+wall. Pair each question with your current best-guess hypothesis so the user can correct
+a wrong guess faster than answer an open one; let later questions pivot on earlier
+answers. Build the product definition below from the confirmed answers — "sounds good"
+is not confirmation; restate intent in the user's words and get an explicit yes.
+(adapted from addyosmani/agent-skills, MIT)
+
+## Vertical-slice plan (`tasks/plan.md`, before implementation)
+
+For any multi-session build, write a `tasks/plan.md`: study specs read-only first → map
+dependencies → break work into **thin end-to-end slices** (one feature path data→API→UI,
+not all-DB-then-all-API-then-all-UI), each with testable acceptance criteria, a
+verification step, affected files, and a size (XS/S/M/L; XL = split further). Order so
+each slice leaves the system working and risky work surfaces early. Never overwrite an
+incomplete plan without asking — unchecked items may be mid-session work.
+(adapted from addyosmani/agent-skills, MIT)
+
 ## Substantial projects: product + invariants source of truth (before heavy implementation)
 
 For anything beyond a script or small tool — an app, a backend, anything expected to

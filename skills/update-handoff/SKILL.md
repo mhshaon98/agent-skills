@@ -14,16 +14,21 @@ already in this session's context; never re-read files this session wrote or dis
 
 ```bash
 date "+NOW: %Y-%m-%d %H%M"
+if [ ! -d .git ] && [ -f WHERE-IS-THE-CODE.md ]; then T=$(grep -oE '([A-Za-z]:[\/]|~/)[^`"<>|*?]+' WHERE-IS-THE-CODE.md | head -1 | tr '\134' '/' | sed -e "s|^~|$HOME|" -e 's|^\([A-Za-z]\):|/\L\1|' -e 's|[[:space:]]*$||'); [ -d "$T" ] && { echo "ENTRY POINT -> writing into $T"; cd "$T"; }; fi; pwd
 H=$(ls -1 HANDOFF-*.md 2>/dev/null | sort | tail -1); echo "CURRENT HANDOFF: ${H:-NONE}"
 git status --porcelain=v1 2>/dev/null | head -20; git log --oneline -8 2>/dev/null || ls -t | head -10
+[ -n "${SKILLS_REPO:-}" ] && { echo "SKILLS CLONE:"; git -C "$SKILLS_REPO" status -sb 2>/dev/null | head -1; git -C "$SKILLS_REPO" status --porcelain=v1 2>/dev/null | head -10; }
 ```
 
 ## Step 2 — decide what needs updating (write nothing yet)
 
+- **Entry-point folder?** If the gather printed `ENTRY POINT -> ...`, every file below is
+  written into THAT clone (never into the pointer folder), and the project push happens there.
 - **Handoff**: if the newest handoff is from THIS session, edit it in place; otherwise
   create `HANDOFF-YYYY-MM-DD-HHMM.md` at the project root using this skeleton — what
   the project is → current state → what this session did → decisions + **rejected
-  alternatives with evidence** → **Verified / NOT-verified ledgers** → known issues →
+  alternatives with evidence** (one **decision record** per architectural choice —
+  Decision · Alternatives rejected · Evidence · Date) → **Verified / NOT-verified ledgers** → known issues →
   ordered TODO → retrospective → how to run. Add a "supersedes" line naming the
   previous handoff; keep the old ones. **No secrets** (these files are long-lived and
   often synced — reference keys by name); every relative date converted to absolute.
@@ -61,6 +66,14 @@ lessons in the handoff marked "PROMOTE TO LESSONS".
 
 - [ ] **Lessons committed in the same pass** — not left uncommitted in the working tree
       for the next session to trip over.
+- [ ] **Skills repo committed AND pushed** — if you keep skills/lessons in a git clone and
+      anything in it changed this session: commit and push it, then `git status -sb` shows
+      neither `ahead` nor changes. An unpushed commit is invisible to every other machine.
+      Push failed (offline, rejected)? Say so explicitly in the handoff and the prompt
+      file; never force-push.
+- [ ] **Project pushed** — if the project has a remote, `git push` (ask the user first
+      before pushing anything public or production-facing; a private project remote at a
+      checkpoint is routine).
 - [ ] Handoff, `NEXT-SESSION-PROMPT.md`, and `BUG_LIST.md` agree with each other.
 - [ ] No secrets in anything written; every relative date converted to absolute.
 

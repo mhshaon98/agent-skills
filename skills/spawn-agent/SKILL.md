@@ -78,6 +78,12 @@ REPORT BACK: 1) conclusions first  2) evidence (commands + output + file:line)
 3) NOT verified list  4) surprises (report, don't fix)
 ```
 
+**Slice vertically.** Each delegated task is a thin end-to-end slice (one feature path:
+its data → API → UI), NOT a horizontal layer split (all DB, then all API, then all UI).
+Aim for ~1–5 files touched, and give every task its own acceptance criteria + a
+verification step so it leaves the system working at each checkpoint.
+(adapted from addyosmani/agent-skills, MIT)
+
 ## Orchestration rules
 
 - Non-overlapping ownership; two agents needing the same file → serialize.

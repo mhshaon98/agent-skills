@@ -23,7 +23,7 @@ message IS the report posted to chat — emit the full markdown, self-contained.
 ## Run
 
 ```bash
-python "$HOME/.claude/skills/usage-here/usage_report.py"
+"$(command -v python3 || command -v python)" "$HOME/.claude/skills/usage-here/usage_report.py"
 ```
 
 (PowerShell: `python "$env:USERPROFILE\.claude\skills\usage-here\usage_report.py"`.)
@@ -38,7 +38,7 @@ run without, let the script print its rolling-window warning, and end the report
 one line inviting the user to re-run with a `/usage` reading for anchored numbers:
 
 ```bash
-python usage_report.py --block-resets-in 4h30m --block-pct 1 --weekly-pct 44 --weekly-fable-pct 36
+python3 usage_report.py --block-resets-in 4h30m --block-pct 1 --weekly-pct 44 --weekly-fable-pct 36
 ```
 
 Paste the emitted markdown tables as-is; add ≤2 lines of commentary (biggest cost
@@ -63,12 +63,12 @@ driver + anything anomalous).
 At the top of a session (`session-start` step 5 / `call-handoff` script):
 
 ```bash
-python "$HOME/.claude/skills/usage-here/usage_report.py" --snapshot
+"$(command -v python3 || command -v python)" "$HOME/.claude/skills/usage-here/usage_report.py" --snapshot
 ```
 
 Add the `/usage` flags when a reading is on screen. The snapshot stores **only the
 instant** in `~/.claude/usage-here/<session-id>.json` (machine-local — never inside a
-cloud-synced folder — pruned at 30 days); all totals are recomputed from transcripts at
+cloud-synced folder or your skills repo — pruned at 30 days); all totals are recomputed from transcripts at
 report time, so it cannot drift. Re-running `--snapshot` mid-session overwrites the
 baseline (valid for measuring one stretch, but discards the original start). It keys
 on `CLAUDE_CODE_SESSION_ID`, so it works even before the session's transcript is

@@ -54,6 +54,23 @@ lessons** (recurring traps, so a "new" bug can be matched to a known pattern).
 Add a header note telling every future session to read the file during session start
 and update it in the same session a bug is touched.
 
+## Triage method (before writing the ledger entry)
+
+Each rung is a precondition for the next — don't record a fix until all six are done:
+
+1. **Reproduce** — no repro = a hypothesis, not a bug. This is where you scan
+   `BUG_LIST.md` and check ✅ entries for regressions (step 1 of "When a bug is
+   reported"); a re-triggered old bug repros the old way.
+2. **Localize the layer** — UI / API / data / build / external / the test itself; git
+   bisect to the introducing commit.
+3. **Reduce to a minimal failing case** — strip unrelated code, simplify inputs.
+4. **Fix the root cause, not the symptom** — a DB-query fix, not a UI dedup.
+5. **Regression test** — one test that catches this specific failure.
+6. **Verify end-to-end** — focused test → full suite → build → manual check.
+
+Hard rule: once something is broken, STOP adding features until it is fixed — new work
+on top of a break compounds the diagnosis. (adapted from addyosmani/agent-skills, MIT)
+
 ## Debugging rules while working an entry
 
 - Reproduce before fixing; re-run the reproduction after fixing.

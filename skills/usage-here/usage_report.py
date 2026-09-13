@@ -299,7 +299,7 @@ def share_str(part: float, whole: float) -> str:
 
 def snapshot_path(session_id: str) -> Path:
     """Snapshots are machine-local ephemera — they live under ~/.claude, never inside
-    a cloud-synced skills folder (sync + per-machine state is a reliable way to get
+    a cloud-synced folder or the skills repo (sync + per-machine state is a reliable way to get
     conflicted copies)."""
     d = claude_home() / "usage-here"
     d.mkdir(parents=True, exist_ok=True)

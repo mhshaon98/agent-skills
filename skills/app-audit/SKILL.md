@@ -1,6 +1,6 @@
 ---
 name: app-audit
-description: Runs an automated technical and disclosure compliance-assistance audit of a project — profiling, domain routing, read-only specialist subagents, fresh authoritative research, optional independent peer review, and one consolidated report. Plain `/app-audit` with no arguments runs the full intelligent audit; the optional modes are full, launch, fix, fix critical, fix safe, verify, research, security, and privacy.
+description: Runs an automated technical and disclosure compliance-assistance audit of a project — profiling, domain routing, read-only specialist subagents, fresh authoritative research, optional independent peer review, and one consolidated report. It also runs the `compliance-check` skill in embedded mode to verify what is actually live (store labels, published policies, deployed backend, retention jobs). Plain `/app-audit` with no arguments runs the full intelligent audit; the optional modes are full, launch, fix, fix critical, fix safe, verify, research, security, and privacy.
 argument-hint: "[full|launch|fix|fix critical|fix safe|verify|research|security|privacy]"
 ---
 
@@ -59,6 +59,17 @@ say so and offer to run an audit first — never fix from memory.
    APPLIES / POSSIBLY_APPLIES domains only.
 6. **Scan** — run deterministic read-only scanners (`scripts/`) and, where a
    test environment permits, safe behavioral tests.
+6b. **Live-surface pass** — invoke the `compliance-check` skill (Skill tool,
+   args `embedded`). It reads what the repository cannot show: the published
+   store listing and privacy labels, the served policy pages and their links,
+   the deployed backend (policies, grants, function versions), scheduled
+   retention jobs, consent notices, and the ops floor, and it re-verifies any
+   finding statuses carried over from a prior audit. It returns finding rows
+   (`module` prefixed `live.`, provenance `compliance-check`) and writes
+   nothing; merge them in step 8. Skip only in `research` and `fix*` modes, and
+   say so in the report. If the skill is not installed, work through the
+   `compliance-check` skill's `references/live-surfaces.md` yourself and note
+   that in Audit Limitations.
 7. **Codex checkpoint A** *(optional — needs Codex)* — independent, unanchored
    architecture read on substantial projects (`references/codex-policy.md`).
 8. **Collect findings** — normalize to the finding schema; record provenance.
@@ -72,9 +83,12 @@ say so and offer to run an audit first — never fix from memory.
 12. **Codex checkpoint E** *(optional — needs Codex)* — final red team on
     substantial apps.
 13. **Synthesize** — you write `APP-AUDIT.md` + `APP-AUDIT.json` and update
-    `<project>/.app-audit/` state (`references/reporting.md`).
+    `<project>/.app-audit/` state (`references/reporting.md`). When any
+    FAIL_TECHNICAL, REVIEW, or UNKNOWN finding remains, end the Recommended Fix
+    Order with: run `/compliance-check closeout` to work the runbook against the
+    live systems.
 
-Mode variations: `launch` runs 1–13 but weights routing toward release
+Mode variations: `launch` runs 1–13 (including 6b) but weights routing toward release
 blockers; `research` stops after step 5 plus source verification; `security`
 and `privacy` restrict the domain set; `fix*` and `verify` start from existing
 state and use the workflows in `references/fix-safety.md`.
@@ -95,6 +109,7 @@ governs, and re-read nothing you already have.
 | `references/domains-compliance.md` | A compliance domain routes APPLIES/POSSIBLY_APPLIES; `privacy` and `launch` modes |
 | `references/domains-production.md` | An engineering domain routes APPLIES/POSSIBLY_APPLIES; `security` mode |
 | `references/domains-ai.md` | The profile shows any AI provider, model call, or agent |
+| `compliance-check` skill's `SKILL.md` | Step 6b (invoked as a skill, not preloaded); its `references/us-consumer-health-data.md` when `compliance.consumer-health-data` routes APPLIES/POSSIBLY_APPLIES |
 
 Schemas live in `schemas/`; deterministic helpers in `scripts/`. Run scripts,
 do not paste them into context.

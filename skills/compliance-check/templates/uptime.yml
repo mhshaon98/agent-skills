@@ -1,0 +1,53 @@
+# TEMPLATE (compliance-check). Tested in production. Must be committed to the
+# DEFAULT branch (scheduled workflows run only there); see references/production-safety.md §5.
+# Rename the probe URLs and accepted codes.
+#
+# Uptime check (audit Item 9 / M-9). Free, no third-party account: a scheduled job
+# that fails when something users depend on stops answering. GitHub emails the
+# repo owner when a scheduled run fails. Scheduled workflows only run from the
+# default branch, which is why this file lives on main.
+#
+# What it checks, and what "healthy" means:
+#   - Supabase REST gateway: 401 (no key) or 200. 5xx / timeout = down.
+#   - notify edge function: 401 without a JWT = gateway and runtime alive.
+#   - Privacy policy and consumer health data policy: 200. App Store and the
+#     in-app Settings rows link to both, so a 404 is a compliance problem.
+#
+# Cost: one short ubuntu job every 2 hours, about 360 billed minutes a month.
+
+name: Uptime
+
+on:
+  schedule:
+    - cron: "23 */2 * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  check:
+    name: Check production endpoints
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Probe
+        shell: bash
+        run: |
+          set -u
+          fail=0
+          probe() {
+            local name="$1" url="$2" ok="$3"
+            local code
+            code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 -X "${4:-GET}" "$url" || echo 000)
+            if [[ " $ok " == *" $code "* ]]; then
+              echo "OK   $name ($code)"
+            else
+              echo "::error::$name returned $code, expected one of: $ok"
+              fail=1
+            fi
+          }
+          probe "Supabase REST"          "https://<PROJECT_REF>.supabase.co/rest/v1/"                         "200 401"
+          probe "notify edge function"   "https://<PROJECT_REF>.supabase.co/functions/v1/notify"              "401" POST
+          probe "Privacy policy"         "https://<YOUR_DOMAIN>/privacy"                                      "200"
+          probe "Consumer health policy" "https://<YOUR_DOMAIN>/consumer-health-data"                         "200"
+          exit $fail
