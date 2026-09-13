@@ -12,7 +12,7 @@
   <a href="skills.json">skills.json</a>
 </p>
 
-<p align="center"><sub>Last updated: 2026-09-13 · 22 skills · 11 playbooks</sub></p>
+<p align="center"><sub>Last updated: 2026-09-13 · 22 skills · 11 playbooks · Remotion recommended for video</sub></p>
 
 # Agent Skills Catalog
 
