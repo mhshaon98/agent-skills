@@ -97,6 +97,11 @@
   .copy:hover { border-color: var(--accent); color: var(--accent); }
   .copy.done { border-color: var(--accent); color: var(--accent); }
   .empty { color: var(--muted); padding: 40px 0; text-align: center; }
+  .extra { margin-top: 44px; }
+  .extra h2 { font-size: 20px; margin: 0 0 6px; letter-spacing: -0.01em; }
+  .card.featured { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .card a.open { font-size: 12.5px; font-weight: 500; color: var(--accent); text-decoration: none; }
+  .card a.open:hover { text-decoration: underline; }
   footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 13px; color: var(--muted); }
   footer a { color: var(--accent); text-decoration: none; }
   footer a:hover { text-decoration: underline; }
@@ -129,6 +134,18 @@
   <p class="count" id="count"></p>
   <div class="grid" id="grid"></div>
   <p class="empty" id="empty" hidden>No skills match your filter.</p>
+
+  <section class="extra" id="frameworks">
+    <h2>Recommended frameworks &amp; upstream skills</h2>
+    <p class="count">Not part of this catalog — install them from their own repos. They pair well with the skills above.</p>
+    <div class="grid" id="upstream-grid"></div>
+  </section>
+
+  <section class="extra" id="playbooks">
+    <h2>Playbooks</h2>
+    <p class="count">Longer reference docs an agent reads on demand — nothing to install. The skills lean on them for detail.</p>
+    <div class="grid" id="playbook-grid"></div>
+  </section>
 
   <footer>
     Agents: read <a id="agents-link" href="#" target="_blank" rel="noopener">AGENTS.md</a>
@@ -223,8 +240,9 @@
     });
   }
 
-  function copyInstall(btn, name) {
-    var text = installCmd(name);
+  function copyInstall(btn, name) { copyText(btn, installCmd(name)); }
+
+  function copyText(btn, text) {
     var done = function () {
       var prev = btn.textContent;
       btn.textContent = "Copied ✓";
@@ -286,6 +304,71 @@
         emptyEl.textContent = "Could not load skills.json.";
       });
   }
+
+  // Static sections: upstream frameworks/skills and playbooks (not in skills.json,
+  // since nothing here is installed by install.sh). Keep in sync with README.md
+  // and playbooks/README.md.
+  var UPSTREAM = [
+    { name: "Remotion", tag: "video framework", featured: true,
+      url: "https://github.com/remotion-dev/skills",
+      desc: "The recommended video framework: programmatic React video, captions, rendering. Chosen over HyperFrames after a head-to-head on output quality. Both video playbooks below are built on it.",
+      cmd: "npx skills add remotion-dev/skills" },
+    { name: "last30days", tag: "research", url: "https://github.com/mvanhorn/last30days-skill",
+      desc: "Broad multi-source social-sentiment research over the last 30 days." },
+    { name: "defuddle", tag: "research", url: "https://github.com/kepano/obsidian-skills",
+      desc: "Extract clean markdown from web pages, token-efficiently." },
+    { name: "agent-browser", tag: "tooling", url: "https://github.com/vercel-labs/agent-browser",
+      desc: "Browser-automation CLI built for AI agents." },
+    { name: "impeccable", tag: "design", url: "https://github.com/pbakaus/impeccable",
+      desc: "Design-system craft skill for frontend UI work." },
+    { name: "taste-skill", tag: "design", url: "https://github.com/Leonxlnx/taste-skill",
+      desc: "Elite UX/UI and motion-engineering taste." },
+    { name: "design-motion-principles", tag: "design", url: "https://github.com/kylezantos/design-motion-principles",
+      desc: "Build or audit UI motion with intent." }
+  ];
+  var PLAYBOOKS = [
+    ["character-narrated-video", "video", "Remotion pipeline for a mascot narrating a short video: measured voice timeline, spring-based rig, checks, review ritual."],
+    ["device-demo-video", "video", "Remotion recipe for an app shown on real device hardware in motion: recreated UI, fold/flip moves, foley, checks, deliverables."],
+    ["architecture-playbook", "engineering", "Architecture defaults per project type, the least-code ladder, invariants against design drift, storage decision guide."],
+    ["verification-and-quality", "engineering", "Verification ladder, Verified/NOT-verified ledger, debugging discipline, code-quality, refactor and release checklists."],
+    ["security-and-secrets", "safety", "Secrets hygiene, backend RLS/advisor rules, client permission boundaries, security-pass checklist, resource-exhaustion hardening."],
+    ["cloudflare-cost-safety", "safety", "Why spend ceilings are plan settings, one-way-door upgrade rules, KV/R2 cost-aware design, deploy checklist."],
+    ["model-and-agent-strategy", "delegation", "Model tiers, explicit model pinning, when (not) to spawn subagents, agent roster, orchestration and cost rules."],
+    ["token-efficiency", "delegation", "Evidence-tagged levers for cutting fixed context, round-trips, and per-operation token cost."],
+    ["communication-and-autonomy", "workflow", "Outcome-first reporting, honesty rules, proceed-vs-ask calibration, UI iteration protocol."],
+    ["codex-image-pipeline", "media", "Headless AI image generation via the Codex CLI, brief rules, mapped failure modes."],
+    ["social-marketing-visuals", "media", "The grid-mix rule for social feeds and the production notes that travel with it."]
+  ];
+
+  function staticCard(o) {
+    var card = document.createElement("div");
+    card.className = "card" + (o.featured ? " featured" : "");
+    var top = document.createElement("div"); top.className = "card-top";
+    var h3 = document.createElement("h3"); h3.textContent = o.name;
+    var tag = document.createElement("span"); tag.className = "tag"; tag.textContent = o.tag;
+    top.appendChild(h3); top.appendChild(tag);
+    var desc = document.createElement("p"); desc.className = "desc"; desc.textContent = o.desc;
+    var foot = document.createElement("div"); foot.className = "card-foot";
+    var a = document.createElement("a"); a.className = "open"; a.href = o.url;
+    a.target = "_blank"; a.rel = "noopener"; a.textContent = o.linkText || "Open repo →";
+    foot.appendChild(a);
+    if (o.cmd) {
+      var btn = document.createElement("button"); btn.className = "copy"; btn.type = "button";
+      btn.textContent = "Copy install"; btn.title = o.cmd;
+      btn.addEventListener("click", function () { copyText(btn, o.cmd); });
+      foot.appendChild(btn);
+    }
+    card.appendChild(top); card.appendChild(desc); card.appendChild(foot);
+    return card;
+  }
+
+  var upGrid = document.getElementById("upstream-grid");
+  UPSTREAM.forEach(function (o) { upGrid.appendChild(staticCard(o)); });
+  var pbGrid = document.getElementById("playbook-grid");
+  PLAYBOOKS.forEach(function (p) {
+    pbGrid.appendChild(staticCard({ name: p[0], tag: p[1], desc: p[2],
+      url: REPO_URL + "/blob/main/playbooks/" + p[0] + ".md", linkText: "Read playbook →" }));
+  });
 
   searchEl.addEventListener("input", render);
   load();
