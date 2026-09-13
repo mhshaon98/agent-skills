@@ -20,8 +20,10 @@ plugin, and that a session started before the plugin was installed won't see
 `/codex:*` until it is restarted. Then wait.
 
 The Codex login browser flow belongs to the user (ChatGPT subscription or API key) —
-never enter credentials on their behalf. Plugin registration is per-machine: a machine
-that has never installed it has no bridge, regardless of what other machines have.
+never enter credentials on their behalf. Plugin registration is per-machine and does
+**not** arrive with a `git pull` of your skills repo: a machine that has never installed
+it has no bridge, regardless of what other machines have, and a machine where the user
+deliberately declined it has none either.
 
 ## 0.5 `codex exec` gotchas
 

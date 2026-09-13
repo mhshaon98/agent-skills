@@ -118,6 +118,7 @@
       session continuity, verification, data safety, release review, delegation,
       formatting, and auditing. Also works with OpenAI Codex CLI.</p>
     <a class="gh" id="gh-link" href="#" target="_blank" rel="noopener">View on GitHub &rarr;</a>
+    <p class="count" style="margin:12px 0 0">Last updated: <time id="updated" datetime="2026-09-13">13 Sep 2026</time></p>
   </header>
 
   <div class="controls">
@@ -147,6 +148,17 @@
   document.getElementById("repo-slug").textContent = SLUG;
   document.getElementById("gh-link").href = REPO_URL;
   document.getElementById("agents-link").href = REPO_URL + "/blob/main/AGENTS.md";
+
+  // Last-updated stamp: the static date above is the fallback; the latest commit
+  // time from the GitHub API replaces it when reachable.
+  fetch("https://api.github.com/repos/" + SLUG + "/commits?per_page=1")
+    .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
+    .then(function (c) {
+      var iso = c[0].commit.committer.date, el = document.getElementById("updated");
+      el.dateTime = iso;
+      el.textContent = new Date(iso).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
+    })
+    .catch(function () {});
 
   var grid = document.getElementById("grid");
   var chipsEl = document.getElementById("chips");

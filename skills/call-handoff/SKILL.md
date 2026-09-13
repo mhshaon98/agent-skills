@@ -24,8 +24,16 @@ break — brief the user, fix session titles, then stop. This is orientation onl
 
 ## Step 1 — the one-shot script (single Bash call; Git Bash works on Windows)
 
+Set `S` to the local clone of your skills repo if you keep one in git (leave it empty
+to skip the sync block).
+
 ```bash
-HL=$(find . docs handoffs -maxdepth 1 -name 'HANDOFF-*.md' 2>/dev/null | awk -F/ '{print $NF "|" $0}' | sort)
+S="${SKILLS_REPO:-}"; echo "=== SKILLS SYNC (${S:-none configured})"
+if [ -n "$S" ] && [ -d "$S/.git" ]; then D=$(git -C "$S" status --porcelain=v1 | head -3); if [ -n "$D" ]; then echo "DIRTY skills clone - not pulling:"; echo "$D"; else B=$(git -C "$S" rev-parse HEAD); git -C "$S" pull --ff-only 2>&1 | tail -1; git -C "$S" diff --name-only "$B" HEAD | grep -qE '^(skills|agents|hooks)/' && echo "SKILLS CHANGED -> re-install needed"; fi; git -C "$S" log -1 --format='skills @ %h %ad %s' --date=short; git -C "$S" status -sb | head -1
+elif [ -n "$S" ]; then echo "NO CLONE at $S - clone your skills repo there first"; fi
+echo "=== ENTRY POINT?"; if ! ls HANDOFF-*.md docs/HANDOFF-*.md handoffs/HANDOFF-*.md >/dev/null 2>&1 && [ ! -d .git ]; then for P in WHERE-IS-THE-CODE.md CLAUDE.md; do [ -f "$P" ] || continue; T=$(grep -oE '([A-Za-z]:[\/]|~/)[^`"<>|*?]+' "$P" | head -1 | tr '\134' '/' | sed -e "s|^~|$HOME|" -e 's|^\([A-Za-z]\):|/\L\1|' -e 's|[[:space:]]*$||'); [ -n "$T" ] && [ -d "$T" ] && { echo "pointer $P -> $T (cd there; this folder is the entry point only)"; cd "$T" || true; break; }; done; fi; pwd
+echo "=== PROJECT SYNC"; if git remote get-url origin >/dev/null 2>&1; then if [ -z "$(git status --porcelain=v1 -uno)" ]; then git pull --ff-only 2>&1 | tail -1; else echo "dirty tree - not pulling"; fi; git status -sb | head -1; else echo "no remote"; fi
+HL=$(find . docs handoffs -maxdepth 1 -name 'HANDOFF-*.md' 2>/dev/null | while read -r f; do printf '%s|%s\n' "$(basename "$f")" "$f"; done | sort)
 H=$(printf '%s\n' "$HL" | tail -1 | cut -d'|' -f2)
 echo "=== NEWEST HANDOFF: ${H:-NONE} · prior: $(printf '%s\n' "$HL" | tail -3 | head -2 | cut -d'|' -f2 | tr '\n' ' ')"
 [ -n "$H" ] && sed -n '1,600p' "$H"
@@ -38,10 +46,18 @@ Optional final line, if you use the `usage-here` skill — it records a usage ba
 for the session so a later report can isolate this session's burn:
 
 ```bash
-echo "=== USAGE BASELINE"; python "$HOME/.claude/skills/usage-here/usage_report.py" --snapshot
+echo "=== USAGE BASELINE"; "$(command -v python3 || command -v python)" "$HOME/.claude/skills/usage-here/usage_report.py" --snapshot
 ```
 
 ## Step 2 — reconcile and (rarely) follow up
+
+- **Sync lines first.** `SKILLS CHANGED` ⇒ the installed copies under `~/.claude/skills`
+  are stale: re-run your install step from the clone in one Bash call of its own and
+  report its last lines. `DIRTY skills clone` or `ahead` in the status line ⇒ a previous
+  session on THIS machine left work uncommitted/unpushed: say so in the briefing (it is
+  invisible to other machines) and offer `update-handoff` to finish it. `NO CLONE` ⇒
+  tell the user to clone the repo and stop. A pull that fails (offline, diverged) is
+  reported, never retried with force.
 
 - **`NEXT-SESSION-PROMPT.md`** (written by `update-handoff`) is the fastest
   orientation: if its date matches or post-dates the newest handoff, build the
@@ -51,6 +67,12 @@ echo "=== USAGE BASELINE"; python "$HOME/.claude/skills/usage-here/usage_report.
   the briefing and treat git/files as truth.
 - Bug entries: read in full only open/reopened ones (one targeted Read if the grep
   headers aren't enough). A ✅ entry matching a fresh symptom ⇒ suspect regression.
+- **Entry-point folder**: a project folder may hold only `WHERE-IS-THE-CODE.md` + a
+  pointer `CLAUDE.md` (e.g. a cloud-synced folder whose code lives in a git clone
+  elsewhere). The script detects "no handoff AND no .git", reads the first path out of
+  the pointer, and `cd`s there for the rest of the run; say in the briefing which folder
+  the code lives in. Every later command in the session must target that path too (the
+  shell resets cwd to the entry point).
 - **No handoff at all?** The script output already shows it: orient from `README.md`
   (one Read) + the git log, say plainly there is no handoff, note one must be created
   before session end (`update-handoff` skill).

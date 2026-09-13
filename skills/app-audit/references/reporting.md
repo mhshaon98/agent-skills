@@ -91,7 +91,11 @@ when its content is "no applicable findings" — omission hides scope.
   concrete evidence that produced the PASS and confirmation it survived the
   adversarial pass (`orchestration.md` §6).
 - **Recommended Fix Order** — ordered by risk reduction per unit of effort and
-  by dependency, with each item's safety class.
+  by dependency, with each item's safety class. Findings from the
+  `compliance-check` live-surface pass (`live.*` modules) are ordered with the
+  rest. Close with the pointer to `/compliance-check closeout`, which works the
+  items against live systems with per-action confirmation; later close-out runs
+  update `findings.json` statuses, which then outrank this report's prose.
 - **Rule/Source Freshness** — every authority relied on: citation, status
   (`CURRENT` / `UPCOMING` / `SUPERSEDED` / `VACATED` / `REPEALED` /
   `UNDER_CHALLENGE` / `UNKNOWN`), `last_verified`, `effective_date`, any

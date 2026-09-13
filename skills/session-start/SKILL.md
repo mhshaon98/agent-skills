@@ -10,6 +10,12 @@ approaches, regressing user-iterated designs, and debugging known bugs from scra
 
 ## Steps
 
+0. **Sync first — one Bash call.** If you keep your skills in a git clone,
+   `git -C "<skills-repo>" pull --ff-only` (skip with a warning if that clone is dirty;
+   if it is missing, tell the user to clone it and stop). Then, if the project has a
+   remote and a clean tree, `git pull --ff-only` there too. If the skills pull touched
+   `skills/`, `agents/` or `hooks/`, re-run your install step from the clone so
+   `~/.claude/skills` matches. Report: skills head, ahead/behind, re-install ran or not.
 1. **Find and read the newest `HANDOFF-*.md`** at the project root (filename format
    `HANDOFF-YYYY-MM-DD-HHMM.md`). It is the source of truth for project state.
    - If its date looks stale vs. `git log` or file mtimes, say so and reconcile.
@@ -28,7 +34,7 @@ approaches, regressing user-iterated designs, and debugging known bugs from scra
    rate-limit window:
 
    ```bash
-   python "$HOME/.claude/skills/usage-here/usage_report.py" --snapshot
+   "$(command -v python3 || command -v python)" "$HOME/.claude/skills/usage-here/usage_report.py" --snapshot
    ```
 6. **Restate the goal** to the user in 1–2 sentences, including constraints and what
    must NOT break. State any assumptions explicitly and proceed — ask clarifying

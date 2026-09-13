@@ -236,6 +236,25 @@ including historical prefixes from earlier schema versions?
 Enumerate write paths from the code — every place an object key is constructed —
 and confirm the deletion path covers each one.
 
+## 1.9 `compliance.consumer-health-data` — US consumer health data laws
+
+`POSSIBLY_APPLIES` whenever the product touches physical or mental health status in
+any form: body measurements, weight, fitness, symptoms, conditions, medications,
+reproductive or biometric data, "wellness" features, a health-platform integration
+(HealthKit, Health Connect), or a free-text channel (support chat) where users can
+volunteer such details. "The data stays on the device" does not by itself make it
+`NOT_APPLICABLE`: whether on-device processing counts as collecting is unresolved.
+
+Washington's My Health My Data Act (RCW 19.373) and Nevada's law (NRS 603A.400 to
+603A.550) have no revenue or volume threshold; Connecticut's CTDPA reaches sensitive
+data with no threshold from 2026-07-01. Investigate: a separate consumer health data
+policy page with the statutory elements, where it is linked (site root, every page
+collecting personal information, the store listing, inside the app), response and
+deletion windows, the appeal process, processor disclosure wording, and any consent
+notice. The requirement list, citations and last-verified date live in the
+`compliance-check` skill's `references/us-consumer-health-data.md`; re-verify with
+`app-audit-legal-researcher` when that date is older than 90 days.
+
 ---
 
 # 2. Platform and store
@@ -568,6 +587,7 @@ never write or alter one. This mirrors the `PROHIBITED_AUTOFIX` list in
 | 6 | `compliance.data-retention` | intent is often a user-only fact |
 | 7 | `compliance.account-deletion` | trace the full chain; partial fixes do not PASS |
 | 8 | `compliance.user-upload-deletion` | separate from account deletion |
+| 8b | `compliance.consumer-health-data` | no threshold in WA/NV; "stays on device" does not settle it |
 | 9 | `compliance.apple-app-store` | N/A without an Apple target |
 | 10 | `compliance.google-play` | N/A without an Android target |
 | 11 | `compliance.subscriptions` | verify rule status before citing |
