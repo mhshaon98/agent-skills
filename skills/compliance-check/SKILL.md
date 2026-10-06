@@ -1,6 +1,6 @@
 ---
 name: compliance-check
-description: Live compliance close-out for an app or website - verifies what is ACTUALLY live (store listing and privacy labels, published policy pages, deployed backend, retention jobs, deletion, consent notices, ops floor) against the code and the published words, reconciles audit finding statuses against current code, then works the remediation runbook item by item with production-safe patterns. Use on `/compliance-check`, "what's left on compliance", "close out the audit", before a store submission, or when app-audit calls it. Modes: check (default, read-only), closeout, store, retention, health-data, reconcile, embedded.
+description: 'Live compliance close-out: checks what is actually live (store listing and labels, published policies, deployed backend, retention and deletion jobs) against the code and the published words, then works the remediation runbook. Use on /compliance-check, "what''s left on compliance", "close out the audit", or before a store submission.'
 argument-hint: "[check|closeout|store|retention|health-data|reconcile|embedded]"
 ---
 

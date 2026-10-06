@@ -9,7 +9,7 @@ A feed grid must read as a MIX, never one template repeated. A balance that work
 - **Real-life photography** (AI-generated photographic plates or real photos:
   interiors, objects, food, people at plain walls). These land well; use them
   confidently but **do not overuse**.
-- **White typographic tiles** (the brand's backbone template).
+- **White typographic tiles** (a typographic template tile).
 - **Dark tiles** (black/near-black data or poster tiles).
 - **Colorful tiles** (flat brand-color fields and colored compositions).
 - **Infographics** (diagrams, stat sheets, blueprints, charts).
@@ -24,7 +24,6 @@ color tile beats three of anything).
   committed generators do all lettering and compositing over the plates (see
   `codex-image-pipeline.md`).
 - Flat color only where the brand bans gradients.
-- Photographic pairs (before/after, week 1/week 12) must hold the same framing;
-  in tracking-style apps that consistency is the product story itself.
+- Photographic pairs and series must hold identical framing.
 - Keep a style library doc per project listing each tile template, so batches
   can be planned against the mix.

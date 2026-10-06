@@ -1,6 +1,6 @@
 ---
 name: bug-ledger
-description: Use whenever a bug is reported, discovered, fixed, or reopened, or before working in a historically bug-prone area. Maintains the cumulative bug ledger (BUG_LIST.md) — many "new" bugs are old ones recurring or a fix that regressed, so check it BEFORE debugging.
+description: 'Use when a bug is reported, found, fixed, or reopened, or before working in a bug-prone area. Check BUG_LIST.md before debugging: many "new" bugs are regressions of fixed ones.'
 ---
 
 # Bug Ledger Discipline
@@ -58,9 +58,8 @@ and update it in the same session a bug is touched.
 
 Each rung is a precondition for the next — don't record a fix until all six are done:
 
-1. **Reproduce** — no repro = a hypothesis, not a bug. This is where you scan
-   `BUG_LIST.md` and check ✅ entries for regressions (step 1 of "When a bug is
-   reported"); a re-triggered old bug repros the old way.
+1. **Reproduce** — no repro = a hypothesis, not a bug. A re-triggered old bug repros
+   the old way.
 2. **Localize the layer** — UI / API / data / build / external / the test itself; git
    bisect to the introducing commit.
 3. **Reduce to a minimal failing case** — strip unrelated code, simplify inputs.
@@ -73,7 +72,5 @@ on top of a break compounds the diagnosis. (adapted from addyosmani/agent-skills
 
 ## Debugging rules while working an entry
 
-- Reproduce before fixing; re-run the reproduction after fixing.
-- Root-cause, don't symptom-patch — "hide/delay/fade the problem" means keep digging.
 - **Two failed attempts → stop grinding**: step back, re-read the surrounding system,
   escalate model tier or spawn a debugging agent.

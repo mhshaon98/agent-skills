@@ -1,9 +1,9 @@
 ---
 name: usage-here
-description: Report what THIS session has cost — tokens and dollars by model, share of the 5-hour and weekly limits, and the three most expensive prompts. Use whenever the user says "usage here", "what did this session cost", "how much have I burned", "token usage", or asks about limits mid-session.
+description: 'Report what this session cost: tokens and dollars by model, share of the 5-hour and weekly limits, top three prompts. Use on "usage here", "what did this session cost", "how much have I burned", "token usage", or questions about limits mid-session.'
 context: fork
 background: true
-model: sonnet
+model: claude-sonnet-5-5
 ---
 
 # Usage Here — what this session cost
@@ -13,9 +13,10 @@ estimate or eyeball token counts yourself. Session burn is fixed context times
 round-trips, and that fixed context is mostly invisible overhead rather than the work —
 the driver sits in the cache-read column, which no eyeball estimate ever finds.
 
-**You are running as a forked background subagent on Sonnet** (frontmatter: `context:
-fork`, `background: true`, `model: sonnet` — requires Claude Code ≥ 2.1.218; older
-versions run it inline, which is fine). Report on the **parent session**, not your own
+**You are running as a forked background subagent on Sonnet 5.5** (frontmatter: `context:
+fork`, `background: true`, `model: claude-sonnet-5-5` — pinned so the alias can't move
+it; if your Claude Code doesn't know that model yet, update the CLI or set `model:
+sonnet`). Report on the **parent session**, not your own
 fork: no args picks the newest session transcript for this cwd, which is the parent —
 if ambiguous, pass `--session-id` with the UUID from the scratchpad path. Your final
 message IS the report posted to chat — emit the full markdown, self-contained.
@@ -60,7 +61,7 @@ driver + anything anomalous).
 
 ## The session-start snapshot
 
-At the top of a session (`session-start` step 5 / `call-handoff` script):
+At the top of a session (the `call-handoff` script takes it):
 
 ```bash
 "$(command -v python3 || command -v python)" "$HOME/.claude/skills/usage-here/usage_report.py" --snapshot
@@ -98,6 +99,9 @@ the baseline to the transcript's first timestamp — the true session start.
 
 ## Pricing maintenance
 
-`pricing.json` holds per-model rates and the cache multipliers. Unknown model IDs fall
+`pricing.json` holds per-model rates and the cache multipliers (verified 2026-07-25,
+except `claude-opus-5-5` and `claude-sonnet-5-5`, whose list prices come from secondary
+sources with cache rates derived from the shared multipliers — not yet checked against
+Anthropic's price page; each carries a `source` note). Unknown model IDs fall
 back to Opus-tier rates — add missing models rather than trust the fallback. When prices
 change, update `pricing.json` only; nothing else hard-codes a rate.

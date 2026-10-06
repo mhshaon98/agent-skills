@@ -17,10 +17,12 @@ A skill is a single directory under `skills/<name>/` with a `SKILL.md` at its ro
 
 1. **One skill per directory.** Keep each skill self-contained under its own
    `skills/<name>/` folder.
-2. **Keep `skills.json` in sync.** The manifest at the repo root is the source of truth
-   for the README tables, the installers, and the web catalog. Add or update the entry
-   for your skill — `name`, `description`, `category`, and `files` (the file count in the
-   skill directory) — and make sure it matches what is on disk.
+2. **Regenerate the catalog; never hand-edit it.** `skills.json`,
+   `.claude-plugin/marketplace.json`, `llms.txt` and the README tables are generated
+   from the `SKILL.md` front-matter. For a new skill, add its category to `CATEGORIES`
+   in `scripts/build-catalog.py` (and to `TARGETS` if it only works in one agent), then
+   run `python3 scripts/build-catalog.py`. The front-matter `name` must equal the folder
+   name.
 3. **No personal information in skill text.** No real names, personal file paths, email
    addresses, internal hostnames, or secrets — anywhere in a `SKILL.md` or its
    supporting files. Skills here are meant to be portable across any project and any
@@ -28,5 +30,5 @@ A skill is a single directory under `skills/<name>/` with a `SKILL.md` at its ro
 4. **Pick an existing category** where it fits (`workflow`, `safety`, `delegation`,
    `formatting`, `tooling`). Propose a new category only if none apply.
 
-Test your entry with `python3 -m json.tool skills.json` before opening the PR to confirm
-the manifest still parses.
+Before opening the PR, run `python3 scripts/build-catalog.py --check`; it exits 1 if any
+generated file is stale.

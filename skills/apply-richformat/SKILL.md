@@ -1,6 +1,6 @@
 ---
 name: apply-richformat
-description: Rich formatting for any text-bearing surface — app screens, documents, reports, READMEs, chat answers, terminal output, data tables. Use on walls of undifferentiated text, when building or reviewing such a surface, or when the user says "rich formatting", "text vomit", "needs better structure", "make this readable".
+description: Give any text-bearing surface (app screen, document, report, README, chat answer, CLI output, table) visible rank and separation. Use when building or reviewing one, or on "rich formatting", "text vomit", "needs better structure", "make this readable".
 ---
 
 # Apply Rich Formatting
@@ -107,8 +107,7 @@ Rich means *legible structure*, not more ornament. Every one of these is a failu
 - **A table for one dimension.** Two columns of "Item / Description" is a list.
 - **Nested cards, stacked shadows, coloured bars on any card edge** (top, side or
   bottom) — the single most-repeated slop finding there is.
-- **Emoji in any user-facing output.** Zero exceptions unless the user asks for them in
-  that specific piece of work.
+- **Emoji in any user-facing output**, unless the user asks for it in that piece of work.
 - **Em-dashes in user-facing copy.** Hyphens and math minus only.
 - **State carried by colour alone.** Always a word too.
 - **More than one signal-coloured fill per view**, counting persistent chrome.

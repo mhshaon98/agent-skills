@@ -30,7 +30,7 @@ the trip count, then output size.
 5. **Skill descriptions load every session** — keep frontmatter descriptions to ≤2
    sentences and prune skills you don't use. Measure rather than guess; this read-only
    command (run from your skills directory) totals description bytes (≈4 bytes/token):
-   [verified locally]
+   [verified by the author]
 
    ```bash
    python -c "import os,io,re;t=0;n=0
@@ -46,6 +46,13 @@ the trip count, then output size.
    ```
 
 ## Tier 2 — Round-trips and session shape
+
+0. **Session length beats file structure.** A study of 1,650 Claude Code sessions
+   (McMillan, 2026-05-11) found instruction-file size and structure had no
+   measurable effect on compliance, while compliance fell about 5.6% in odds per extra
+   function generated in the session. Trimming files further buys little; ending a
+   session at a natural checkpoint (`update-handoff`, then a fresh `call-handoff`) is
+   the lever. One task family per session; a pivot to unrelated work is a new session.
 
 6. **/clear between unrelated tasks; new topic = new session.** Docs call
    never-cleared long sessions the top cause of surprise spend. A handoff system is the
@@ -67,7 +74,7 @@ the trip count, then output size.
    silently overrides frontmatter model routing. Agent Teams cost several times a
    standard session (official figure) — avoid on plan-limited accounts. [measured]
 10. **Diagnostics are not free:** each `/context` run pastes ~12–15k into the
-    transcript. Run it once at session start, not mid-session. [verified locally]
+    transcript. Run it once at session start, not mid-session. [verified by the author]
 11. **/btw for side questions** — the answer never enters history; meaningful
     savings in question-heavy sessions per community tracking. [corroborated]
 

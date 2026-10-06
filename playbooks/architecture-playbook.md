@@ -124,7 +124,7 @@ The ladder trims over-engineering, not correctness. When the user intentionally 
   fallback that never throws to the UI.
 
 ### Finance/data tools
-- The user's ground-truth data (workbook, bank exports) is read-only by default; a
+- The user's ground-truth data (workbook, source exports) is read-only by default; a
   separate audited write path is an opt-in capability that degrades cleanly when its
   prerequisites (the owning app, permissions) are missing — check capability up front,
   not at write time.

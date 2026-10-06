@@ -23,28 +23,34 @@ don't spawn.
 
 ## Model-tier routing
 
-**HARD RULE:** research, web scraping, data collection, and codebase exploration never
-run on your most expensive reasoning tier — use the most token-efficient model that can
-do the job. Reserve the top tier for orchestration, hard architecture decisions, and
-code that really matters.
+Research, scraping, data collection and codebase exploration do not run on your most
+expensive reasoning tier (Fable/Mythos-class): they are high-volume reading, and the
+top tier's usage limit is the one that runs out. Use the cheapest of Opus/Sonnet/Haiku
+that can do it. Reserve the top tier for orchestration, hard architecture decisions,
+and code that really matters.
 
-Think in four tiers rather than in specific model names, and route down aggressively:
-anything above the cheapest capable tier is a call you should be able to justify in one
-sentence.
+Think in three tiers rather than in specific model names. A workable split is
+**~75–80% frontier · ~20–25% mid (fast only for the purely mechanical), all at medium
+effort**: the frontier executor is the default for everything that is real work, and
+anything cheaper is a call you should be able to justify in one sentence.
 
 | Tier | Use for |
 |---|---|
-| **Frontier** (your strongest general executor, medium effort) — the DEFAULT for delegated work | Anything carrying judgment or ambiguity: design, implementation in unfamiliar code, code review (default reviewer tier), debugging, security-sensitive surfaces, high-blast-radius migrations, research needing judgment, dense-document reasoning |
-| **Workhorse** (a slightly cheaper frontier-family model) — work already specified | Execution where the plan is decided: implementing an agreed spec, mechanical-but-nontrivial refactors, verification passes, careful sweeps, multi-step tool work, doc work needing care |
+| **Frontier** (your strongest general executor, e.g. current Opus, medium effort) — the DEFAULT, ~75–80% of spawns | Anything carrying judgment or ambiguity: design, implementation in unfamiliar code, code review (default reviewer tier), debugging, security-sensitive surfaces, high-blast-radius migrations, research needing judgment, dense-document reasoning — AND execution where the plan is already decided: agreed spec, mechanical-but-nontrivial refactors, verification passes, careful sweeps, multi-step tool work, doc work needing care |
 | **Mid** (Sonnet-class) — genuinely simple tasks only | Short text/copy generation, web scraping, simple multi-step sweeps, classification |
 | **Fast** (Haiku-class) — the most mechanical tasks | Boilerplate, mechanical edits, formatting, icons/asset drudgery, repetitive file sweeps, straightforward tests, doc updates |
 
-Judgment work starts at the frontier tier; **drop a tier** when the task is already
-specified and bounded, and **drop further** to Sonnet/Haiku only when it is genuinely
-simple (copy, icons, scraping, mechanical sweeps, formatting, classification). Raise an
-agent's reasoning effort (or reconsider the plan) when two attempts failed or the change
-touches shipped user data. Reviewers and security agents get the frontier tier — review
-is judgment work.
+Raise an agent's reasoning effort (or reconsider the plan) when two attempts failed or
+the change touches shipped user data. Reviewers and security agents get the frontier
+tier — review is judgment work. Don't auto-upgrade the pin as newer models ship; move
+it deliberately.
+
+**Session model already equals the frontier executor (e.g. an Opus main session, not
+Fable)?** Then this is NOT conductor mode — work inline, zero agents by default. Spawn
+the frontier executor only for independent parallel workstreams or a fresh-eyes review
+of your own large diff; gathering (research, scraping, codebase sweeps) goes to the mid
+tier. No percentage target here: the main model already equals the subagent tier, so a
+split adds nothing.
 
 **The alias trap — pin the tier you mean.** The Agent tool's `model` parameter takes
 aliases, and a family alias resolves to the *newest* model in that family. Pass one and
@@ -52,7 +58,10 @@ your whole subagent fleet silently moves to a different model the day a new one 
 changing cost and behavior with no diff anywhere. If you care which model runs a spawn,
 define a subagent type whose frontmatter pins the exact model id and spawn via
 `subagent_type`, not via the alias. Keep one such definition per tier you actually use
-(a frontier executor and a workhorse executor is usually enough).
+(a frontier executor and a mid-tier gatherer is usually enough — pin the mid tier
+too, since its alias moves the same way; use the bare alias only as a fallback when
+the pinned agent type isn't installed). A newly released model may need a newer Claude
+Code CLI; an older one rejects the spawn, so update the CLI before pinning it.
 
 **Pre-filter with code, not AI:** before any model call, ask whether a regex, SQL
 query, or plain computation can shrink the job so the model only judges/narrates a
@@ -62,8 +71,9 @@ shortlist. Cache model outputs keyed by data-state.
 
 ```
 ROLE: <Investigator / Implementer / Reviewer / Debugger / Docs — ONE role>
-MODEL TIER: <frontier / workhorse / mid / fast — spawn via a subagent type that pins
-the model, never via a bare family alias.>
+MODEL TIER: <frontier / mid / fast — frontier is the DEFAULT for judgment AND
+already-specified work; spawn via a subagent type that pins the model, never via a
+bare family alias.>
 CONTEXT (assume you know nothing else):
 - Project: <name + one-liner + root path>
 - Relevant state: <the 3–6 facts this task depends on>

@@ -1,0 +1,469 @@
+{
+  "name": "dev-discipline",
+  "description": "Field-tested engineering-discipline skills: session continuity, verification, data safety, release review, delegation and formatting. One plugin per skill, plus one bundle per category.",
+  "version": "2026-10-06",
+  "owner": {
+    "name": "agent-skills maintainers",
+    "url": "https://github.com/mhshaon98/agent-skills"
+  },
+  "plugins": [
+    {
+      "name": "bug-ledger",
+      "source": "./",
+      "description": "Use when a bug is reported, found, fixed, or reopened, or before working in a bug-prone area. Check BUG_LIST.md before debugging: many \"new\" bugs are regressions of fixed ones.",
+      "version": "fd6b5e5c97ab",
+      "category": "workflow",
+      "keywords": [
+        "skill",
+        "workflow"
+      ],
+      "homepage": "https://github.com/mhshaon98/agent-skills/tree/main/skills/bug-ledger",
+      "repository": "https://github.com/mhshaon98/agent-skills",
+      "license": "MIT",
+      "skills": [
+        "./skills/bug-ledger"
+      ]
+    },
+    {
+      "name": "call-handoff",
+      "source": "./",
+      "description": "Cold-start briefing from the project's newest handoff, open bugs and next-session prompt in two round-trips, then stop. Use at session start or on \"call handoff\", \"catch up\", \"where did we leave off\".",
+      "version": "e16fc653b965",
+      "category": "workflow",
+      "keywords": [
+        "skill",
+        "workflow"
+      ],
+      "homepage": "https://github.com/mhshaon98/agent-skills/tree/main/skills/call-handoff",
+      "repository": "https://github.com/mhshaon98/agent-skills",
+      "license": "MIT",
+      "skills": [
+        "./skills/call-handoff"
+      ]
+    },
+    {
+      "name": "new-project",
+      "source": "./",
+      "description": "Bootstrap a brand-new project with proven architecture defaults and continuity scaffolding. Use when starting a new project from scratch, or when touching a legacy project that has no handoff/git/structure yet.",
+      "version": "68efaaeb40bb",
+      "category": "workflow",
+      "keywords": [
+        "skill",
+        "workflow"
+      ],
+      "homepage": "https://github.com/mhshaon98/agent-skills/tree/main/skills/new-project",
+      "repository": "https://github.com/mhshaon98/agent-skills",
+      "license": "MIT",
+      "skills": [
+        "./skills/new-project"
+      ]
+    },
+    {
+      "name": "session-start",
+      "source": "./",
+      "description": "Old name for the session-start ritual, which now lives in call-handoff; run that skill instead.",
+      "version": "9ea3ea110186",
+      "category": "workflow",
+      "keywords": [
+        "skill",
+        "workflow"
+      ],
+      "homepage": "https://github.com/mhshaon98/agent-skills/tree/main/skills/session-start",
+      "repository": "https://github.com/mhshaon98/agent-skills",
+      "license": "MIT",
+      "skills": [
+        "./skills/session-start"
+      ]
+    },
+    {
+      "name": "update-handoff",
+      "source": "./",
+      "description": "End-of-session wrap in one pass: a DETAILED handoff (always; depth scales with how much the session did, nothing in context is allowed to slip), lessons, memory, bug ledger and NEXT-SESSION-PROMPT.md. Use on \"update handoff\", \"wrap up\", \"end the session\", or before context runs out.",
+      "version": "703d93a0ec4a",
+      "category": "workflow",
+      "keywords": [
+        "skill",
+        "workflow"
+      ],
+      "homepage": "https://github.com/mhshaon98/agent-skills/tree/main/skills/update-handoff",
+      "repository": "https://github.com/mhshaon98/agent-skills",
+      "license": "MIT",
+      "skills": [
+        "./skills/update-handoff"
+      ]
+    },
+    {
+      "name": "app-audit",
+      "source": "./",
+      "description": "Automated technical and disclosure compliance-assistance audit of a project: profiling, read-only specialist subagents, fresh research, optional Codex peer review, one consolidated report. Use on /app-audit, \"audit this app\", or a pre-launch security/privacy/store check.",
+      "version": "ec0280e7d3c7",
+      "category": "safety",
+      "keywords": [
+        "skill",
+        "safety"
+      ],
+      "homepage": "https://github.com/mhshaon98/agent-skills/tree/main/skills/app-audit",
+      "repository": "https://github.com/mhshaon98/agent-skills",
+      "license": "MIT",
+      "skills": [
+        "./skills/app-audit"
+      ]
+    },
+    {
+      "name": "compliance-check",
+      "source": "./",
+      "description": "Live compliance close-out: checks what is actually live (store listing and labels, published policies, deployed backend, retention and deletion jobs) against the code and the published words, then works the remediation runbook. Use on /compliance-check, \"what's left on compliance\", \"close out the audit\", or before a store submission.",
+      "version": "9244413ffaef",
+      "category": "safety",
+      "keywords": [
+        "skill",
+        "safety"
+      ],
+      "homepage": "https://github.com/mhshaon98/agent-skills/tree/main/skills/compliance-check",
+      "repository": "https://github.com/mhshaon98/agent-skills",
+      "license": "MIT",
+      "skills": [
+        "./skills/compliance-check"
+      ]
+    },
+    {
+      "name": "pre-release-review",
+      "source": "./",
+      "description": "Independent fresh-context review before anything ships. Use on \"ship it\", \"release\", \"submit\", \"deploy\", \"push to production\", before any production push, and after a large diff, even when the diff looks fine.",
+      "version": "ef52630b71be",
+      "category": "safety",
+      "keywords": [
+        "skill",
+        "safety"
+      ],
+      "homepage": "https://github.com/mhshaon98/agent-skills/tree/main/skills/pre-release-review",
+      "repository": "https://github.com/mhshaon98/agent-skills",
+      "license": "MIT",
+      "skills": [
+        "./skills/pre-release-review"
+      ]
+    },
+    {
+      "name": "safe-data-write",
+      "source": "./",
+      "description": "Use before any write, migration, or deletion touching user data: stores, schemas, user-owned files (Excel workbooks, databases, documents). Backup, audit and rollback rules learned from shipped data-loss bugs.",
+      "version": "e14ed4cff0d7",
+      "category": "safety",
+      "keywords": [
+        "skill",
+        "safety"
+      ],
+      "homepage": "https://github.com/mhshaon98/agent-skills/tree/main/skills/safe-data-write",
+      "repository": "https://github.com/mhshaon98/agent-skills",
+      "license": "MIT",
+      "skills": [
+        "./skills/safe-data-write"
+      ]
+    },
+    {
+      "name": "security-pass",
+      "source": "./",
+      "description": "Use when touching auth, API keys, secrets, RLS/policies, payment or personal data, any new endpoint that writes, or live backends — and before any release. Security and secrets checklist; every rule traces to a real production finding.",
+      "version": "17c62905a755",
+      "category": "safety",
+      "keywords": [
+        "skill",
+        "safety"
+      ],
+      "homepage": "https://github.com/mhshaon98/agent-skills/tree/main/skills/security-pass",
+      "repository": "https://github.com/mhshaon98/agent-skills",
+      "license": "MIT",
+      "skills": [
+        "./skills/security-pass"
+      ]
+    },
+    {
+      "name": "verify-work",
+      "source": "./",
+      "description": "Use before claiming work is done, working, or fixed, and before writing a handoff or completion summary. Verification ladder plus the Verified/NOT-verified ledger.",
+      "version": "91082beddc65",
+      "category": "safety",
+      "keywords": [
+        "skill",
+        "safety"
+      ],
+      "homepage": "https://github.com/mhshaon98/agent-skills/tree/main/skills/verify-work",
+      "repository": "https://github.com/mhshaon98/agent-skills",
+      "license": "MIT",
+      "skills": [
+        "./skills/verify-work"
+      ]
+    },
+    {
+      "name": "antigravity-bridge",
+      "source": "./",
+      "description": "Delegate bounded work or get a third-provider opinion from Google's Antigravity CLI (agy, Gemini). Use on \"ask antigravity\", \"ask gemini\", \"send this to agy\", as a Claude-vs-Codex tie-breaker, or for cheap bounded research sweeps.",
+      "version": "3e0eceeacbaf",
+      "category": "delegation",
+      "keywords": [
+        "skill",
+        "delegation"
+      ],
+      "homepage": "https://github.com/mhshaon98/agent-skills/tree/main/skills/antigravity-bridge",
+      "repository": "https://github.com/mhshaon98/agent-skills",
+      "license": "MIT",
+      "skills": [
+        "./skills/antigravity-bridge"
+      ]
+    },
+    {
+      "name": "codex-bridge",
+      "source": "./",
+      "description": "Delegate a task to OpenAI Codex or get a non-Claude second review via the codex plugin. Use on \"ask codex\", \"have codex review/check this\", \"send to codex\", or before a release when a second provider is worth it.",
+      "version": "cc854b4ba0ad",
+      "category": "delegation",
+      "keywords": [
+        "skill",
+        "delegation"
+      ],
+      "homepage": "https://github.com/mhshaon98/agent-skills/tree/main/skills/codex-bridge",
+      "repository": "https://github.com/mhshaon98/agent-skills",
+      "license": "MIT",
+      "skills": [
+        "./skills/codex-bridge"
+      ]
+    },
+    {
+      "name": "cowork-relay",
+      "source": "./",
+      "description": "Split work between Claude Cowork and Claude Code on one project: each side does all it can and ends with a copy-paste relay prompt for the other. Use in a Cowork session or when a RELAY prompt is pasted.",
+      "version": "eb3fce68dc58",
+      "category": "delegation",
+      "keywords": [
+        "skill",
+        "delegation"
+      ],
+      "homepage": "https://github.com/mhshaon98/agent-skills/tree/main/skills/cowork-relay",
+      "repository": "https://github.com/mhshaon98/agent-skills",
+      "license": "MIT",
+      "skills": [
+        "./skills/cowork-relay"
+      ]
+    },
+    {
+      "name": "fable-conductor",
+      "source": "./",
+      "description": "Session-long operating mode when the session model is Fable/Mythos-class: Fable plans, briefs and verifies; execution is delegated to Opus/Sonnet/Haiku subagents.",
+      "version": "15ac26eb688c",
+      "category": "delegation",
+      "keywords": [
+        "skill",
+        "delegation"
+      ],
+      "homepage": "https://github.com/mhshaon98/agent-skills/tree/main/skills/fable-conductor",
+      "repository": "https://github.com/mhshaon98/agent-skills",
+      "license": "MIT",
+      "skills": [
+        "./skills/fable-conductor"
+      ]
+    },
+    {
+      "name": "spawn-agent",
+      "source": "./",
+      "description": "Use BEFORE spawning any subagent (research, implementation, review, debugging) or choosing a model for delegated work. Gate, brief-writing procedure, and model-tier routing; usage limits are a real budget.",
+      "version": "ea08bd80f6d4",
+      "category": "delegation",
+      "keywords": [
+        "skill",
+        "delegation"
+      ],
+      "homepage": "https://github.com/mhshaon98/agent-skills/tree/main/skills/spawn-agent",
+      "repository": "https://github.com/mhshaon98/agent-skills",
+      "license": "MIT",
+      "skills": [
+        "./skills/spawn-agent"
+      ]
+    },
+    {
+      "name": "apply-richformat",
+      "source": "./",
+      "description": "Give any text-bearing surface (app screen, document, report, README, chat answer, CLI output, table) visible rank and separation. Use when building or reviewing one, or on \"rich formatting\", \"text vomit\", \"needs better structure\", \"make this readable\".",
+      "version": "e3f8a4d59765",
+      "category": "formatting",
+      "keywords": [
+        "skill",
+        "formatting"
+      ],
+      "homepage": "https://github.com/mhshaon98/agent-skills/tree/main/skills/apply-richformat",
+      "repository": "https://github.com/mhshaon98/agent-skills",
+      "license": "MIT",
+      "skills": [
+        "./skills/apply-richformat"
+      ]
+    },
+    {
+      "name": "slop-clean",
+      "source": "./",
+      "description": "Project-wide sweep that removes heavy AI slop from design and copy while keeping deliberate, evidenced creative choices (bold colour, density, texture, voice). Manual only (/slop-clean [path]); never self-trigger.",
+      "version": "48e654211e31",
+      "category": "formatting",
+      "keywords": [
+        "skill",
+        "formatting"
+      ],
+      "homepage": "https://github.com/mhshaon98/agent-skills/tree/main/skills/slop-clean",
+      "repository": "https://github.com/mhshaon98/agent-skills",
+      "license": "MIT",
+      "skills": [
+        "./skills/slop-clean"
+      ]
+    },
+    {
+      "name": "client-cms",
+      "source": "./",
+      "description": "Add a secure client-facing admin/content layer to the current website so nontechnical staff can edit approved content without touching source. Use on /client-cms, \"add an admin panel\", or when the user wants site content editable by a client or business owner.",
+      "version": "20c13b79bcea",
+      "category": "tooling",
+      "keywords": [
+        "skill",
+        "tooling"
+      ],
+      "homepage": "https://github.com/mhshaon98/agent-skills/tree/main/skills/client-cms",
+      "repository": "https://github.com/mhshaon98/agent-skills",
+      "license": "MIT",
+      "skills": [
+        "./skills/client-cms"
+      ]
+    },
+    {
+      "name": "commissioning-logger",
+      "source": "./",
+      "description": "Only when explicitly asked to log a multi-step hands-on process (commissioning, wiring, bring-up, troubleshooting): \"log this\", \"start a commissioning log\", \"write it up as we go\". Keeps log.md plus a Word doc with annotated screenshots.",
+      "version": "52c753a9212a",
+      "category": "tooling",
+      "keywords": [
+        "skill",
+        "tooling"
+      ],
+      "homepage": "https://github.com/mhshaon98/agent-skills/tree/main/skills/commissioning-logger",
+      "repository": "https://github.com/mhshaon98/agent-skills",
+      "license": "MIT",
+      "skills": [
+        "./skills/commissioning-logger"
+      ]
+    },
+    {
+      "name": "usage-here",
+      "source": "./",
+      "description": "Report what this session cost: tokens and dollars by model, share of the 5-hour and weekly limits, top three prompts. Use on \"usage here\", \"what did this session cost\", \"how much have I burned\", \"token usage\", or questions about limits mid-session.",
+      "version": "c437186106a0",
+      "category": "tooling",
+      "keywords": [
+        "skill",
+        "tooling"
+      ],
+      "homepage": "https://github.com/mhshaon98/agent-skills/tree/main/skills/usage-here",
+      "repository": "https://github.com/mhshaon98/agent-skills",
+      "license": "MIT",
+      "skills": [
+        "./skills/usage-here"
+      ]
+    },
+    {
+      "name": "workflow-pack",
+      "source": "./",
+      "description": "Bundle of every workflow skill: bug-ledger, call-handoff, new-project, session-start, update-handoff",
+      "version": "442ca4ff9113",
+      "category": "bundle",
+      "keywords": [
+        "bundle",
+        "workflow"
+      ],
+      "homepage": "https://github.com/mhshaon98/agent-skills",
+      "repository": "https://github.com/mhshaon98/agent-skills",
+      "license": "MIT",
+      "skills": [
+        "./skills/bug-ledger",
+        "./skills/call-handoff",
+        "./skills/new-project",
+        "./skills/session-start",
+        "./skills/update-handoff"
+      ]
+    },
+    {
+      "name": "safety-pack",
+      "source": "./",
+      "description": "Bundle of every safety skill: app-audit, compliance-check, pre-release-review, safe-data-write, security-pass, verify-work",
+      "version": "395145b7a886",
+      "category": "bundle",
+      "keywords": [
+        "bundle",
+        "safety"
+      ],
+      "homepage": "https://github.com/mhshaon98/agent-skills",
+      "repository": "https://github.com/mhshaon98/agent-skills",
+      "license": "MIT",
+      "skills": [
+        "./skills/app-audit",
+        "./skills/compliance-check",
+        "./skills/pre-release-review",
+        "./skills/safe-data-write",
+        "./skills/security-pass",
+        "./skills/verify-work"
+      ]
+    },
+    {
+      "name": "delegation-pack",
+      "source": "./",
+      "description": "Bundle of every delegation skill: antigravity-bridge, codex-bridge, cowork-relay, fable-conductor, spawn-agent",
+      "version": "9494c02ff376",
+      "category": "bundle",
+      "keywords": [
+        "bundle",
+        "delegation"
+      ],
+      "homepage": "https://github.com/mhshaon98/agent-skills",
+      "repository": "https://github.com/mhshaon98/agent-skills",
+      "license": "MIT",
+      "skills": [
+        "./skills/antigravity-bridge",
+        "./skills/codex-bridge",
+        "./skills/cowork-relay",
+        "./skills/fable-conductor",
+        "./skills/spawn-agent"
+      ]
+    },
+    {
+      "name": "formatting-pack",
+      "source": "./",
+      "description": "Bundle of every formatting skill: apply-richformat, slop-clean",
+      "version": "466ac7c250db",
+      "category": "bundle",
+      "keywords": [
+        "bundle",
+        "formatting"
+      ],
+      "homepage": "https://github.com/mhshaon98/agent-skills",
+      "repository": "https://github.com/mhshaon98/agent-skills",
+      "license": "MIT",
+      "skills": [
+        "./skills/apply-richformat",
+        "./skills/slop-clean"
+      ]
+    },
+    {
+      "name": "tooling-pack",
+      "source": "./",
+      "description": "Bundle of every tooling skill: client-cms, commissioning-logger, usage-here",
+      "version": "187249f4ae7c",
+      "category": "bundle",
+      "keywords": [
+        "bundle",
+        "tooling"
+      ],
+      "homepage": "https://github.com/mhshaon98/agent-skills",
+      "repository": "https://github.com/mhshaon98/agent-skills",
+      "license": "MIT",
+      "skills": [
+        "./skills/client-cms",
+        "./skills/commissioning-logger",
+        "./skills/usage-here"
+      ]
+    }
+  ]
+}

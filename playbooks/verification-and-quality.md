@@ -25,8 +25,8 @@ Climb as high as the change warrants; state which rung you reached.
 
 Every handoff and every completion claim carries two lists:
 
-- **Verified**: what was run, where, with what result ("all 7 tabs exercised via browser
-  automation on macOS; four year-totals match workbook rollups").
+- **Verified**: what was run, where, with what result ("every changed screen exercised via
+  browser automation on macOS; totals match the source to the cent").
 - **NOT verified**: everything implemented but not run — other OS ("implemented, none run
   on Windows"), physical device (camera quality, on-device AI inference), native dialogs
   needing a human click, live backend schema not yet executed.
@@ -87,8 +87,8 @@ session — a bad edit multiplies. Validate progressively, never all-at-once:
 
 - **Scratch first**: installers and hooks run against scratch files/paths (e.g. a
   settings-path override) before touching the real user config.
-- **One machine first**: let the change live on the machine that made it before other
-  machines pick it up; the handoff tells the next machine what to watch for.
+- **One environment first**: let the change live in the environment that made it before
+  others pick it up; the handoff tells the next one what to watch for.
 - **Behavioral changes get a probe**: an instruction or routing change is only
   "verified" after a REAL later session demonstrates the behavior (a small canary
   instruction is a cheap standing probe for always-loaded-instruction retention).

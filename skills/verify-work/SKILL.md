@@ -1,6 +1,6 @@
 ---
 name: verify-work
-description: Use BEFORE claiming work is "done", "complete", "working", or "fixed", and before writing a handoff or completion summary. Verification ladder plus the honest Verified/NOT-verified ledger — "verified" is a claim about evidence, not confidence.
+description: Use before claiming work is done, working, or fixed, and before writing a handoff or completion summary. Verification ladder plus the Verified/NOT-verified ledger.
 ---
 
 # Verify Before Claiming Done
@@ -28,14 +28,14 @@ Climb as high as the change warrants, and **state which rung you reached**:
 ## The honest ledger (required in every completion claim and handoff)
 
 - **Verified:** exactly what was run, where, with what result. State reached, not
-  effort spent ("all 7 tabs exercised via browser automation on this Mac; totals
-  match the workbook to the dollar" — not "did lots of testing").
+  effort spent ("every changed screen exercised via browser automation on macOS;
+  totals match the source to the cent" — not "did lots of testing").
 - **NOT verified:** everything implemented but not run — other OS ("implemented,
   none run on Windows"), physical device, native dialogs needing a human click,
   live backend schema not yet executed. Never let an untested platform ride
   implicitly on a tested one's green checkmark.
 
-## Honesty rules (absolute)
+## Honesty rules
 
 - Failing tests are reported as failing, with output.
 - Skipped steps are reported as skipped.

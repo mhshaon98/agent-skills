@@ -14,8 +14,7 @@ whatever your provider currently offers.
 
 The most expensive (above-flagship) models are never used for research, web scraping,
 data collection, codebase exploration, or other information-gathering. Those tasks run on
-the frontier/workhorse tier when they need judgment, and on mid/fast tiers when they are
-simple extraction.
+the frontier, mid, or fast tier; which one a task gets is stated once, in §1.
 
 Top-tier models are reserved for:
 - Conductor/orchestration work (the main session managing a project)
@@ -32,8 +31,10 @@ whatever the main session is running". A review workflow launched with no model 
 a top-tier session silently runs every agent on the top tier.
 
 - Every agent spawn (including agents inside workflow scripts) **must** state its tier
-  explicitly. A spawn that names no tier is a bug, like a missing schema. Grep workflow
-  scripts for agent calls and check before running.
+  explicitly, chosen per §1, and through a pinned definition where §0c applies. A spawn
+  that names no tier is a bug, like a missing schema — but so is a spawn that names its
+  tier through an auto-upgrading alias. Grep workflow scripts for agent calls and check
+  both conditions before running.
 
 ### 0c. Pin models explicitly — aliases can auto-upgrade
 
@@ -42,6 +43,15 @@ the tier the day a new one ships. If your policy pins a specific version, expres
 where it actually holds — e.g. custom agent definitions whose frontmatter names the exact
 model ID and effort — and spawn through those definitions, never through a bare alias.
 Verify the pin with real usage data; don't assume.
+
+- Pin the mid tier the same way when your policy names a specific mid-tier version;
+  the bare alias is only a fallback where no pinned definition is installed.
+- When a new flagship replaces older pinned tiers, **retire** the old definitions
+  (remove them from the agents folder) instead of leaving them spawnable. Exactly one
+  pinned definition per tier keeps "which model ran?" answerable.
+- An alias that happens to resolve to the right model today is still not a pin.
+- A new model can require a newer CLI version; an outdated CLI fails the spawn
+  outright. Update the CLI before switching the pin.
 
 ### 0d. State the agent count before launching a fleet
 
@@ -63,23 +73,38 @@ release-blocking bug in one round — the fan-out would have bought nothing.
 All delegated work at **medium reasoning effort** by default; raise effort only when two
 attempts failed or the change touches shipped user data.
 
+One workable split (tune to your own budget): **~75–80% frontier · ~20–25% mid**
+(fast tier only for the purely mechanical). When the current flagship is as strong as anything you have on judgment and
+cheaper than the tiers it replaced, it absorbs the old "workhorse" role: one default tier
+for judgment work AND for already-specified bounded execution.
+
 | Tier | Use for | Examples |
 |---|---|---|
-| **Frontier** (current flagship, medium effort) — the default for judgment | System/feature design, implementation in unfamiliar code, debugging, code review, security-sensitive surfaces, high-blast-radius migrations, research needing judgment, dense-document reasoning | Designing a sync/conflict model; the pre-release review that must not miss anything; root-causing a data-loss bug |
-| **Workhorse** (previous flagship or equivalent, medium effort) — work already specified | Implementing an agreed spec, mechanical-but-nontrivial refactors, verification passes, careful sweeps, second-pass cleanup, doc work needing care | Feature sessions once the idiom was agreed; applying a reviewed fix list across a codebase |
+| **Frontier** (current flagship, medium effort) — the DEFAULT, ~75–80% of delegated work | Anything carrying judgment or ambiguity — system/feature design, implementation in unfamiliar code, debugging, code review, security-sensitive surfaces, high-blast-radius migrations, research needing judgment, dense-document reasoning — AND execution where the plan is already decided: agreed spec, mechanical-but-nontrivial refactors, verification passes, careful sweeps, doc work needing care | Designing a sync/conflict model; the pre-release review that must not miss anything; root-causing a data-loss bug; applying a reviewed fix list across a codebase |
 | **Mid** (Sonnet-class) — genuinely simple tasks | Short copy generation, web scraping, simple multi-step sweeps, classification/filtering, summarizing already-gathered facts | Follow-up phrasing/summarization; briefing distillation |
 | **Fast** (Haiku-class) — the most mechanical tasks | Boilerplate, simple edits, formatting, file cleanup, asset drudgery, repetitive sweeps, straightforward tests, doc typo fixes | Feedback distillation; writing a handoff from a session record |
 
-Start judgment work on the frontier tier; **drop to workhorse** when the task is already
-specified and bounded, and **drop further** only when it is genuinely simple. New model
-releases do not move the default automatically — changing the pin is a deliberate
-decision.
+**Drop** from the default to mid/fast only when the task is genuinely simple (copy,
+icons, scraping, mechanical sweeps, formatting, classification). "Specified and bounded"
+is no longer a reason to downgrade when there is no cheaper strong tier to step down
+to. New model releases do not move the default automatically — changing the pin is a
+deliberate decision.
 
 ## 1b. The burn model
 
 Burn ≈ fixed context × round-trips: every tool round-trip re-reads the session's
 entire fixed context, so batching independent calls and one gathering script beat
 serial exploration every time.
+
+## 1c. Sessions whose main model equals the subagent tier
+
+When the session's MAIN model is the same frontier tier your subagents run on (not a
+top-tier conductor), it is **not conductor mode**: work inline, zero agents by default.
+Spawn frontier-tier agents ONLY for (a) independent parallel workstreams or (b)
+fresh-eyes review of the session's own large diff; gathering (research, scraping,
+codebase sweeps) goes to the mid tier. **No percentage target** — the main model already
+equals the subagent tier, so a split adds nothing. Top-tier conductor sessions keep the
+§1 split.
 
 ## 2. Pre-filter with code, not AI (the biggest quota saver)
 
@@ -130,10 +155,9 @@ verdict. Agents get bounded, self-contained briefs.
 | **Security/Privacy Agent** | Live backend, auth, keys, anything user-data-exposed | Advisor runs, key hygiene, permission-prompt boundaries |
 
 Model per agent follows §0 and §1: investigator/research/scraping agents never run on the
-top tier — mechanical extraction on fast/mid tiers, research needing judgment on the
-frontier tier; docs/handoff agents on fast models; implementation, review, security, and
-debugging agents on the frontier tier by default (review is judgment work), dropping to
-workhorse when the work is already specified and bounded.
+top tier (hard rule); docs/handoff agents run on fast models; every other agent in the
+roster takes the §1 default (the pinned frontier tier), review included, because review
+is judgment work.
 
 ## 5. Orchestration rules
 
