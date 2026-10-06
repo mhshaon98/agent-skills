@@ -69,6 +69,7 @@ CATEGORIES = {
     "spawn-agent": "delegation",
     "apply-richformat": "formatting",
     "slop-clean": "formatting",
+    "doc-metadata": "formatting",
     "client-cms": "tooling",
     "commissioning-logger": "tooling",
     "usage-here": "tooling",
