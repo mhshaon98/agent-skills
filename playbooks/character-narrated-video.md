@@ -2,8 +2,7 @@
 
 *Applies to any project where a character speaks over, and reacts to, a short
 video built in a frame-function renderer. The recommended framework is
-**Remotion** (an alternative HTML-to-video framework on the same headless-Chrome
-render engine was evaluated and retired in favour of Remotion for better output).
+**Remotion**.
 This playbook covers the whole thing: the audio pipeline and the picture.*
 
 The rule under all of it: **the picture is a pure function of the frame, and
@@ -27,17 +26,21 @@ stopwatch, and nothing expressive is a switch.
    **assert the take says what the script says** (token counts match or the
    build fails). A beat's window runs to the START of the next beat, so the
    pause the narrator actually left is the pause the picture holds.
-4. **Refine the foreign line.** A mixed-language single transcription pass tends to
+4. **Check for glued tokens.** A transcript token much longer than the
+   take's normal word (> ~0.6 s) usually starts inside the silence before it.
+   Snap ONLY those forward to where the take's loudness returns after the
+   silence; never snap ordinary words, and never cue from an interpolated one.
+5. **Refine the foreign line.** A mixed-language single transcription pass tends to
    swallow the foreign words and mistime the next English word. Re-transcribe just
    that line's audio window and splice its timings; the times still come from
    measuring, never from typing numbers into the timeline JSON.
-5. **Every beat is cued by a word, never a hand-picked frame.** `cue(lineId,
-   word)` / `atWord("card","forever")`: the phrase comes apart on "apart", the
-   card seals on "forever". Re-record at a different pace and every picture
+6. **Every beat is cued by a word, never a hand-picked frame.** `cue(lineId,
+   word)` / `atWord("tap","open")`: the button presses on "tap", the
+   panel opens on "open". Re-record at a different pace and every picture
    follows. Hand-editing the timeline JSON is forbidden.
-6. **Captions from the same timeline.** One caption, always the same place,
+7. **Captions from the same timeline.** One caption, always the same place,
    authored words with measured timings. No paraphrase headline competing with
-   it (that mismatch gets cuts rejected).
+   it.
 
 ## 2. The character rig as a pure function of frame
 
@@ -143,12 +146,12 @@ timings to the timeline (worst drift under ~0.15 s). Reproduce route-dependent
 "missing view" bugs on both routes; a button that exists but paints nothing is a
 geometry bug, not z-order.
 
-## 6. Owner-decision log (do not re-litigate taste)
+## 6. Taste-decision log (do not re-litigate taste)
 
 Keep a dated block in the project's kit doc so decided taste is not re-opened:
 
 > **YYYY-MM-DD, <decision>.** <what was chosen> / <what it replaces> /
-> <one-line reason in the owner's words>.
+> <one-line reason in the decision-maker's words>.
 
 Typical entries: flat background vs photo; pace and length (e.g. 30 s with holds
 vs a 12 s cut); SFX on every cue; the shared end card is the one ending; store
@@ -169,13 +172,13 @@ badge style.
    shadow clearance, seam for loops).
 8. Render; run the `volumedetect` gate.
 9. Review ritual: strips, teleport probe, transcribe-back drift.
-10. Log any new taste decision; publish media only after the owner approves the
-    direction.
+10. Log any new taste decision; publish media only after the user or client approves
+    the direction.
 
 ## Suggested kit layout
 
 - A rig README (geometry, script format, springs, hops, rolls, lighting, logo
-  morph, owner rules), a post playbook (script → take → timeline → motion → SFX →
+  morph, taste rules), a post playbook (script → take → timeline → motion → SFX →
   checks → review → publish), and a runnable template post with a stub timeline
   and one of every check.
 - Pipeline scripts: `record`, `build-timeline`, `check-posts`.

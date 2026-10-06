@@ -1,6 +1,6 @@
 ---
 name: cowork-relay
-description: Coordinate work split between Claude Cowork and Claude Code on the same project — Cowork does the maximum possible, sandbox-blocked steps go to Claude Code, and each side ends by writing a copy-paste relay prompt for the other.
+description: "Split work between Claude Cowork and Claude Code on one project: each side does all it can and ends with a copy-paste relay prompt for the other. Use in a Cowork session or when a RELAY prompt is pasted."
 ---
 
 # Cowork ↔ Claude Code Relay
@@ -57,7 +57,7 @@ from rediscovery: decisions made, dead ends hit, quirks found>
 
 1. Trust "DONE" only as far as its evidence — spot-check one claim before building
    on it (the relay is an agent report, not a verdict).
-2. Run the `session-start` ritual (newest handoff, bug ledger) — the relay
+2. Run the `call-handoff` ritual (newest handoff, bug ledger) — the relay
    supplements it, never replaces it.
 3. Execute the tasks; anything you cannot do in THIS environment goes into your own
    relay prompt back, with what you tried.

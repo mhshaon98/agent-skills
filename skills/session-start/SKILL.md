@@ -1,60 +1,19 @@
 ---
 name: session-start
-description: Use at the start of ANY work session on a project — before reading code or making changes — and when joining an unfamiliar or legacy project. Runs the startup ritual — newest handoff, bug ledger, project docs — then restates the goal.
+description: Old name for the session-start ritual, which now lives in call-handoff; run that skill instead.
 ---
 
-# Session Start Ritual
+# Session Start — now part of `call-handoff`
 
-Orient before touching anything. Takes ~2 minutes and prevents re-testing dead
-approaches, regressing user-iterated designs, and debugging known bugs from scratch.
+Run the `call-handoff` skill. It is the single session-start ritual: skills and project
+sync, newest handoff, open bugs, next-session prompt, usage baseline, briefing. If
+`call-handoff` already ran in this session, its briefing stands; a second run only
+repeats the same reads.
 
-## Steps
+Once a task is chosen, follow `call-handoff`'s last section, "When a task is chosen"
+(restate the goal, inspect before changing, skim the relevant lessons, keep the phases
+separate, runtime-caps check).
 
-0. **Sync first — one Bash call.** If you keep your skills in a git clone,
-   `git -C "<skills-repo>" pull --ff-only` (skip with a warning if that clone is dirty;
-   if it is missing, tell the user to clone it and stop). Then, if the project has a
-   remote and a clean tree, `git pull --ff-only` there too. If the skills pull touched
-   `skills/`, `agents/` or `hooks/`, re-run your install step from the clone so
-   `~/.claude/skills` matches. Report: skills head, ahead/behind, re-install ran or not.
-1. **Find and read the newest `HANDOFF-*.md`** at the project root (filename format
-   `HANDOFF-YYYY-MM-DD-HHMM.md`). It is the source of truth for project state.
-   - If its date looks stale vs. `git log` or file mtimes, say so and reconcile.
-   - **If no handoff exists** (first session or legacy project): orient from
-     README/code instead, and create the first handoff before the session ends
-     (use the `update-handoff` skill).
-2. **Read the project's own `CLAUDE.md` / `README.md`** if present.
-3. **Read `BUG_LIST.md`** at the repo root — the cumulative bug ledger. Note which
-   areas are historically bug-prone. Do not create an empty one preemptively; the
-   `bug-ledger` skill creates it when the first bug appears.
-4. **Inspect before changing.** Look at the actual files, data shapes, and current
-   behavior relevant to today's task. Never assume the handoff is complete.
-5. **Take a usage baseline** (optional — if you use the `usage-here` skill). One
-   command, one line of output; it records the instant the session began so a later
-   report can separate this session's burn from other sessions sharing the same
-   rate-limit window:
-
-   ```bash
-   "$(command -v python3 || command -v python)" "$HOME/.claude/skills/usage-here/usage_report.py" --snapshot
-   ```
-6. **Restate the goal** to the user in 1–2 sentences, including constraints and what
-   must NOT break. State any assumptions explicitly and proceed — ask clarifying
-   questions only when truly blocked.
-
-## Rules that apply from here on
-
-- Rejected alternatives recorded in handoffs are **dead paths** — do not re-test them.
-- "Don't regress" notes on UI designs are binding.
-- Keep the handoff updated DURING the session as work lands, not only at the end.
-- **Runtime resource-exhaustion check** (once per project): if this project spawns OS
-  processes, runs a long-running service/daemon, ships a container/compose/k8s surface,
-  or runs untrusted code, confirm it has PID/memory caps; if not, apply the additive
-  repo-local guards and flag the rest (see the `security-pass` skill).
-  Static sites, single-file scripts with no spawning, pure libraries, plain client apps
-  → skip. Don't re-flag a project whose handoff already records the caps live at the
-  host/orchestrator.
-
-## Keep the phases separate
-
-Understand → Plan → Build → Verify → Hand off. Don't edit while you're still
-discovering; don't claim success while you're still building. If you keep a personal
-lessons/anti-patterns file, skim the sections relevant to today's stack here.
+Legacy project with no git, handoff or structure at all? `call-handoff` reports the
+missing handoff; use `new-project` for the scaffolding and create the first handoff
+before the session ends (`update-handoff`).

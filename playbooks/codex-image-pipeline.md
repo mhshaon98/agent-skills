@@ -38,15 +38,35 @@ generation (free plans do not).*
 ## Content rules that travel with the pipeline
 
 - **Images are LETTERLESS.** Image models never render brand type, logos, or
-  UI; committed generators (e.g. Pillow scripts with the licensed fonts and
+  UI; committed generators (e.g. Pillow scripts with the project's fonts and
   contrast floors) do all lettering and compositing. This fails for real:
   a generated batch can silently ship the wrong typeface.
-- Pairs/series (before-after, week N) hold IDENTICAL framing; state it in
-  the brief ("same fixed tripod framing", "same wall, framing and light").
+- Series images hold IDENTICAL framing; state the framing in the brief.
 - Put the project's bans in the brief itself (e.g. no gradients, no text, no
   watermarks); instructions are obeyed literally, so a stale brief ships stale rules.
 - Verify on disk (dimensions via sips/PIL) before compositing; never trust
   "done" text.
+
+## Real product in a generated scene
+
+When a real, purchasable product must appear in a generated room and stay
+accurate:
+1. Attach the REAL product photo with `-i` and brief "keep the product
+   identical: outline, grain, texture, count/shape of every part; only the
+   scene and light change". Text-to-image of the product is never acceptable.
+2. For lighting that belongs to the room, do NOT relight a finished composite
+   with an edit pass. Cut the product out (e.g. a subject-mask tool such as
+   macOS Vision), divide out its large-scale shading, place it on flat grey,
+   attach THAT, and render the scene fresh with a lighting-first brief:
+   establish sources, then light the product only with them, then matching cast
+   and contact shadows. Keep the brief and the cutout script in the project so
+   the next render reuses them.
+3. Check every render side by side with its reference before showing anyone.
+4. Type goes on afterwards in code; "text behind the product" = headline on the
+   wall layer, product re-composited over it via the same subject matte.
+
+Always run headless `codex exec` with stdin closed (`< /dev/null`); otherwise it
+can sit waiting on stdin.
 
 ## Failure modes already mapped
 

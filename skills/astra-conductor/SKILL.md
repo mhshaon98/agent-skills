@@ -1,6 +1,6 @@
 ---
 name: astra-conductor
-description: Operating mode for the ENTIRE session whenever the session model is GPT-6-Astra: Astra acts only as architect/orchestrator, delegates ALL execution to gpt-5.6/5.4/5.3 subagents via spawn_agent, and verifies end-to-end.
+description: "Operating mode for the ENTIRE session whenever the session model is GPT-6-Astra: Astra acts only as architect/orchestrator, delegates ALL execution to gpt-5.6/5.4/5.3 subagents via spawn_agent, and verifies end-to-end."
 ---
 
 # Astra as Conductor — Delegate Everything, Verify Everything
@@ -13,7 +13,7 @@ final end-to-end verification verdict. **Everything else is delegated.**
 
 This mode is the standing authorization the `spawn_agent` tool requires ("Do not spawn
 sub-agents unless the user or applicable AGENTS.md/skill instructions explicitly ask").
-`~/.codex/AGENTS.md` grants the same thing in its `codex-conductor` block. Neither is a
+An equivalent standing instruction in your `~/.codex/AGENTS.md` does the same. Neither is a
 licence to delegate trivial one-step work, to publish, to touch user data, or to widen
 the brief.
 
@@ -24,7 +24,7 @@ the brief.
 > different model or there is a clear task-specific reason."
 > — Codex CLI 0.147, `spawn_agent` tool description
 
-On Astra that default is **backwards for this OS**. Inheriting means every subagent is
+On Astra that default is **backwards for this workflow**. Inheriting means every subagent is
 another Astra, which is exactly the tier this mode exists to conserve — the Codex-side
 twin of Claude Code's `model: "opus"` alias trap, where the bare alias silently resolves to
 the newest, most expensive model.
@@ -72,7 +72,7 @@ default_subagent_reasoning_effort = "medium"
 
 3. **BRIEF** — one self-contained brief per agent: goal, the exact files/paths, the write
    scope, done-criteria, and what must not break. Decompose so **write sets are
-   disjoint** — two agents editing the same file is the failure mode this OS keeps
+   disjoint** — two agents editing the same file is the failure mode this workflow keeps
    re-learning. Tell coding subagents to edit files directly in their forked workspace
    and to list changed paths in the final answer. Use `fork_turns="all"` when the agent
    needs session context, `"none"` for a clean-room task; `"none"` without enough context
@@ -106,13 +106,13 @@ raise to high/xhigh only for a genuinely hard architecture or debugging call, an
   Conducting subagents does not promote Codex to conductor of the project.
 - Findings still go to `CODEX-FINDINGS.md`; a better idea is a PROPOSAL entry, not a
   unilateral re-scope.
-- The user's skills repository, any `CLAUDE.md`, any `.claude/` directory: read-only, forever.
+- Any skills repository the user keeps, any `CLAUDE.md`, any `.claude/` directory: read-only, forever.
 - User data is sacred — migration + rollback story before any store/schema/user-file
   write, and a subagent's write scope never includes one without that story.
 
 ## Related
 
-Claude-side twin: `fable-conductor` (Claude-only, excluded from the Codex mirror).
+Claude-side twin: `fable-conductor` (Claude Code only).
 This skill is Codex-only — install it into `~/.codex/skills`, not `~/.claude/skills`.
 Sources for the mechanics above: `codex --version` 0.147.0, `~/.codex/models_cache.json`, and the `spawn_agent` /
 `wait_agent` / `list_agents` tool contracts in the Codex binary.

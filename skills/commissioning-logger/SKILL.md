@@ -1,6 +1,6 @@
 ---
 name: commissioning-logger
-description: Use ONLY when explicitly asked to log/document/track a multi-step hands-on process (commissioning, wiring, network bring-up, setup, troubleshooting, runbooks) — "log this", "start a commissioning log", "write it up as we go". Keeps a log.md plus a Word doc with annotated screenshots.
+description: 'Only when explicitly asked to log a multi-step hands-on process (commissioning, wiring, bring-up, troubleshooting): "log this", "start a commissioning log", "write it up as we go". Keeps log.md plus a Word doc with annotated screenshots.'
 ---
 
 # Commissioning / Activity Logger (general)
@@ -11,7 +11,7 @@ subject — not tied to one machine, vendor, or industry.
 
 ## Per-subject workspace
 Each thing being logged gets its own folder. Ask the user for (or infer) a short
-**subject slug** (e.g. `cl3000`, `network-bringup`, `press-pm`). Default location is a
+**subject slug** (e.g. `pump-controller`, `network-bringup`, `line-3-sensor`). Default location is a
 `<Subject>_Log/` folder inside the current project/working folder; confirm or let the
 user override. Create this layout on first use:
 
@@ -28,12 +28,12 @@ user override. Create this layout on first use:
    the value set, and the observed result. Record ONLY verified-working steps; mark
    anything unconfirmed **PENDING** — never assert an unverified step as done.
 3. **Screenshots/photos**: pasted images are NOT saved to disk — ask the user to save each
-   into `screenshots/`. Then run `scripts/annotate_screenshot.py` to draw boxes/arrows/
+   into `screenshots/`. Then run `"$HOME/.claude/skills/commissioning-logger/scripts/annotate_screenshot.py"` to draw boxes/arrows/
    labels on the exact control/item changed, output into `screenshots_annotated/`, and
    reference it in `log.md` as `![caption|w=NNN](screenshots_annotated/file.jpg)`
    (`w=` optional width in px; portraits ~380, screenshots ~620).
 4. **Append to `log.md` first**, then rebuild the `.docx`:
-   `node scripts/build_log_docx.js <Subject>_Log/log.md <Subject>_Log/<Subject>_StepByStep.docx`
+   `node "$HOME/.claude/skills/commissioning-logger/scripts/build_log_docx.js" <Subject>_Log/log.md <Subject>_Log/<Subject>_StepByStep.docx`
    (the builder embeds any images referenced in the markdown). Keep the two in sync.
    If the doc is open in Word the write fails with EBUSY/EPERM — ask the user to close
    it, or write to a temp name and tell them.
@@ -52,7 +52,7 @@ user override. Create this layout on first use:
 - Capture identifiers exactly (serial numbers, IPs, part numbers, channel mappings).
 
 ## Annotation helper
-`scripts/annotate_screenshot.py INPUT OUT --box "x,y,w,h,color,label" --arrow "x1,y1,x2,y2,color" --label "x,y,color,text"`
+`"$HOME/.claude/skills/commissioning-logger/scripts/annotate_screenshot.py" INPUT OUT --box "x,y,w,h,color,label" --arrow "x1,y1,x2,y2,color" --label "x,y,color,text"`
 (pixels on the input image; multiple allowed; needs Pillow — `pip install pillow`).
 Zoom into the saved screenshot first (Read the image) to get pixel coordinates right;
 re-check the annotated output visually before embedding it.

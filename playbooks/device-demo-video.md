@@ -2,8 +2,7 @@
 
 *Applies to any short looping post that shows an app on a device: a new-device
 announcement, a feature walkthrough, a store preview. Built with **Remotion**
-(the recommended video framework; an alternative HTML-to-video framework on the
-same render engine was evaluated and retired in favour of it). Sibling of
+(the recommended video framework). Sibling of
 `character-narrated-video.md` (that one is the narrator; this one is the device
 and the UI).*
 
@@ -76,10 +75,10 @@ anything is rendered.
 - One camera track (keyframes of focus + scale, eased) over a world in the
   bezel's own pixel space. Push in to make the UI readable on a phone, pull out
   for the hardware move. Crop the device freely; never crop the text being read.
-- The post family's frame rules still hold: flat ground, props centred, captions are
+- The series' frame rules still hold: flat ground, props centred, captions are
   short kickers in one band that drop in and out, one at a time.
 - End on the brand card (icon, wordmark, a subtitle line for the claim, the store
-  badge, the maker lockup). Skip decorative extras the owner has vetoed.
+  badge, the maker lockup). Skip decorative extras the user or client has vetoed.
 - The loop hand-back is ONE scroll: the end card leaves as a group moving down
   while the device drops in from above at the same speed, locked together. Do
   not let the card's pieces exit separately while the device moves; they fight.
@@ -92,9 +91,9 @@ anything is rendered.
   choose by measurement (onset, energy in the first 25 ms for the click), trim
   glides at 2% of peak so their rise survives.
 - The click is the loudest thing in the mix, layered with a soft low thud.
-  UI taps, pops and ticks come from the house SFX library, one per visible event.
-- The brand's own music bed under it, faded at both ends so the seam is silent.
-- Master to the family's approved level (e.g. about -16 LUFS, peak under -1 dBTP)
+  UI taps, pops and ticks come from your project's SFX library, one per visible event.
+- Your project's music bed under it, faded at both ends so the seam is silent.
+- Master to the series' approved level (e.g. about -16 LUFS, peak under -1 dBTP)
   with a gain plus a transparent limiter; then measure the click onset against its
   frame.
 
@@ -116,10 +115,10 @@ finite.
   frame (padding the 4:5 file would cut them off mid-screen). Everything stays in
   the Stories safe band (roughly top 250 px, bottom 340 px).
 - Deliverables: feed mp4, story mp4, and a caption `.txt` next to them, published
-  only after the owner approves.
+  only after the user or client approves.
 
-## Owner decisions log
+## Taste decisions log
 
-Keep a dated list of the owner's taste calls for the post family (fold style,
-lighting, claim wording, where the mascot sits, end-card behaviour, SFX character,
+Keep a dated list of the user's or client's taste calls for the series (fold style,
+lighting, claim wording, end-card behaviour, SFX character,
 ground colour, store badge style) so later rounds don't re-open them.

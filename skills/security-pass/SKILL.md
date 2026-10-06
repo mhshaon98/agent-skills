@@ -6,8 +6,9 @@ description: Use when touching auth, API keys, secrets, RLS/policies, payment or
 # Security Pass
 
 Security passes are one of the few places where spending extra model budget is always
-justified. Run as a focused pass (mid model; **strong** when the diff touches data
-migration, auth, or payment/personal data).
+justified. Run as a focused pass on your default judgment tier (pinned via a subagent
+type if delegated, see `spawn-agent`); raise reasoning effort when the diff touches data
+migration, auth, or payment/personal data.
 
 ## Secrets hygiene
 

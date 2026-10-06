@@ -1,134 +1,530 @@
-[
-  {
-    "name": "bug-ledger",
-    "description": "Use whenever a bug is reported, discovered, fixed, or reopened, or before working in a historically bug-prone area. Maintains the cumulative bug ledger (BUG_LIST.md) \u2014 many \"new\" bugs are old ones recurring or a fix that regressed, so check it BEFORE debugging.",
-    "files": 1,
-    "category": "workflow"
+{
+  "schema_version": 2,
+  "name": "agent-skills",
+  "description": "Installable agent skills (SKILL.md format) for Claude Code and OpenAI Codex CLI.",
+  "repo": "https://github.com/mhshaon98/agent-skills",
+  "raw_base": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/",
+  "site": "https://mhshaon98.github.io/agent-skills/",
+  "updated": "2026-10-06",
+  "marketplace": {
+    "name": "dev-discipline",
+    "add": "/plugin marketplace add mhshaon98/agent-skills",
+    "install": "/plugin install <skill-name>@dev-discipline"
   },
-  {
-    "name": "call-handoff",
-    "description": "Cold-start a session from the project's newest handoff in a strict token budget. Use at session start or when the user says \"call handoff\", \"catch up\", or \"where did we leave off\" \u2014 reads the newest HANDOFF-*.md, open bugs, and project docs, reports a briefing, fixes generic session titles, and stops.",
-    "files": 1,
-    "category": "workflow"
+  "install_paths": {
+    "claude_code": "~/.claude/skills/<name>/",
+    "claude_code_windows": "%USERPROFILE%\\.claude\\skills\\<name>\\",
+    "claude_code_project": ".claude/skills/<name>/",
+    "codex": "${CODEX_HOME:-~/.codex}/skills/<name>/"
   },
-  {
-    "name": "new-project",
-    "description": "Bootstrap a brand-new project with proven architecture defaults and continuity scaffolding. Use when starting a new project from scratch, or when touching a legacy project that has no handoff/git/structure yet.",
-    "files": 1,
-    "category": "workflow"
-  },
-  {
-    "name": "session-start",
-    "description": "Use at the start of ANY work session on a project \u2014 before reading code or making changes \u2014 and when joining an unfamiliar or legacy project. Runs the startup ritual \u2014 newest handoff, bug ledger, project docs \u2014 then restates the goal.",
-    "files": 1,
-    "category": "workflow"
-  },
-  {
-    "name": "update-handoff",
-    "description": "End-of-session wrap-up in one efficient pass \u2014 updates the handoff, memory, changelog, and bug ledger as needed, and writes NEXT-SESSION-PROMPT.md so the next session starts instantly. Use when the user says \"update handoff\", \"wrap up\", \"end the session\", or before context runs out.",
-    "files": 1,
-    "category": "workflow"
-  },
-  {
-    "name": "app-audit",
-    "description": "Runs an automated technical and disclosure compliance-assistance audit of a project \u2014 profiling, domain routing, read-only specialist subagents, fresh authoritative research, optional independent peer review, and one consolidated report. It also runs the `compliance-check` skill in embedded mode to verify what is actually live (store labels, published policies, deployed backend, retention jobs). Plain `/app-audit` with no arguments runs the full intelligent audit; the optional modes are full, launch, fix, fix critical, fix safe, verify, research, security, and privacy.",
-    "files": 110,
-    "category": "safety"
-  },
-  {
-    "name": "compliance-check",
-    "description": "Live compliance close-out for an app or website - verifies what is ACTUALLY live (store listing and privacy labels, published policy pages, deployed backend, retention jobs, deletion, consent notices, ops floor) against the code and the published words, reconciles audit finding statuses against current code, then works the remediation runbook item by item with production-safe patterns. Use on `/compliance-check`, \"what's left on compliance\", \"close out the audit\", before a store submission, or when app-audit calls it. Modes: check (default, read-only), closeout, store, retention, health-data, reconcile, embedded.",
-    "files": 9,
-    "category": "safety"
-  },
-  {
-    "name": "pre-release-review",
-    "description": "Use when the user says \"ship it\", \"release\", \"submit\", \"deploy\", \"push to production\", before any production push, or after any large diff. Mandatory independent review pass \u2014 never skip because \"the diff looks fine\".",
-    "files": 1,
-    "category": "safety"
-  },
-  {
-    "name": "safe-data-write",
-    "description": "Use BEFORE any write, migration, or deletion touching precious user data \u2014 data stores, schemas, user-owned files (Excel workbooks, databases, documents). User data is sacred; these rules were learned from shipped data-loss bugs.",
-    "files": 1,
-    "category": "safety"
-  },
-  {
-    "name": "security-pass",
-    "description": "Use when touching auth, API keys, secrets, RLS/policies, payment or personal data, any new endpoint that writes, or live backends \u2014 and before any release. Security and secrets checklist; every rule traces to a real production finding.",
-    "files": 1,
-    "category": "safety"
-  },
-  {
-    "name": "verify-work",
-    "description": "Use BEFORE claiming work is \"done\", \"complete\", \"working\", or \"fixed\", and before writing a handoff or completion summary. Verification ladder plus the honest Verified/NOT-verified ledger \u2014 \"verified\" is a claim about evidence, not confidence.",
-    "files": 1,
-    "category": "safety"
-  },
-  {
-    "name": "antigravity-bridge",
-    "description": "Delegate bounded work to Google's Antigravity CLI (agy, Gemini models) from inside Claude Code, and get a third-provider second opinion. Use when the user says \"ask antigravity\", \"ask gemini\", \"send this to agy\", when Claude and Codex disagree and a tie-breaker is needed, or when cheap bounded research/sweeps would otherwise burn Claude subagent budget.",
-    "files": 2,
-    "category": "delegation"
-  },
-  {
-    "name": "astra-conductor",
-    "description": "Operating mode for the ENTIRE session whenever the session model is GPT-6-Astra: Astra acts only as architect/orchestrator, delegates ALL execution to gpt-5.6/5.4/5.3 subagents via spawn_agent, and verifies end-to-end.",
-    "files": 1,
-    "category": "delegation"
-  },
-  {
-    "name": "codex-bridge",
-    "description": "Delegate tasks to OpenAI Codex or get a cross-provider second review from inside Claude Code via the official codex plugin. Use when the user says \"ask codex\", \"have codex review/check this\", \"send to codex\", or before a release when a non-Claude reviewer adds value.",
-    "files": 1,
-    "category": "delegation"
-  },
-  {
-    "name": "cowork-relay",
-    "description": "Coordinate work split between Claude Cowork and Claude Code on the same project \u2014 Cowork does the maximum possible, sandbox-blocked steps go to Claude Code, and each side ends by writing a copy-paste relay prompt for the other.",
-    "files": 1,
-    "category": "delegation"
-  },
-  {
-    "name": "fable-conductor",
-    "description": "Operating mode for the ENTIRE session whenever the session model is a top-tier reasoning model: it acts only as architect/orchestrator, delegates ALL execution to cheaper subagent tiers, and verifies end-to-end.",
-    "files": 1,
-    "category": "delegation"
-  },
-  {
-    "name": "spawn-agent",
-    "description": "Use BEFORE spawning any subagent (research, implementation, review, debugging) or choosing a model for delegated work. Gate, brief-writing procedure, and model-tier routing; usage limits are a real budget.",
-    "files": 1,
-    "category": "delegation"
-  },
-  {
-    "name": "apply-richformat",
-    "description": "Rich formatting for any text-bearing surface \u2014 app screens, documents, reports, READMEs, chat answers, terminal output, data tables. Use on walls of undifferentiated text, when building or reviewing such a surface, or when the user says \"rich formatting\", \"text vomit\", \"needs better structure\", \"make this readable\".",
-    "files": 1,
-    "category": "formatting"
-  },
-  {
-    "name": "slop-clean",
-    "description": "Deep-dive sweep of the current project for AI slop, in design and in copy. Only runs when the user explicitly invokes /slop-clean; never self-trigger.",
-    "files": 1,
-    "category": "formatting"
-  },
-  {
-    "name": "client-cms",
-    "description": "Analyze the current website project and intelligently add a secure, client-facing content-management/admin system so authorized nontechnical users can update approved website content without editing source code. Use when the user invokes /client-cms, asks to add an admin panel/dashboard for site content, or wants website content editable by a client/business owner.",
-    "files": 1,
-    "category": "tooling"
-  },
-  {
-    "name": "commissioning-logger",
-    "description": "Use ONLY when explicitly asked to log/document/track a multi-step hands-on process (commissioning, wiring, network bring-up, setup, troubleshooting, runbooks) \u2014 \"log this\", \"start a commissioning log\", \"write it up as we go\". Keeps a log.md plus a Word doc with annotated screenshots.",
-    "files": 5,
-    "category": "tooling"
-  },
-  {
-    "name": "usage-here",
-    "description": "Report what THIS session has cost \u2014 tokens and dollars by model, share of the 5-hour and weekly limits, and the three most expensive prompts. Use whenever the user says \"usage here\", \"what did this session cost\", \"how much have I burned\", \"token usage\", or asks about limits mid-session.",
-    "files": 4,
-    "category": "tooling"
-  }
-]
+  "categories": [
+    {
+      "id": "workflow",
+      "title": "Workflow",
+      "description": "Session continuity: start, hand off, track bugs, bootstrap projects."
+    },
+    {
+      "id": "safety",
+      "title": "Safety",
+      "description": "Verification, data safety, security and release gates."
+    },
+    {
+      "id": "delegation",
+      "title": "Delegation",
+      "description": "Subagents, model routing, and second opinions from other providers."
+    },
+    {
+      "id": "formatting",
+      "title": "Formatting",
+      "description": "Readable output and AI-slop cleanup."
+    },
+    {
+      "id": "tooling",
+      "title": "Tooling",
+      "description": "Task-specific tools: CMS layer, process logging, usage reports."
+    }
+  ],
+  "skills": [
+    {
+      "name": "bug-ledger",
+      "description": "Use when a bug is reported, found, fixed, or reopened, or before working in a bug-prone area. Check BUG_LIST.md before debugging: many \"new\" bugs are regressions of fixed ones.",
+      "category": "workflow",
+      "targets": [
+        "claude",
+        "codex"
+      ],
+      "version": "fd6b5e5c97ab",
+      "path": "skills/bug-ledger",
+      "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/bug-ledger/SKILL.md",
+      "file_count": 1,
+      "files": [
+        "skills/bug-ledger/SKILL.md"
+      ]
+    },
+    {
+      "name": "call-handoff",
+      "description": "Cold-start briefing from the project's newest handoff, open bugs and next-session prompt in two round-trips, then stop. Use at session start or on \"call handoff\", \"catch up\", \"where did we leave off\".",
+      "category": "workflow",
+      "targets": [
+        "claude",
+        "codex"
+      ],
+      "version": "e16fc653b965",
+      "path": "skills/call-handoff",
+      "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/call-handoff/SKILL.md",
+      "file_count": 2,
+      "files": [
+        "skills/call-handoff/SKILL.md",
+        "skills/call-handoff/references/layouts.md"
+      ]
+    },
+    {
+      "name": "new-project",
+      "description": "Bootstrap a brand-new project with proven architecture defaults and continuity scaffolding. Use when starting a new project from scratch, or when touching a legacy project that has no handoff/git/structure yet.",
+      "category": "workflow",
+      "targets": [
+        "claude",
+        "codex"
+      ],
+      "version": "68efaaeb40bb",
+      "path": "skills/new-project",
+      "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/new-project/SKILL.md",
+      "file_count": 1,
+      "files": [
+        "skills/new-project/SKILL.md"
+      ]
+    },
+    {
+      "name": "session-start",
+      "description": "Old name for the session-start ritual, which now lives in call-handoff; run that skill instead.",
+      "category": "workflow",
+      "targets": [
+        "claude",
+        "codex"
+      ],
+      "version": "9ea3ea110186",
+      "path": "skills/session-start",
+      "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/session-start/SKILL.md",
+      "file_count": 1,
+      "files": [
+        "skills/session-start/SKILL.md"
+      ]
+    },
+    {
+      "name": "update-handoff",
+      "description": "End-of-session wrap in one pass: a DETAILED handoff (always; depth scales with how much the session did, nothing in context is allowed to slip), lessons, memory, bug ledger and NEXT-SESSION-PROMPT.md. Use on \"update handoff\", \"wrap up\", \"end the session\", or before context runs out.",
+      "category": "workflow",
+      "targets": [
+        "claude",
+        "codex"
+      ],
+      "version": "703d93a0ec4a",
+      "path": "skills/update-handoff",
+      "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/update-handoff/SKILL.md",
+      "file_count": 2,
+      "files": [
+        "skills/update-handoff/SKILL.md",
+        "skills/update-handoff/references/layered.md"
+      ]
+    },
+    {
+      "name": "app-audit",
+      "description": "Automated technical and disclosure compliance-assistance audit of a project: profiling, read-only specialist subagents, fresh research, optional Codex peer review, one consolidated report. Use on /app-audit, \"audit this app\", or a pre-launch security/privacy/store check.",
+      "category": "safety",
+      "targets": [
+        "claude",
+        "codex"
+      ],
+      "version": "ec0280e7d3c7",
+      "path": "skills/app-audit",
+      "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/app-audit/SKILL.md",
+      "file_count": 110,
+      "files": [
+        "skills/app-audit/SKILL.md",
+        "skills/app-audit/README.md",
+        "skills/app-audit/agents/app-audit-adversarial-reviewer.md",
+        "skills/app-audit/agents/app-audit-ai-reviewer.md",
+        "skills/app-audit/agents/app-audit-architecture-reviewer.md",
+        "skills/app-audit/agents/app-audit-codex-liaison.md",
+        "skills/app-audit/agents/app-audit-data-reviewer.md",
+        "skills/app-audit/agents/app-audit-implementer.md",
+        "skills/app-audit/agents/app-audit-legal-researcher.md",
+        "skills/app-audit/agents/app-audit-ops-reviewer.md",
+        "skills/app-audit/agents/app-audit-payments-reviewer.md",
+        "skills/app-audit/agents/app-audit-platform-researcher.md",
+        "skills/app-audit/agents/app-audit-privacy-reviewer.md",
+        "skills/app-audit/agents/app-audit-recon.md",
+        "skills/app-audit/agents/app-audit-security-reviewer.md",
+        "skills/app-audit/agents/app-audit-source-verifier.md",
+        "skills/app-audit/agents/app-audit-verifier.md",
+        "skills/app-audit/fixtures/GROUND-TRUTH.md",
+        "skills/app-audit/fixtures/fixture-saas/.env.example",
+        "skills/app-audit/fixtures/fixture-saas/.github/workflows/ci.yml",
+        "skills/app-audit/fixtures/fixture-saas/.gitignore",
+        "skills/app-audit/fixtures/fixture-saas/README.md",
+        "skills/app-audit/fixtures/fixture-saas/app/(dashboard)/account/page.tsx",
+        "skills/app-audit/fixtures/fixture-saas/app/(dashboard)/notes/[id]/page.tsx",
+        "skills/app-audit/fixtures/fixture-saas/app/(dashboard)/notes/page.tsx",
+        "skills/app-audit/fixtures/fixture-saas/app/api/account/delete/route.ts",
+        "skills/app-audit/fixtures/fixture-saas/app/api/credits/consume/route.ts",
+        "skills/app-audit/fixtures/fixture-saas/app/api/health/route.ts",
+        "skills/app-audit/fixtures/fixture-saas/app/api/notes/[id]/route.ts",
+        "skills/app-audit/fixtures/fixture-saas/app/api/notes/route.ts",
+        "skills/app-audit/fixtures/fixture-saas/app/api/stripe/checkout/route.ts",
+        "skills/app-audit/fixtures/fixture-saas/app/api/stripe/webhook/route.ts",
+        "skills/app-audit/fixtures/fixture-saas/app/api/summarize/route.ts",
+        "skills/app-audit/fixtures/fixture-saas/app/api/uploads/route.ts",
+        "skills/app-audit/fixtures/fixture-saas/app/layout.tsx",
+        "skills/app-audit/fixtures/fixture-saas/app/page.tsx",
+        "skills/app-audit/fixtures/fixture-saas/app/pricing/page.tsx",
+        "skills/app-audit/fixtures/fixture-saas/app/privacy-policy/page.tsx",
+        "skills/app-audit/fixtures/fixture-saas/app/signin/page.tsx",
+        "skills/app-audit/fixtures/fixture-saas/app/signup/page.tsx",
+        "skills/app-audit/fixtures/fixture-saas/app/terms/page.tsx",
+        "skills/app-audit/fixtures/fixture-saas/components/CookieBanner.tsx",
+        "skills/app-audit/fixtures/fixture-saas/components/DeleteAccountButton.tsx",
+        "skills/app-audit/fixtures/fixture-saas/components/Nav.tsx",
+        "skills/app-audit/fixtures/fixture-saas/components/NoteCard.tsx",
+        "skills/app-audit/fixtures/fixture-saas/components/Testimonials.tsx",
+        "skills/app-audit/fixtures/fixture-saas/config/legacy.env.example.bak",
+        "skills/app-audit/fixtures/fixture-saas/content/changelog.md",
+        "skills/app-audit/fixtures/fixture-saas/lib/ai.ts",
+        "skills/app-audit/fixtures/fixture-saas/lib/analytics.ts",
+        "skills/app-audit/fixtures/fixture-saas/lib/auth.ts",
+        "skills/app-audit/fixtures/fixture-saas/lib/stripe.ts",
+        "skills/app-audit/fixtures/fixture-saas/lib/summarize-internal.ts",
+        "skills/app-audit/fixtures/fixture-saas/lib/supabase/client.ts",
+        "skills/app-audit/fixtures/fixture-saas/lib/supabase/server.ts",
+        "skills/app-audit/fixtures/fixture-saas/middleware.ts",
+        "skills/app-audit/fixtures/fixture-saas/next.config.mjs",
+        "skills/app-audit/fixtures/fixture-saas/package.json",
+        "skills/app-audit/fixtures/fixture-saas/public/logo.svg",
+        "skills/app-audit/fixtures/fixture-saas/scripts/build-marketing-blurb.mjs",
+        "skills/app-audit/fixtures/fixture-saas/styles/globals.css",
+        "skills/app-audit/fixtures/fixture-saas/supabase/config.toml",
+        "skills/app-audit/fixtures/fixture-saas/supabase/migrations/20250110120000_init.sql",
+        "skills/app-audit/fixtures/fixture-saas/supabase/migrations/20250214093000_storage_buckets.sql",
+        "skills/app-audit/fixtures/fixture-saas/supabase/migrations/20250320141500_subscriptions.sql",
+        "skills/app-audit/fixtures/fixture-saas/supabase/storage/brand-assets/MANIFEST.md",
+        "skills/app-audit/fixtures/fixture-saas/tsconfig.json",
+        "skills/app-audit/fixtures/fixture-saas/vercel.json",
+        "skills/app-audit/fixtures/fixture-static/README.md",
+        "skills/app-audit/fixtures/fixture-static/about.html",
+        "skills/app-audit/fixtures/fixture-static/index.html",
+        "skills/app-audit/fixtures/fixture-static/script.js",
+        "skills/app-audit/fixtures/fixture-static/style.css",
+        "skills/app-audit/references/codex-policy.md",
+        "skills/app-audit/references/discovery.md",
+        "skills/app-audit/references/domains-ai.md",
+        "skills/app-audit/references/domains-compliance.md",
+        "skills/app-audit/references/domains-production.md",
+        "skills/app-audit/references/fix-safety.md",
+        "skills/app-audit/references/orchestration.md",
+        "skills/app-audit/references/reporting.md",
+        "skills/app-audit/references/research-policy.md",
+        "skills/app-audit/schemas/application-profile.schema.json",
+        "skills/app-audit/schemas/audit-state.schema.json",
+        "skills/app-audit/schemas/finding.schema.json",
+        "skills/app-audit/schemas/source-registry.schema.json",
+        "skills/app-audit/scripts/codex_review.sh",
+        "skills/app-audit/scripts/freshness_check.py",
+        "skills/app-audit/scripts/scan_processors.py",
+        "skills/app-audit/scripts/scan_secrets.py",
+        "skills/app-audit/scripts/schema_util.py",
+        "skills/app-audit/scripts/tests/clean-target/index.html",
+        "skills/app-audit/scripts/tests/clean-target/notes.md",
+        "skills/app-audit/scripts/tests/run_selftest.sh",
+        "skills/app-audit/scripts/tests/samples/finding.invalid.json",
+        "skills/app-audit/scripts/tests/samples/finding.valid.json",
+        "skills/app-audit/scripts/tests/samples/profile.invalid.json",
+        "skills/app-audit/scripts/tests/samples/profile.valid.json",
+        "skills/app-audit/scripts/tests/samples/registry.fresh.json",
+        "skills/app-audit/scripts/tests/samples/registry.invalid.json",
+        "skills/app-audit/scripts/tests/samples/registry.valid.json",
+        "skills/app-audit/scripts/tests/samples/state.invalid.json",
+        "skills/app-audit/scripts/tests/samples/state.valid.json",
+        "skills/app-audit/scripts/tests/scan-target/.env.example",
+        "skills/app-audit/scripts/tests/scan-target/package.json",
+        "skills/app-audit/scripts/tests/scan-target/src/analytics.js",
+        "skills/app-audit/scripts/tests/scan-target/src/config.js",
+        "skills/app-audit/scripts/validate_finding.py",
+        "skills/app-audit/scripts/validate_json.py",
+        "skills/app-audit/scripts/validate_registry.py"
+      ]
+    },
+    {
+      "name": "compliance-check",
+      "description": "Live compliance close-out: checks what is actually live (store listing and labels, published policies, deployed backend, retention and deletion jobs) against the code and the published words, then works the remediation runbook. Use on /compliance-check, \"what's left on compliance\", \"close out the audit\", or before a store submission.",
+      "category": "safety",
+      "targets": [
+        "claude",
+        "codex"
+      ],
+      "version": "9244413ffaef",
+      "path": "skills/compliance-check",
+      "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/compliance-check/SKILL.md",
+      "file_count": 9,
+      "files": [
+        "skills/compliance-check/SKILL.md",
+        "skills/compliance-check/references/live-surfaces.md",
+        "skills/compliance-check/references/production-safety.md",
+        "skills/compliance-check/references/retention-and-deletion.md",
+        "skills/compliance-check/references/us-consumer-health-data.md",
+        "skills/compliance-check/templates/purge-files-function.ts",
+        "skills/compliance-check/templates/retention-purge.sql",
+        "skills/compliance-check/templates/setup-script-skeleton.sh",
+        "skills/compliance-check/templates/uptime.yml"
+      ]
+    },
+    {
+      "name": "pre-release-review",
+      "description": "Independent fresh-context review before anything ships. Use on \"ship it\", \"release\", \"submit\", \"deploy\", \"push to production\", before any production push, and after a large diff, even when the diff looks fine.",
+      "category": "safety",
+      "targets": [
+        "claude",
+        "codex"
+      ],
+      "version": "ef52630b71be",
+      "path": "skills/pre-release-review",
+      "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/pre-release-review/SKILL.md",
+      "file_count": 1,
+      "files": [
+        "skills/pre-release-review/SKILL.md"
+      ]
+    },
+    {
+      "name": "safe-data-write",
+      "description": "Use before any write, migration, or deletion touching user data: stores, schemas, user-owned files (Excel workbooks, databases, documents). Backup, audit and rollback rules learned from shipped data-loss bugs.",
+      "category": "safety",
+      "targets": [
+        "claude",
+        "codex"
+      ],
+      "version": "e14ed4cff0d7",
+      "path": "skills/safe-data-write",
+      "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/safe-data-write/SKILL.md",
+      "file_count": 1,
+      "files": [
+        "skills/safe-data-write/SKILL.md"
+      ]
+    },
+    {
+      "name": "security-pass",
+      "description": "Use when touching auth, API keys, secrets, RLS/policies, payment or personal data, any new endpoint that writes, or live backends — and before any release. Security and secrets checklist; every rule traces to a real production finding.",
+      "category": "safety",
+      "targets": [
+        "claude",
+        "codex"
+      ],
+      "version": "17c62905a755",
+      "path": "skills/security-pass",
+      "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/security-pass/SKILL.md",
+      "file_count": 1,
+      "files": [
+        "skills/security-pass/SKILL.md"
+      ]
+    },
+    {
+      "name": "verify-work",
+      "description": "Use before claiming work is done, working, or fixed, and before writing a handoff or completion summary. Verification ladder plus the Verified/NOT-verified ledger.",
+      "category": "safety",
+      "targets": [
+        "claude",
+        "codex"
+      ],
+      "version": "91082beddc65",
+      "path": "skills/verify-work",
+      "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/verify-work/SKILL.md",
+      "file_count": 1,
+      "files": [
+        "skills/verify-work/SKILL.md"
+      ]
+    },
+    {
+      "name": "antigravity-bridge",
+      "description": "Delegate bounded work or get a third-provider opinion from Google's Antigravity CLI (agy, Gemini). Use on \"ask antigravity\", \"ask gemini\", \"send this to agy\", as a Claude-vs-Codex tie-breaker, or for cheap bounded research sweeps.",
+      "category": "delegation",
+      "targets": [
+        "claude",
+        "codex"
+      ],
+      "version": "3e0eceeacbaf",
+      "path": "skills/antigravity-bridge",
+      "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/antigravity-bridge/SKILL.md",
+      "file_count": 3,
+      "files": [
+        "skills/antigravity-bridge/SKILL.md",
+        "skills/antigravity-bridge/references/verified-notes.md",
+        "skills/antigravity-bridge/scripts/agy-run.sh"
+      ]
+    },
+    {
+      "name": "astra-conductor",
+      "description": "Operating mode for the ENTIRE session whenever the session model is GPT-6-Astra: Astra acts only as architect/orchestrator, delegates ALL execution to gpt-5.6/5.4/5.3 subagents via spawn_agent, and verifies end-to-end.",
+      "category": "delegation",
+      "targets": [
+        "codex"
+      ],
+      "version": "32c5d9492438",
+      "path": "skills/astra-conductor",
+      "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/astra-conductor/SKILL.md",
+      "file_count": 1,
+      "files": [
+        "skills/astra-conductor/SKILL.md"
+      ]
+    },
+    {
+      "name": "codex-bridge",
+      "description": "Delegate a task to OpenAI Codex or get a non-Claude second review via the codex plugin. Use on \"ask codex\", \"have codex review/check this\", \"send to codex\", or before a release when a second provider is worth it.",
+      "category": "delegation",
+      "targets": [
+        "claude"
+      ],
+      "version": "cc854b4ba0ad",
+      "path": "skills/codex-bridge",
+      "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/codex-bridge/SKILL.md",
+      "file_count": 4,
+      "files": [
+        "skills/codex-bridge/SKILL.md",
+        "skills/codex-bridge/references/exec-gotchas.md",
+        "skills/codex-bridge/references/image-generation.md",
+        "skills/codex-bridge/references/windows.md"
+      ]
+    },
+    {
+      "name": "cowork-relay",
+      "description": "Split work between Claude Cowork and Claude Code on one project: each side does all it can and ends with a copy-paste relay prompt for the other. Use in a Cowork session or when a RELAY prompt is pasted.",
+      "category": "delegation",
+      "targets": [
+        "claude",
+        "codex"
+      ],
+      "version": "eb3fce68dc58",
+      "path": "skills/cowork-relay",
+      "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/cowork-relay/SKILL.md",
+      "file_count": 1,
+      "files": [
+        "skills/cowork-relay/SKILL.md"
+      ]
+    },
+    {
+      "name": "fable-conductor",
+      "description": "Session-long operating mode when the session model is Fable/Mythos-class: Fable plans, briefs and verifies; execution is delegated to Opus/Sonnet/Haiku subagents.",
+      "category": "delegation",
+      "targets": [
+        "claude"
+      ],
+      "version": "15ac26eb688c",
+      "path": "skills/fable-conductor",
+      "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/fable-conductor/SKILL.md",
+      "file_count": 1,
+      "files": [
+        "skills/fable-conductor/SKILL.md"
+      ]
+    },
+    {
+      "name": "spawn-agent",
+      "description": "Use BEFORE spawning any subagent (research, implementation, review, debugging) or choosing a model for delegated work. Gate, brief-writing procedure, and model-tier routing; usage limits are a real budget.",
+      "category": "delegation",
+      "targets": [
+        "claude",
+        "codex"
+      ],
+      "version": "ea08bd80f6d4",
+      "path": "skills/spawn-agent",
+      "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/spawn-agent/SKILL.md",
+      "file_count": 1,
+      "files": [
+        "skills/spawn-agent/SKILL.md"
+      ]
+    },
+    {
+      "name": "apply-richformat",
+      "description": "Give any text-bearing surface (app screen, document, report, README, chat answer, CLI output, table) visible rank and separation. Use when building or reviewing one, or on \"rich formatting\", \"text vomit\", \"needs better structure\", \"make this readable\".",
+      "category": "formatting",
+      "targets": [
+        "claude",
+        "codex"
+      ],
+      "version": "e3f8a4d59765",
+      "path": "skills/apply-richformat",
+      "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/apply-richformat/SKILL.md",
+      "file_count": 1,
+      "files": [
+        "skills/apply-richformat/SKILL.md"
+      ]
+    },
+    {
+      "name": "slop-clean",
+      "description": "Project-wide sweep that removes heavy AI slop from design and copy while keeping deliberate, evidenced creative choices (bold colour, density, texture, voice). Manual only (/slop-clean [path]); never self-trigger.",
+      "category": "formatting",
+      "targets": [
+        "claude",
+        "codex"
+      ],
+      "version": "48e654211e31",
+      "path": "skills/slop-clean",
+      "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/slop-clean/SKILL.md",
+      "file_count": 1,
+      "files": [
+        "skills/slop-clean/SKILL.md"
+      ]
+    },
+    {
+      "name": "client-cms",
+      "description": "Add a secure client-facing admin/content layer to the current website so nontechnical staff can edit approved content without touching source. Use on /client-cms, \"add an admin panel\", or when the user wants site content editable by a client or business owner.",
+      "category": "tooling",
+      "targets": [
+        "claude",
+        "codex"
+      ],
+      "version": "20c13b79bcea",
+      "path": "skills/client-cms",
+      "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/client-cms/SKILL.md",
+      "file_count": 2,
+      "files": [
+        "skills/client-cms/SKILL.md",
+        "skills/client-cms/references/inline-editing.md"
+      ]
+    },
+    {
+      "name": "commissioning-logger",
+      "description": "Only when explicitly asked to log a multi-step hands-on process (commissioning, wiring, bring-up, troubleshooting): \"log this\", \"start a commissioning log\", \"write it up as we go\". Keeps log.md plus a Word doc with annotated screenshots.",
+      "category": "tooling",
+      "targets": [
+        "claude",
+        "codex"
+      ],
+      "version": "52c753a9212a",
+      "path": "skills/commissioning-logger",
+      "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/commissioning-logger/SKILL.md",
+      "file_count": 5,
+      "files": [
+        "skills/commissioning-logger/SKILL.md",
+        "skills/commissioning-logger/scripts/annotate_screenshot.py",
+        "skills/commissioning-logger/scripts/build_log_docx.js",
+        "skills/commissioning-logger/scripts/package-lock.json",
+        "skills/commissioning-logger/scripts/package.json"
+      ]
+    },
+    {
+      "name": "usage-here",
+      "description": "Report what this session cost: tokens and dollars by model, share of the 5-hour and weekly limits, top three prompts. Use on \"usage here\", \"what did this session cost\", \"how much have I burned\", \"token usage\", or questions about limits mid-session.",
+      "category": "tooling",
+      "targets": [
+        "claude",
+        "codex"
+      ],
+      "version": "c437186106a0",
+      "path": "skills/usage-here",
+      "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/usage-here/SKILL.md",
+      "file_count": 4,
+      "files": [
+        "skills/usage-here/SKILL.md",
+        "skills/usage-here/limits.json",
+        "skills/usage-here/pricing.json",
+        "skills/usage-here/usage_report.py"
+      ]
+    }
+  ]
+}

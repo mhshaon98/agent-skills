@@ -101,9 +101,7 @@ below are enough. Don't impose ceremony the project doesn't earn.
 - **Cap runtime resources from day one** if the project spawns OS processes, runs a
   service/daemon, ships a container, or runs untrusted code: bounded worker pools (never
   spawn-per-request; no tight retry loop on spawn failure), and PID/memory limits in the
-  deploy surface (Docker `pids_limit`/`mem_limit`, k8s `resources.limits`, systemd
-  `TasksMax`/`MemoryMax`). Prevents fork-bomb / resource-flood DoS the app layer can't
-  defend against. Details: the `security-pass` skill.
+  deploy surface (`security-pass`, runtime section).
 
 ## Storage decision table
 

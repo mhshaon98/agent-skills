@@ -1,6 +1,6 @@
 ---
 name: codex-bridge
-description: Delegate tasks to OpenAI Codex or get a cross-provider second review from inside Claude Code via the official codex plugin. Use when the user says "ask codex", "have codex review/check this", "send to codex", or before a release when a non-Claude reviewer adds value.
+description: Delegate a task to OpenAI Codex or get a non-Claude second review via the codex plugin. Use on "ask codex", "have codex review/check this", "send to codex", or before a release when a second provider is worth it.
 ---
 
 # Codex Bridge — delegate to, and get reviewed by, a non-Claude model
@@ -25,43 +25,15 @@ never enter credentials on their behalf. Plugin registration is per-machine and 
 it has no bridge, regardless of what other machines have, and a machine where the user
 deliberately declined it has none either.
 
-## 0.5 `codex exec` gotchas
+## 0.5 Before these specific jobs, read the reference
 
-- **Backgrounded `codex exec` MUST get `</dev/null`.** With an open non-TTY stdin it
-  prints "Reading additional input from stdin..." and hangs forever before doing ANY
-  work, with zero output — silently, for as long as you let it. Foreground runs are
-  unaffected.
-- **The default sandbox cannot reach the iOS Simulator** (or any XPC service):
-  `simctl` fails with `CoreSimulatorService ... Code=61 "Connection refused"`. Getting
-  past this needs a Codex profile with a relaxed sandbox mode, which only the user
-  should create and authorize — and only for simulator capture/verification tasks,
-  never for general coding. Note that Codex profiles live in per-name config files, not
-  as `[profiles.*]` tables inside `config.toml`.
-- **Approval prompts do not exist in `codex exec`.** "Have Codex ask permission" is
-  only possible in interactive Codex (TUI / desktop app); the headless bridge either
-  has the access or it doesn't.
-- **Codex cannot inject simulator taps** (`simctl` has no tap command; System Events
-  needs accessibility grants it may not have). The division that works: Claude drives
-  the UI with its simulator tools, Codex captures and reviews.
-
-## 0.6 Image generation via the CLI
-
-The CLI's `image_generation` feature (ChatGPT-token auth, no API key, needs a paid
-ChatGPT plan) generates images headlessly and saves them into the workspace:
-
-```bash
-codex exec --skip-git-repo-check -s workspace-write \
-  -c model="<image-capable model>" -c model_reasoning_effort="medium" \
-  "<brief: exact paths+filenames, exact pixel size, 'verify each with sips', content rules>"
-```
-
-- Pass model and effort as `-c` flags per invocation; never edit the user's
-  `~/.codex/config.toml` yourself.
-- Multi-image briefs loop on their own (roughly 60-90s per image). A workspace image
-  named as a reference holds identity and framing across a series (e.g. staged
-  before/after pairs).
-- Generated images come out **letterless** — do brand typography and compositing in
-  your own committed generators. Verify dimensions on disk yourself.
+- Running `codex exec` yourself (background runs, iOS Simulator access, approvals):
+  `references/exec-gotchas.md`. The one rule to keep in mind always: a backgrounded
+  `codex exec` needs `</dev/null` or it waits on stdin forever, silently.
+- Image generation: `references/image-generation.md`, then
+  https://github.com/mhshaon98/agent-skills/blob/main/playbooks/codex-image-pipeline.md for the full doctrine (pass model and effort as
+  `-c` flags, keep effort at most medium, never edit `~/.codex/config.toml`).
+- First use on a Windows PC: `references/windows.md`.
 
 ## 1. Command inventory
 
@@ -102,6 +74,14 @@ If you use Codex regularly, write its standing contract down somewhere Codex rea
 
 ## 3. Usage doctrine
 
+**Review direction matters.** One published test found Claude reviewing a Codex draft
+raised correctness (about 72% → 90%) while Codex reviewing a Claude draft lowered it
+(about 91% → 83%); small LeetCode-style set, reviewers could not run tests, so treat it
+as a caution, not a law. Consequences: a Codex review of Claude's work is a list of
+**leads**, never a patch list. Reproduce or trace each finding before changing
+anything, and do not "fix" what you cannot confirm. Where the work can be split, the
+stronger arrangement is Codex drafts the bounded piece and Claude reviews it.
+
 - **A Codex review is a SECOND opinion. It never replaces `pre-release-review`.**
   That skill's independent Claude reviewer is still mandatory before any release,
   submission, or deploy. Codex runs *in addition*, where a non-Claude perspective is
@@ -120,9 +100,3 @@ If you use Codex regularly, write its standing contract down somewhere Codex rea
   Claude limit.
 - **Never send secrets.** Anything handed to Codex leaves Anthropic's boundary — the
   same rule as for any external tool (see `security-pass`).
-
-## 4. Windows
-
-Validate the bridge on one Windows machine before trusting it on another; the plugin
-has had Windows-specific install and app-server startup bugs. If one bites, say so
-plainly and fall back to a Claude reviewer rather than retrying blind.

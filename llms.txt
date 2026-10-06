@@ -1,0 +1,66 @@
+# Agent Skills Catalog
+
+> Installable agent skills in the SKILL.md format for Claude Code (also read by OpenAI Codex CLI). An agent pointed here should list the catalog, let the user pick, and install only the picks.
+
+Install protocol: read AGENTS.md first. The machine-readable manifest is skills.json; each entry lists every file path of the skill, so it can be installed by downloading raw files without git. Claude Code users can also add this repo as a plugin marketplace (`/plugin marketplace add mhshaon98/agent-skills`, then `/plugin install <skill>@dev-discipline`).
+
+## Start here
+
+- [AGENTS.md](https://raw.githubusercontent.com/mhshaon98/agent-skills/main/AGENTS.md): install protocol for agents (list, user picks, install picks only, never overwrite without asking)
+- [skills.json](https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills.json): manifest; skills[] entries carry name, description, category, targets (claude/codex), version, path, raw_url, file_count and files
+- [marketplace.json](https://raw.githubusercontent.com/mhshaon98/agent-skills/main/.claude-plugin/marketplace.json): Claude Code plugin marketplace, one plugin per skill plus category bundles
+- [README.md](https://raw.githubusercontent.com/mhshaon98/agent-skills/main/README.md): human overview and one-line installers
+
+## Skills: Workflow
+
+- [bug-ledger](https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/bug-ledger/SKILL.md): Use when a bug is reported, found, fixed, or reopened, or before working in a bug-prone area. Check BUG_LIST.md before debugging: many "new" bugs are regressions of fixed ones.
+- [call-handoff](https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/call-handoff/SKILL.md): Cold-start briefing from the project's newest handoff, open bugs and next-session prompt in two round-trips, then stop. Use at session start or on "call handoff", "catch up", "where did we leave off".
+- [new-project](https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/new-project/SKILL.md): Bootstrap a brand-new project with proven architecture defaults and continuity scaffolding. Use when starting a new project from scratch, or when touching a legacy project that has no handoff/git/structure yet.
+- [session-start](https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/session-start/SKILL.md): Old name for the session-start ritual, which now lives in call-handoff; run that skill instead.
+- [update-handoff](https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/update-handoff/SKILL.md): End-of-session wrap in one pass: a DETAILED handoff (always; depth scales with how much the session did, nothing in context is allowed to slip), lessons, memory, bug ledger and NEXT-SESSION-PROMPT.md. Use on "update handoff", "wrap up", "end the session", or before context runs out.
+
+## Skills: Safety
+
+- [app-audit](https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/app-audit/SKILL.md): Automated technical and disclosure compliance-assistance audit of a project: profiling, read-only specialist subagents, fresh research, optional Codex peer review, one consolidated report. Use on /app-audit, "audit this app", or a pre-launch security/privacy/store check.
+- [compliance-check](https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/compliance-check/SKILL.md): Live compliance close-out: checks what is actually live (store listing and labels, published policies, deployed backend, retention and deletion jobs) against the code and the published words, then works the remediation runbook. Use on /compliance-check, "what's left on compliance", "close out the audit", or before a store submission.
+- [pre-release-review](https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/pre-release-review/SKILL.md): Independent fresh-context review before anything ships. Use on "ship it", "release", "submit", "deploy", "push to production", before any production push, and after a large diff, even when the diff looks fine.
+- [safe-data-write](https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/safe-data-write/SKILL.md): Use before any write, migration, or deletion touching user data: stores, schemas, user-owned files (Excel workbooks, databases, documents). Backup, audit and rollback rules learned from shipped data-loss bugs.
+- [security-pass](https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/security-pass/SKILL.md): Use when touching auth, API keys, secrets, RLS/policies, payment or personal data, any new endpoint that writes, or live backends — and before any release. Security and secrets checklist; every rule traces to a real production finding.
+- [verify-work](https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/verify-work/SKILL.md): Use before claiming work is done, working, or fixed, and before writing a handoff or completion summary. Verification ladder plus the Verified/NOT-verified ledger.
+
+## Skills: Delegation
+
+- [antigravity-bridge](https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/antigravity-bridge/SKILL.md): Delegate bounded work or get a third-provider opinion from Google's Antigravity CLI (agy, Gemini). Use on "ask antigravity", "ask gemini", "send this to agy", as a Claude-vs-Codex tie-breaker, or for cheap bounded research sweeps.
+- [astra-conductor](https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/astra-conductor/SKILL.md): Operating mode for the ENTIRE session whenever the session model is GPT-6-Astra: Astra acts only as architect/orchestrator, delegates ALL execution to gpt-5.6/5.4/5.3 subagents via spawn_agent, and verifies end-to-end. (Codex CLI only)
+- [codex-bridge](https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/codex-bridge/SKILL.md): Delegate a task to OpenAI Codex or get a non-Claude second review via the codex plugin. Use on "ask codex", "have codex review/check this", "send to codex", or before a release when a second provider is worth it. (Claude Code only)
+- [cowork-relay](https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/cowork-relay/SKILL.md): Split work between Claude Cowork and Claude Code on one project: each side does all it can and ends with a copy-paste relay prompt for the other. Use in a Cowork session or when a RELAY prompt is pasted.
+- [fable-conductor](https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/fable-conductor/SKILL.md): Session-long operating mode when the session model is Fable/Mythos-class: Fable plans, briefs and verifies; execution is delegated to Opus/Sonnet/Haiku subagents. (Claude Code only)
+- [spawn-agent](https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/spawn-agent/SKILL.md): Use BEFORE spawning any subagent (research, implementation, review, debugging) or choosing a model for delegated work. Gate, brief-writing procedure, and model-tier routing; usage limits are a real budget.
+
+## Skills: Formatting
+
+- [apply-richformat](https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/apply-richformat/SKILL.md): Give any text-bearing surface (app screen, document, report, README, chat answer, CLI output, table) visible rank and separation. Use when building or reviewing one, or on "rich formatting", "text vomit", "needs better structure", "make this readable".
+- [slop-clean](https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/slop-clean/SKILL.md): Project-wide sweep that removes heavy AI slop from design and copy while keeping deliberate, evidenced creative choices (bold colour, density, texture, voice). Manual only (/slop-clean [path]); never self-trigger.
+
+## Skills: Tooling
+
+- [client-cms](https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/client-cms/SKILL.md): Add a secure client-facing admin/content layer to the current website so nontechnical staff can edit approved content without touching source. Use on /client-cms, "add an admin panel", or when the user wants site content editable by a client or business owner.
+- [commissioning-logger](https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/commissioning-logger/SKILL.md): Only when explicitly asked to log a multi-step hands-on process (commissioning, wiring, bring-up, troubleshooting): "log this", "start a commissioning log", "write it up as we go". Keeps log.md plus a Word doc with annotated screenshots.
+- [usage-here](https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/usage-here/SKILL.md): Report what this session cost: tokens and dollars by model, share of the 5-hour and weekly limits, top three prompts. Use on "usage here", "what did this session cost", "how much have I burned", "token usage", or questions about limits mid-session.
+
+## Optional
+
+- [playbooks/README.md](https://raw.githubusercontent.com/mhshaon98/agent-skills/main/playbooks/README.md): index of longer reference docs the skills lean on; read on demand, nothing to install
+- [architecture-playbook](https://raw.githubusercontent.com/mhshaon98/agent-skills/main/playbooks/architecture-playbook.md): Architecture Playbook
+- [character-narrated-video](https://raw.githubusercontent.com/mhshaon98/agent-skills/main/playbooks/character-narrated-video.md): Character-narrated video: a mascot narrates and drives the UI
+- [cloudflare-cost-safety](https://raw.githubusercontent.com/mhshaon98/agent-skills/main/playbooks/cloudflare-cost-safety.md): Cloudflare Cost-Safety Playbook
+- [codex-image-pipeline](https://raw.githubusercontent.com/mhshaon98/agent-skills/main/playbooks/codex-image-pipeline.md): Codex image pipeline — AI images headlessly, on any project
+- [communication-and-autonomy](https://raw.githubusercontent.com/mhshaon98/agent-skills/main/playbooks/communication-and-autonomy.md): Communication & Autonomy Standards
+- [device-demo-video](https://raw.githubusercontent.com/mhshaon98/agent-skills/main/playbooks/device-demo-video.md): Device demo video: an app shown running on real hardware, in motion
+- [model-and-agent-strategy](https://raw.githubusercontent.com/mhshaon98/agent-skills/main/playbooks/model-and-agent-strategy.md): Model & Agent Strategy
+- [security-and-secrets](https://raw.githubusercontent.com/mhshaon98/agent-skills/main/playbooks/security-and-secrets.md): Security & Secrets Playbook
+- [social-marketing-visuals](https://raw.githubusercontent.com/mhshaon98/agent-skills/main/playbooks/social-marketing-visuals.md): Social / marketing visuals — the grid mix rule
+- [token-efficiency](https://raw.githubusercontent.com/mhshaon98/agent-skills/main/playbooks/token-efficiency.md): Token Efficiency Playbook
+- [verification-and-quality](https://raw.githubusercontent.com/mhshaon98/agent-skills/main/playbooks/verification-and-quality.md): Verification & Code Quality Standards
+- [install.sh](https://raw.githubusercontent.com/mhshaon98/agent-skills/main/install.sh): macOS/Linux/Git Bash installer (works piped from curl)
+- [install.ps1](https://raw.githubusercontent.com/mhshaon98/agent-skills/main/install.ps1): Windows PowerShell installer (works with irm | iex)

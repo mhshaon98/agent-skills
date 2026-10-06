@@ -1,6 +1,6 @@
 ---
 name: safe-data-write
-description: Use BEFORE any write, migration, or deletion touching precious user data — data stores, schemas, user-owned files (Excel workbooks, databases, documents). User data is sacred; these rules were learned from shipped data-loss bugs.
+description: "Use before any write, migration, or deletion touching user data: stores, schemas, user-owned files (Excel workbooks, databases, documents). Backup, audit and rollback rules learned from shipped data-loss bugs."
 ---
 
 # Safe Writes to Precious Data

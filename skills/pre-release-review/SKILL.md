@@ -1,6 +1,6 @@
 ---
 name: pre-release-review
-description: Use when the user says "ship it", "release", "submit", "deploy", "push to production", before any production push, or after any large diff. Mandatory independent review pass — never skip because "the diff looks fine".
+description: Independent fresh-context review before anything ships. Use on "ship it", "release", "submit", "deploy", "push to production", before any production push, and after a large diff, even when the diff looks fine.
 ---
 
 # Pre-Release Review Pass
@@ -18,7 +18,8 @@ separate agent, not the same context re-reading its diff.**
 2. **Spawn a review agent** (fresh context, no shared assumptions):
    - Model tier: **frontier** — review is judgment work, and release-critical review is
      the clearest case for your strongest tier. Spawn via a subagent type that pins the
-     model, not via a bare family alias (aliases resolve to whatever is newest).
+     model, not via a bare family alias (aliases resolve to whatever is newest; full
+     rule in `spawn-agent`).
    - Read-only — the reviewer proposes, never fixes.
 3. **Brief the agent** (agents start cold — the brief must be self-contained):
 
@@ -57,6 +58,9 @@ REPORT BACK: findings with file:line evidence; explicit "areas I could not verif
 - [ ] No test/sample data left behind
 - [ ] Version/build numbers bumped (an uploaded build number is burned forever)
 - [ ] User-facing copy checked against copy rules
+- [ ] EVERY surface that can start an in-app purchase shows title, price, period,
+      auto-renewal terms, cancel path, **Terms of Use (EULA)** + Privacy links, and
+      Restore — and the store listing description carries the same items
 - [ ] Handoff updated; working tree clean or explained
 
 **Never push/publish/submit without the user's explicit go-ahead.**

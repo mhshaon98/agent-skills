@@ -1,6 +1,6 @@
 ---
 name: app-audit
-description: Runs an automated technical and disclosure compliance-assistance audit of a project — profiling, domain routing, read-only specialist subagents, fresh authoritative research, optional independent peer review, and one consolidated report. It also runs the `compliance-check` skill in embedded mode to verify what is actually live (store labels, published policies, deployed backend, retention jobs). Plain `/app-audit` with no arguments runs the full intelligent audit; the optional modes are full, launch, fix, fix critical, fix safe, verify, research, security, and privacy.
+description: 'Automated technical and disclosure compliance-assistance audit of a project: profiling, read-only specialist subagents, fresh research, optional Codex peer review, one consolidated report. Use on /app-audit, "audit this app", or a pre-launch security/privacy/store check.'
 argument-hint: "[full|launch|fix|fix critical|fix safe|verify|research|security|privacy]"
 ---
 
@@ -101,7 +101,7 @@ governs, and re-read nothing you already have.
 | File | Read when |
 |---|---|
 | `references/discovery.md` | Phase 1–3, every mode |
-| `references/orchestration.md` | Phase 5 onward; always for `default`/`full`/`launch` |
+| `references/orchestration.md` | At start for `default`/`full`/`launch` (§11); otherwise from Phase 5 |
 | `references/research-policy.md` | Any depth assignment, any research dispatch, `research` mode |
 | `references/codex-policy.md` | Before the first Codex checkpoint of the run (skip entirely if Codex is unavailable) |
 | `references/fix-safety.md` | `fix`, `fix critical`, `fix safe`, `verify`; and whenever writing remediation guidance |
@@ -294,7 +294,8 @@ one-at-a-time questions. If the user does not answer, the affected findings stay
 ## 11. First action
 
 1. Resolve the mode from `$ARGUMENTS` and state it in one line.
-2. Read `references/discovery.md` and `references/orchestration.md`.
+2. Read `references/discovery.md`; in `default`/`full`/`launch` mode also read
+   `references/orchestration.md` now (other modes: when Phase 5 begins, per §2).
 3. Check `<project>/.app-audit/state.json` — if present, report what exists and
    whether you are resuming or starting fresh.
 4. Spawn `app-audit-recon`.

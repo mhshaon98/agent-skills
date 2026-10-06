@@ -1,16 +1,21 @@
 ---
 name: fable-conductor
-description: Operating mode for the ENTIRE session whenever the session model is a top-tier reasoning model: it acts only as architect/orchestrator, delegates ALL execution to cheaper subagent tiers, and verifies end-to-end.
+description: "Session-long operating mode when the session model is Fable/Mythos-class: Fable plans, briefs and verifies; execution is delegated to Opus/Sonnet/Haiku subagents."
 ---
 
 # Fable as Conductor — Delegate Everything, Verify Everything
 
-When this session runs on a Fable-class model, Fable-time is the scarcest resource in
-the system. It is spent ONLY on what lower tiers cannot do: understanding the goal,
+When this session runs on a Fable-class model, Fable time is the scarcest resource in
+the system, so spend it on what lower tiers cannot do (understanding the goal,
 architecture and design, decomposing work, writing briefs, merging results, and the
-final end-to-end verification verdict. **Everything else is delegated.** This mode
+final end-to-end verification verdict) and delegate the rest. This mode
 deliberately overrides the usual "zero agents by default" rule — on Fable, the
 subagents ARE the execution layer.
+
+This mode applies ONLY to Fable/Mythos-class sessions: a session whose main model is
+already the frontier executor tier (e.g. Opus) is not a conductor and follows the
+"session model already equals the frontier executor" rule in `spawn-agent` instead
+(work inline, zero agents by default).
 
 ## The standing loop (repeat until the goal is achieved)
 
@@ -20,24 +25,14 @@ subagents ARE the execution layer.
    skills into the plan; users state outcomes and won't enumerate these for you.
    Then decompose into bounded, self-contained tasks with observable done-criteria.
    Plan depth ∝ blast radius.
-2. **ROUTE** — route each task to the cheapest tier that can actually do it. Think in
-   tiers, not in specific model names:
-
-   | Tier | Route these tasks |
-   |---|---|
-   | **Frontier executor** (your strongest general model, medium effort) — the DEFAULT for delegated work | Anything carrying judgment or ambiguity: design, implementation in unfamiliar code, debugging, code review, security-sensitive surfaces, subtle/high-blast-radius migrations, research needing judgment, dense-document reasoning |
-   | **Workhorse** (a slightly cheaper frontier-family model) — work already specified | Execution where the plan is decided: implementing an agreed spec, complex-but-mechanical refactors, verification passes, careful sweeps, multi-step tool work, documentation with reasoning |
-   | **Sonnet-class** — genuinely simple tasks only | Short text/copy generation, web scraping, simple multi-step sweeps, classification |
-   | **Haiku-class** — the most mechanical tasks | Boilerplate, mechanical edits, formatting, icons/asset drudgery, file sweeps, simple tests, doc/handoff updates, scraping/extraction |
-
-   **Pin the tier you mean.** A family alias in the Agent tool's `model` parameter
-   resolves to the *newest* model of that family, so your whole fleet moves the day a
-   new one ships. Spawn through subagent types whose frontmatter pins an exact model id
-   instead. **Hard rule:** research, scraping, codebase exploration, and data collection
-   are ALWAYS delegated off the conductor — never done inline, even "just quickly".
-   Research that needs judgment goes to the frontier executor; mechanical
-   scraping/extraction goes to Sonnet/Haiku. Before delegating at all: can a regex, a
-   SQL query, or plain computation do it for free?
+2. **ROUTE** — tiers, split and spawn mechanics are in `spawn-agent` ("Model-tier
+   routing"); read it before the first dispatch of the session. In short: the pinned
+   frontier executor (e.g. current Opus) for anything that is real work, Sonnet- or
+   Haiku-class only for the genuinely simple or mechanical, and never a bare family
+   alias like `model: "opus"`, because that alias means "newest in the family". On
+   Fable, research, scraping, exploration and data collection are always delegated,
+   even when it would be quick inline, because Fable time is the scarce resource.
+   First ask whether a regex, SQL query or plain computation does the job for free.
 3. **BRIEF & DISPATCH** — write a self-contained brief per task (use the
    `spawn-agent` skill's brief format: role, context, exact files to read, bounded
    task, ownership/boundaries, definition of done, required report-back with
@@ -90,5 +85,5 @@ inline, that is the signal to stop and dispatch.
 - **No marathon agents:** split phases so each agent finishes in ≤~100 tool calls; an
   executor returning a checkpoint gets a fresh successor, never a "continue" on the
   same context. Watch wall-time — >30 min on one agent means the brief was too big.
-- Session end: delegate the handoff draft to the cheapest tier, verify it, and run the
-  `update-handoff` learning loop yourself.
+- Session end: run `update-handoff` yourself; it is three round-trips and the content
+  is already in context.

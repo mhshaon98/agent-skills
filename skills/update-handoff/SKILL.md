@@ -1,24 +1,55 @@
 ---
 name: update-handoff
-description: End-of-session wrap-up in one efficient pass — updates the handoff, memory, changelog, and bug ledger as needed, and writes NEXT-SESSION-PROMPT.md so the next session starts instantly. Use when the user says "update handoff", "wrap up", "end the session", or before context runs out.
+description: 'End-of-session wrap in one pass: a DETAILED handoff (always; depth scales with how much the session did, nothing in context is allowed to slip), lessons, memory, bug ledger and NEXT-SESSION-PROMPT.md. Use on "update handoff", "wrap up", "end the session", or before context runs out.'
 ---
 
 # Update Handoff — end-of-session wrap in one pass
 
 Closes out a session: handoff + retrospective + memory + a paste-ready prompt for the
 next session. **Efficiency rule: ≤3 tool round-trips** — one gather script, then ALL
-file writes batched in one parallel message. Most of what goes into these files is
+file writes batched in one parallel message. Efficiency means few round-trips, never a
+thin handoff: completeness of the handoff outranks its length. Most of what goes into these files is
 already in this session's context; never re-read files this session wrote or discussed.
 
 ## Step 1 — gather (single Bash call)
 
 ```bash
 date "+NOW: %Y-%m-%d %H%M"
-if [ ! -d .git ] && [ -f WHERE-IS-THE-CODE.md ]; then T=$(grep -oE '([A-Za-z]:[\/]|~/)[^`"<>|*?]+' WHERE-IS-THE-CODE.md | head -1 | tr '\134' '/' | sed -e "s|^~|$HOME|" -e 's|^\([A-Za-z]\):|/\L\1|' -e 's|[[:space:]]*$||'); [ -d "$T" ] && { echo "ENTRY POINT -> writing into $T"; cd "$T"; }; fi; pwd
-H=$(ls -1 HANDOFF-*.md 2>/dev/null | sort | tail -1); echo "CURRENT HANDOFF: ${H:-NONE}"
+if [ ! -d .git ] && [ -f WHERE-IS-THE-CODE.md ]; then T=$(grep -oE '([A-Za-z]:[\/]|~/)[^`"<>|*?]+' WHERE-IS-THE-CODE.md | head -1 | tr '\134' '/' | sed -e "s|^~|$HOME|" -e 's|[[:space:]]*$||' | awk '{ if (match($0, /^[A-Za-z]:/)) $0 = "/" tolower(substr($0, 1, 1)) substr($0, 3); print }'); [ -d "$T" ] && { echo "ENTRY POINT -> writing into $T"; cd "$T"; }; fi; pwd
+if [ -d handoffs ] && grep -q '^## Topic table' CLAUDE.md 2>/dev/null; then echo "LAYERED: topic files:"; find handoffs -maxdepth 1 -name '*.md' 2>/dev/null | sort; else H=$(find . -maxdepth 1 -name 'HANDOFF-*.md' 2>/dev/null | sed 's|^\./||' | sort | tail -1); echo "CURRENT HANDOFF: ${H:-NONE}"; fi
 git status --porcelain=v1 2>/dev/null | head -20; git log --oneline -8 2>/dev/null || ls -t | head -10
 [ -n "${SKILLS_REPO:-}" ] && { echo "SKILLS CLONE:"; git -C "$SKILLS_REPO" status -sb 2>/dev/null | head -1; git -C "$SKILLS_REPO" status --porcelain=v1 2>/dev/null | head -10; }
 ```
+
+## Step 1b — context sweep (ALWAYS; this is what makes the handoff detailed)
+
+Detailed is the default; the user should never have to ask for "detailed". The handoff
+is the only thing that survives this context window, so before writing anything walk the
+WHOLE session, oldest to newest (including anything summarised by compaction), and list
+every:
+
+- **Request** the user made, including mid-turn asides and side tasks ("on the side…",
+  "also can you…"): done / partly done / not started / dropped, and why.
+- **Change**: every file created, edited or deleted (path + one line of why), every
+  commit hash and push (which repo, which branch), every installer or script run.
+- **Decision** and **rejected alternative**, with the evidence that decided it.
+- **Exact facts** the next session would otherwise have to rediscover: paths, URLs, IDs,
+  versions, commands that worked, error messages verbatim, numbers measured.
+- **In-flight work**: background agents or jobs still running or whose results were not
+  yet acted on, questions asked and not answered, approvals pending, where a multi-step
+  task stopped (the exact next step, not "continue").
+- **Preferences and rules** the user stated this session (also to memory if durable).
+- **Verified vs NOT-verified**: what actually ran versus what was only written.
+
+Then write it ALL down. Depth scales with the session, not with a word budget: a short
+session gets a short handoff; a long, high-context one gets a long handoff organised by
+**workstream** (one sub-section per independent thread under "what this session did",
+each with its own state, files, commits, decisions and exact next step), plus a
+**requests ledger** table (# · request · status · where it landed / why not) and an
+**in flight at wrap** list. Prefer exact detail over summary. Before writing, tick the
+list off against the draft: every item is in the handoff or consciously dropped as
+trivial. If the session is huge, write the handoff FIRST (before lessons and memory) so
+a context limit mid-wrap cannot lose it.
 
 ## Step 2 — decide what needs updating (write nothing yet)
 
@@ -32,6 +63,8 @@ git status --porcelain=v1 2>/dev/null | head -20; git log --oneline -8 2>/dev/nu
   ordered TODO → retrospective → how to run. Add a "supersedes" line naming the
   previous handoff; keep the old ones. **No secrets** (these files are long-lived and
   often synced — reference keys by name); every relative date converted to absolute.
+- Gather printed `LAYERED`, or the handoff is juggling two or more unrelated issues?
+  Read this skill's `references/layered.md`.
 - **Retrospective**: a new gotcha → a dated entry in whatever lessons file you keep;
   a default that got beaten → edit that guidance in place; a rule that turned out wrong
   → fix it. Bar for promoting a lesson: durable, verified in real work, generalizable,
@@ -74,6 +107,8 @@ lessons in the handoff marked "PROMOTE TO LESSONS".
 - [ ] **Project pushed** — if the project has a remote, `git push` (ask the user first
       before pushing anything public or production-facing; a private project remote at a
       checkpoint is routine).
+- [ ] **Context-sweep coverage**: every request, change, commit, decision, exact fact and
+      in-flight item from Step 1b is in the handoff (or deliberately dropped as trivial).
 - [ ] Handoff, `NEXT-SESSION-PROMPT.md`, and `BUG_LIST.md` agree with each other.
 - [ ] No secrets in anything written; every relative date converted to absolute.
 

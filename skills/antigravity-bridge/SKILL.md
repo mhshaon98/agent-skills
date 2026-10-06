@@ -1,26 +1,28 @@
 ---
 name: antigravity-bridge
-description: Delegate bounded work to Google's Antigravity CLI (agy, Gemini models) from inside Claude Code, and get a third-provider second opinion. Use when the user says "ask antigravity", "ask gemini", "send this to agy", when Claude and Codex disagree and a tie-breaker is needed, or when cheap bounded research/sweeps would otherwise burn Claude subagent budget.
+description: Delegate bounded work or get a third-provider opinion from Google's Antigravity CLI (agy, Gemini). Use on "ask antigravity", "ask gemini", "send this to agy", as a Claude-vs-Codex tie-breaker, or for cheap bounded research sweeps.
 ---
 
 # Antigravity Bridge — the third provider tier
 
 `agy` is Google's Antigravity CLI (notes below were verified against v1.1.26, installed at
-`~/.local/bin/agy`, on a Google AI Pro subscription). **Requires the Antigravity CLI to be
+`~/.local/bin/agy`, on a paid Google AI plan). **Requires the Antigravity CLI to be
 installed and signed in; without it this skill does nothing.** Unlike `codex-bridge` this is **not a plugin** — there are no
 `/antigravity:*` slash commands. Claude calls it through one wrapper and nothing else.
 
 **Its value is a third, non-Claude, non-OpenAI opinion on a budget that is genuinely
 small.** It is the LIGHT tier — not where the big workload goes.
 
-Everything below was verified on macOS unless marked otherwise. CLI behavior churns; re-check
+Everything below was verified on one macOS machine unless marked otherwise. CLI behavior churns; re-check
 anything that surprises you.
 
 ## 0. Prerequisite check — every time, before promising anything
 
 ```bash
-<skills-dir>/antigravity-bridge/scripts/agy-run.sh --timeout 60 -- "reply with exactly: ready"
+"$HOME/.claude/skills/antigravity-bridge/scripts/agy-run.sh" --timeout 60 -- "reply with exactly: ready"
 ```
+
+(Adjust the path if you installed the skills somewhere other than `~/.claude/skills`.)
 
 Exit codes tell you what to say, then **STOP** — never improvise a substitute, never
 shell out to a bare `agy`:
@@ -59,10 +61,9 @@ It exists because five things bite otherwise, all confirmed by hitting them:
   tool call was denied.** Both are caught and turned into real exit codes (3 and 4).
 - **No hard timeout = a hung session.** Always set (default 600s).
 
-Issue #76 (`agy -p` emitting nothing on a pipe) did **NOT** reproduce on v1.1.26 — piped
-output works. The pty fallback via `script` stays in as a safety net; if it ever fires it
-prints a warning to stderr. Git Bash on Windows has no `script`, so if #76 ever bites
-there the bridge is simply unavailable on that machine — say so, don't fake it.
+If the wrapper warns on stderr that its pty fallback fired, the run still returned; exit
+127 means the bridge is down on this machine (Git Bash has no `script` for the
+fallback). Say so, don't fake it. History: `references/verified-notes.md`.
 
 Long jobs go out with `run_in_background`, never foreground — a foreground call blocks
 the session for its whole duration.
@@ -70,7 +71,7 @@ the session for its whole duration.
 ## 2. Model policy (binding)
 
 **Claude picks the model — not the CLI's default.** Effort rules: **high is allowed on Flash models** (the cheap tier); everything
-else is **medium or low, never high, never max**. The wrapper enforces this — a non-Flash
+else runs at medium or low. The wrapper enforces this — a non-Flash
 `-high` slug or any `claude-*` slug exits 2 before spending a token.
 
 `agy` **bakes reasoning effort into the model slug**, so `--model` and `--effort` are
@@ -86,7 +87,7 @@ Slugs verified present at time of writing (`agy models` — re-check, they churn
 | `gemini-3.7-flash-medium` / `gemini-3.6-flash-medium` | only to reproduce or compare against an older run |
 | `gemini-3.1-pro-low` | when Pro's depth genuinely matters — **Pro has no medium tier**, only high and low, and high is banned outside Flash, so Pro is available at `-low` only |
 | `gpt-oss-120b-medium` | an open-weights third voice; rarely the best pick |
-| `claude-sonnet-4-6`, `claude-opus-4-6-thinking` | **BANNED.** Paying Google quota for Claude's own blind spots defeats the entire bridge. |
+| `claude-sonnet-4-6`, `claude-opus-4-6-thinking` | Not allowed: paying Google quota for a Claude model gives no second opinion. |
 
 ## 3. Workspace trust and denied actions
 
@@ -134,7 +135,7 @@ mode** — the run either has access or it doesn't (same as `codex exec`).
 
 ## 5. Quota is the real constraint — route accordingly
 
-Google AI Pro is roughly **250 units / 5h plus a ~2,800 weekly baseline, shared with the
+Quotas depend on your plan; on the AI Pro tier it is roughly **250 units / 5h plus a ~2,800 weekly baseline, shared with the
 Antigravity IDE**. Google does not publish exact figures; treat these as approximate and
 check the account when it matters. That is a few dozen substantial delegations a week —
 an order of magnitude below the Codex and Claude-subagent budgets.
@@ -142,8 +143,7 @@ an order of magnitude below the Codex and Claude-subagent budgets.
 | Work | Goes to | Why |
 |---|---|---|
 | Scope, architecture, phasing, release calls | **Claude (me)** | Conductor. Never delegated. |
-| Implementation needing judgment, debugging unfamiliar code | Claude subagent, frontier model | Frontier tier |
-| Specified, bounded, mechanical-but-nontrivial work | Claude subagent, workhorse model | Workhorse |
+| Implementation needing judgment, debugging unfamiliar code, and specified bounded work alike | Claude subagent at your default tier | Default tier (`spawn-agent`) |
 | Substantial delegated coding, deep root-cause, adversarial review | **Codex** | Bigger budget, proven bridge |
 | Tie-breaker when Claude and Codex disagree | **Antigravity** | Third provider family |
 | Cheap bounded research, doc lookups, mechanical sweeps | **Antigravity** | Preserves Claude subagent budget |
@@ -154,12 +154,12 @@ Don't discover the limit by hitting it.
 
 ## 6. The collaboration contract
 
-Same shape as `codex-bridge`, so the three-agent setup stays coherent:
+Same shape as `codex-bridge`, so a Claude + Codex + Antigravity setup stays coherent:
 
 - **Claude conducts.** Antigravity executes briefs and gives second opinions. It never
   re-scopes and never decides.
 - **Antigravity never writes to Claude's surfaces:** any `CLAUDE.md`, any `.claude/`, any
-  `skills/`, or the user's skills repository. Output appearing there is a contract breach —
+  `skills/`, or any skills repository the user keeps. Output appearing there is a contract breach —
   tell the user, revert via git.
 - **Its voice is `ANTIGRAVITY-FINDINGS.md`** at the target project's root (dated entries,
   newest first). Check it before briefing it on a project and after any task. **Its
@@ -171,15 +171,10 @@ Same shape as `codex-bridge`, so the three-agent setup stays coherent:
 
 ## 7. Other verified notes
 
-- Unauthenticated `agy models` / `agy -p` fail **cleanly** with a clear message — they do
-  NOT hang, contrary to the docs' warning. Trust the exit code.
-- `agy`'s own error messages are unusually good (they name the fix). Read them before
-  guessing.
-- The `curl | bash` installer appends `~/.local/bin` to `.zshrc`, `.zprofile` AND
-  `.profile`; the `ERROR: logging before google.Init` lines it prints are glog noise on
-  the success path, not failures.
+- The `ERROR: logging before google.Init` lines the `curl | bash` installer prints are
+  glog noise on the success path, not failures.
 - `--continue` / `--conversation ID` resume real threads. Default to fresh context; use
   continuity only when it is the point.
-- Slash commands and `/usage` are unavailable inside streaming sessions.
-- Subcommands worth knowing: `agy models`, `agy mcp`, `agy plugin`, `agy update`.
-  `agy agents` returned empty when tested.
+- Installer shell-profile detail, unauthenticated behaviour, subcommand list and issue #76
+  history: `references/verified-notes.md` (read when installing or debugging the bridge
+  itself).
