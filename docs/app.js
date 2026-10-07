@@ -210,7 +210,17 @@
     new IntersectionObserver(function (es) {
       var up = !es[0].isIntersecting;
       guide.classList.toggle("up", up);
-      if (up) { kick(-26); faces.buddy.show("happy", 1200); } else { hush(); saidFor = ""; }
+      if (up) {
+        kick(-26); faces.buddy.show("happy", 1200);
+        // Say the line for whatever is already mid-screen: that section may have got there first.
+        setTimeout(function () {
+          var midY = window.innerHeight / 2;
+          Array.prototype.some.call(document.querySelectorAll("main > section[id]"), function (n) {
+            var b = n.getBoundingClientRect();
+            if (b.top <= midY && b.bottom > midY) { say(n.id); return true; }
+          });
+        }, 700);
+      } else { hush(); saidFor = ""; }
     }, { threshold: .15 }).observe(scene);
     // Whichever section crosses the middle of the screen is the one it talks about.
     var mid = new IntersectionObserver(function (es) {
@@ -364,7 +374,7 @@
       card.addEventListener("click", function () { openPanel(s); });
       card.addEventListener("pointerenter", function () { faces.buddy.show("wow", 700); });
       // Until someone opens one, the first cartridge says that it can be opened.
-      if (!opened && i === 0) { card.classList.add("nudge"); card.appendChild(el("span", "tap", "Tap to open")); }
+      if (!opened && i === 0) { card.classList.add("nudge"); var tap = el("span", "tap", "Tap to open"); tap.setAttribute("aria-hidden", "true"); card.appendChild(tap); }
       grid.appendChild(card);
       reveal(card);
     });
@@ -415,7 +425,7 @@
         buildChips();
         render();
         buildPicks();
-        var want = decodeURIComponent(location.hash.slice(1));
+        var want = ""; try { want = decodeURIComponent(location.hash.slice(1)); } catch (e) {}
         skills.some(function (s) { if (s.name === want) { openPanel(s); return true; } });
       })
       .catch(function () {
@@ -653,17 +663,19 @@
       set(room > 0 ? clamp(-r.top / room) : 1);
     }
     build();
-    if (CALM || !("IntersectionObserver" in window)) {
-      how.classList.add("calm"); build(); set(1);
+    var still = CALM || !("IntersectionObserver" in window);
+    function refresh() { build(); last = -1; if (still) set(1); else measure(); }
+    var rz2;
+    window.addEventListener("resize", function () { clearTimeout(rz2); rz2 = setTimeout(refresh, 150); });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(refresh);
+    if (still) {
+      how.classList.add("calm"); refresh();
       Array.prototype.forEach.call(steps, function (li) { li.classList.add("on"); });
       return;
     }
     var queued = false;
     function onScroll() { if (queued) return; queued = true; requestAnimationFrame(function () { queued = false; measure(); }); }
     window.addEventListener("scroll", onScroll, { passive: true });
-    var rz2;
-    window.addEventListener("resize", function () { clearTimeout(rz2); rz2 = setTimeout(function () { build(); last = -1; measure(); }, 150); });
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { build(); last = -1; measure(); });
     measure();
   })();
 

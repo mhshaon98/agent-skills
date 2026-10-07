@@ -50,6 +50,7 @@ def load_brand(a):
     global LINK
     if a.plain: b = dict(PLAIN)
     else:
+        if a.brand_file and not os.path.isfile(a.brand_file): sys.exit(f'--brand-file: no such file: {a.brand_file}')
         path = find_profile(a.brand_file)
         if not path:
             sys.exit('NO BRAND PROFILE. Ask the user for their company name, logo file (PNG or JPG) and brand '
@@ -72,12 +73,18 @@ def save_brand(a):
     b = dict(company=a.company, tagline=a.tagline or '', logo='',
              accent=hexcolor(a.accent or PLAIN['accent'], 'accent'), head=hexcolor(a.head or PLAIN['head'], 'head'),
              link=hexcolor(a.link or a.accent or PLAIN['link'], 'link'))
+    path = os.path.join(d, PROFILE)
+    if not a.logo and not a.no_logo and os.path.isfile(path):
+        try:
+            with open(path, encoding='utf-8') as f: old = json.load(f).get('logo') or ''
+            if old and os.path.isfile(os.path.join(d, old)): b['logo'] = old; print('kept the stored logo:', old)
+        except Exception: pass
     if a.logo:
         ext = os.path.splitext(a.logo)[1].lower()
         if ext not in LOGO_TYPES: sys.exit(f'brand: logo must be one of {", ".join(LOGO_TYPES)} (Word cannot embed {ext or "that file"}; export a PNG)')
         if not os.path.isfile(a.logo): sys.exit(f'brand: logo file not found: {a.logo}')
-        b['logo'] = 'logo' + ext; shutil.copyfile(a.logo, os.path.join(d, b['logo']))
-    path = os.path.join(d, PROFILE)
+        b['logo'] = 'logo' + ext; dest = os.path.join(d, b['logo'])
+        if os.path.abspath(a.logo) != os.path.abspath(dest): shutil.copyfile(a.logo, dest)
     with open(path, 'w', encoding='utf-8', newline='\n') as f: json.dump(b, f, indent=1); f.write('\n')
     print('saved brand profile:', path)
     if not b['logo']: print('no logo given: the header and cover will show the company name as text')
@@ -340,6 +347,18 @@ def notice_block(doc, kind, text, anchor=None):
         anchor.addprevious(t._tbl); anchor.addprevious(gap._p)
     return t
 
+COVER_LABELS = {'Document number', 'Revision', 'Date', 'Prepared by', 'Classification'}
+def is_engine_table(t):
+    """A notice panel or the cover id table from an earlier run: restyle must leave it alone."""
+    try:
+        first = t.rows[0].cells[0]
+        shd = first._tc.get_or_add_tcPr().find(qn('w:shd'))
+        fill = (shd.get(qn('w:fill')) or '').upper() if shd is not None else ''
+        if fill in {v[0] for v in NOTICES.values()} | {PALE}: return True
+        return len(t.columns) == 2 and all(r.cells[0].text.strip() in COVER_LABELS for r in t.rows)
+    except Exception:
+        return False
+
 def style_table(t, b, header=True):
     table_borders(t, RULE, 4, inside=True, outer=True)
     t.alignment = WD_TABLE_ALIGNMENT.CENTER
@@ -367,7 +386,8 @@ def add_inline(p, text):
         set_font(r)
 
 # ---------- restyle an existing document ----------
-SIGNAL_RE = re.compile(r'^\s*(?:⚠\s*)?\**\s*(DANGER|WARNING|CAUTION|NOTICE|NOTE|Note|TIP|Tip|IMPORTANT|Important)\s*\**\s*[:\-–—]\s*(.+)$', re.S)
+TYPED_NO = r'^\s*(?:\d+(?:\.\d+)+\.?\s+|\d+\.\s+|\d{1,2}\s+(?=[A-Z][a-z]))'
+SIGNAL_RE = re.compile(r'^\s*(?:⚠\s*)?\**\s*(DANGER|WARNING|CAUTION|NOTICE|NOTE|Note|TIP|Tip|IMPORTANT|Important)\s*\**\s*(?::|(?<=\s)[\-–—](?=\s))\s*(.+)$', re.S)
 def strip_direct_fonts(doc):
     def runs():
         for p in doc.paragraphs: yield from p.runs
@@ -391,13 +411,14 @@ def restyle(inp, out, meta, a):
     if a.numbered:
         for p in doc.paragraphs:
             if p.style.name in ('Heading 1', 'Heading 2', 'Heading 3') and p.runs:
-                m = re.match(r'^\s*(\d+(\.\d+)*\.?|[A-Z]\.)\s+', p.text)
+                m = re.match(TYPED_NO + r'|^\s*[A-Z]\.\s+', p.text)
                 if m:
                     cut = len(m.group(0))
                     for r in p.runs:
                         if cut <= 0: break
                         n = min(cut, len(r.text)); r.text = r.text[n:]; cut -= n
-    for t in doc.tables: style_table(t, b)
+    for t in doc.tables:
+        if not is_engine_table(t): style_table(t, b)
     for p in list(doc.paragraphs):
         m = SIGNAL_RE.match(p.text)
         if m and p.style.name not in ('Heading 1', 'Heading 2', 'Heading 3', 'Title'):
@@ -454,7 +475,7 @@ def build(inp, out, meta, a):
         if not ln.strip(): i += 1; continue
         h = re.match(r'^(#{1,4})\s+(.*)$', ln)
         if h:
-            lvl = len(h.group(1)); text = re.sub(r'^\s*(\d+(\.\d+)*\.?)\s+', '', h.group(2)) if a.numbered else h.group(2)
+            lvl = len(h.group(1)); text = re.sub(TYPED_NO, '', h.group(2)) if a.numbered else h.group(2)
             if re.match(r'(?i)appendix', text): doc.add_paragraph(text, style='Heading 1')
             else: doc.add_paragraph(text, style=f'Heading {lvl}')
             i += 1; continue
@@ -477,6 +498,7 @@ def build(inp, out, meta, a):
                 cells = [c.strip() for c in lines[i].strip().strip('|').split('|')]
                 if not all(re.fullmatch(r':?-{2,}:?', c) for c in cells if c): rows.append(cells)
                 i += 1
+            if not rows: continue
             if caption:
                 cp = doc.add_paragraph(style='Caption'); cp.add_run(caption); caption = None
             ncol = max(len(r) for r in rows); t = doc.add_table(rows=0, cols=ncol)
@@ -535,6 +557,7 @@ def main():
     ap.add_argument('--brand-file', help='brand profile JSON (default: ./.eng-report/brand.json, then ~/.eng-report/brand.json)')
     ap.add_argument('--plain', action='store_true', help='no brand profile: no logo, neutral accent')
     for k in ('company', 'tagline', 'logo', 'accent', 'head', 'link'): ap.add_argument('--' + k, help='brand mode only')
+    ap.add_argument('--no-logo', action='store_true', help='brand mode: drop the stored logo')
     ap.add_argument('--scope', choices=['project', 'user'], default='project', help='brand mode: save in ./.eng-report or ~/.eng-report')
     for k in ('title', 'subtitle', 'doc-type', 'doc-no', 'rev', 'date', 'author', 'classification'): ap.add_argument('--' + k)
     ap.add_argument('--cover', dest='cover', action='store_true', default=None); ap.add_argument('--no-cover', dest='cover', action='store_false')
