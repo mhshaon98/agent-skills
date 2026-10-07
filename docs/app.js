@@ -154,12 +154,85 @@
   cropScene();
   if (narrow.addEventListener) narrow.addEventListener("change", cropScene); else narrow.addListener(cropScene);
 
-  // The corner buddy appears once the hero robot has scrolled away.
-  var buddy = $("buddy");
-  if ("IntersectionObserver" in window) {
-    new IntersectionObserver(function (es) { buddy.classList.toggle("up", !es[0].isIntersecting); }, { threshold: .15 }).observe(scene);
+  /* ---------- the corner guide ---------- */
+  // The robot rides along once the hero has scrolled away. It leans into the scroll,
+  // its treads turn, and it says one plain line about whichever section is on screen.
+  var guide = $("guide"), buddy = $("buddy"), sayEl = $("guide-say"), rig = buddy.querySelector("svg");
+  var SAY = {
+    how: ["New here? Scroll slowly and watch one skill work.", "think"],
+    picks: ["Not sure where to begin? These seven are a safe start.", "happy"],
+    shelf: ["Every cartridge opens. Tap one to see its steps.", "wow"],
+    install: ["Easiest way in: copy box 1 and paste it to your agent.", "wink"],
+    frameworks: ["Other people's skills we use and recommend.", "happy"],
+    playbooks: ["Longer guides. Nothing to install here.", "note"],
+    end: ["That is the tour. Tap me for a ride back up.", "heart"]
+  };
+  var sayTimer = 0, poseTimer = 0, saidFor = "";
+  function pose(name, ms) {
+    clearTimeout(poseTimer);
+    ["wave", "point", "cheer", "hop", "nod", "zoom", "tall"].forEach(function (c) { buddy.classList.remove(c); });
+    if (!name || CALM) return;
+    void buddy.offsetWidth; buddy.classList.add(name);
+    poseTimer = setTimeout(function () { buddy.classList.remove(name); }, ms || 1400);
   }
-  buddy.addEventListener("click", function () { faces.buddy.show("wow", 900); window.scrollTo({ top: 0, behavior: CALM ? "auto" : "smooth" }); });
+  function say(key) {
+    if (key === saidFor || !SAY[key]) return;
+    saidFor = key;
+    clearTimeout(sayTimer);
+    sayEl.textContent = SAY[key][0];
+    sayEl.classList.add("on");
+    faces.buddy.show(SAY[key][1], 1800);
+    pose(key === "end" ? "cheer" : "point", 2200);
+    sayTimer = setTimeout(function () { sayEl.classList.remove("on"); }, 6500);
+  }
+  function hush() { clearTimeout(sayTimer); sayEl.classList.remove("on"); }
+
+  // Scroll physics: lean and antenna lag are springs driven by scroll speed.
+  var phys = { v: 0, lean: 0, leanV: 0, ant: 0, antV: 0, roll: 0, on: false, lastY: window.pageYOffset };
+  function physTick() {
+    var y = window.pageYOffset, dv = y - phys.lastY; phys.lastY = y;
+    phys.v += (dv - phys.v) * .35;
+    var target = Math.max(-11, Math.min(11, phys.v * .4));
+    phys.leanV += (target - phys.lean) * .16; phys.leanV *= .72; phys.lean += phys.leanV;
+    phys.antV += (-phys.lean * 2.2 - phys.ant) * .12; phys.antV *= .84; phys.ant += phys.antV;
+    phys.roll += phys.v * 2.2;
+    rig.style.setProperty("--lean", phys.lean.toFixed(2) + "deg");
+    rig.style.setProperty("--ant", phys.ant.toFixed(2) + "deg");
+    rig.style.setProperty("--roll", phys.roll.toFixed(1) + "deg");
+    rig.style.setProperty("--belt", (-phys.roll / 9).toFixed(1));
+    if (Math.abs(phys.v) < .05 && Math.abs(phys.lean) < .05 && Math.abs(phys.ant) < .05 && Math.abs(phys.antV) < .05) { phys.on = false; return; }
+    requestAnimationFrame(physTick);
+  }
+  function kick(v) { if (CALM) return; if (v) phys.v = v; if (!phys.on) { phys.on = true; phys.lastY = window.pageYOffset; requestAnimationFrame(physTick); } }
+  window.addEventListener("scroll", function () { if (guide.classList.contains("up")) kick(); }, { passive: true });
+
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver(function (es) {
+      var up = !es[0].isIntersecting;
+      guide.classList.toggle("up", up);
+      if (up) { kick(-26); faces.buddy.show("happy", 1200); } else { hush(); saidFor = ""; }
+    }, { threshold: .15 }).observe(scene);
+    // Whichever section crosses the middle of the screen is the one it talks about.
+    var mid = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting && guide.classList.contains("up")) say(e.target.id); });
+    }, { rootMargin: "-45% 0px -45% 0px" });
+    Array.prototype.forEach.call(document.querySelectorAll("main > section[id]"), function (n) { mid.observe(n); });
+    new IntersectionObserver(function (es) { if (es[0].isIntersecting && guide.classList.contains("up")) say("end"); }, { threshold: .6 }).observe(document.querySelector("footer"));
+  }
+  // Now and then it does something small, so it reads as alive rather than looping.
+  if (!CALM) setInterval(function () {
+    if (!guide.classList.contains("up") || document.hidden || sayEl.classList.contains("on") || phys.on) return;
+    var r = Math.random();
+    if (r < .3) pose("wave", 1900);
+    else if (r < .55) { pose("tall", 1300); faces.buddy.look(-1, -1); setTimeout(function () { faces.buddy.look(0, 0); }, 1200); }
+    else if (r < .75) faces.buddy.show("wink", 900);
+    else pose("nod", 1100);
+  }, 5200);
+  buddy.addEventListener("pointerenter", function () { faces.buddy.show("wow", 700); });
+  buddy.addEventListener("click", function () {
+    hush(); faces.buddy.show("bolt", 1100); pose("zoom", 700); kick(-60);
+    window.scrollTo({ top: 0, behavior: CALM ? "auto" : "smooth" });
+  });
 
   /* ---------- ticker: the phrases that wake a skill ---------- */
   var SAYS = [["catch me up", "call-handoff"], ["ship it", "pre-release-review"], ["wrap up", "update-handoff"], ["is it actually done?", "verify-work"],
@@ -178,7 +251,7 @@
       var prev = btn.textContent;
       btn.textContent = "Copied";
       btn.classList.add("done");
-      faces.buddy.show("check", 1400); faces.panel.show("check", 1400);
+      faces.buddy.show("check", 1400); faces.panel.show("check", 1400); pose("cheer", 1200);
       setTimeout(function () { btn.textContent = prev; btn.classList.remove("done"); }, 1600);
     };
     if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -290,9 +363,27 @@
       card.appendChild(el("span", "pins"));
       card.addEventListener("click", function () { openPanel(s); });
       card.addEventListener("pointerenter", function () { faces.buddy.show("wow", 700); });
+      // Until someone opens one, the first cartridge says that it can be opened.
+      if (!opened && i === 0) { card.classList.add("nudge"); card.appendChild(el("span", "tap", "Tap to open")); }
       grid.appendChild(card);
       reveal(card);
     });
+  }
+  // ...and one cartridge on screen lifts out of the shelf every few seconds.
+  var opened = false;
+  try { opened = sessionStorage.getItem("opened") === "1"; } catch (e) {}
+  var peekTimer = CALM ? 0 : setInterval(function () {
+    if (opened || document.hidden) return;
+    var seen = Array.prototype.filter.call(grid.children, function (c) { var b = c.getBoundingClientRect(); return b.top > 60 && b.bottom < window.innerHeight - 20 && !c.matches(":hover"); });
+    if (!seen.length) return;
+    var c = seen[(Math.random() * seen.length) | 0];
+    c.classList.add("peek"); setTimeout(function () { c.classList.remove("peek"); }, 900);
+  }, 2600);
+  function markOpened() {
+    if (opened) return;
+    opened = true; clearInterval(peekTimer);
+    try { sessionStorage.setItem("opened", "1"); } catch (e) {}
+    Array.prototype.forEach.call(grid.querySelectorAll(".nudge"), function (c) { c.classList.remove("nudge"); var t = c.querySelector(".tap"); if (t) c.removeChild(t); });
   }
 
   function buildChips() {
@@ -353,6 +444,7 @@
   }
 
   function openPanel(s) {
+    markOpened(); hush();
     current = s;
     var f = flowFor(s), n = fileCount(s);
     panel.style.setProperty("--c", catColor(s.category));
@@ -459,6 +551,121 @@
       raf = requestAnimationFrame(tick);
     })(t0);
   }
+
+  /* ---------- what is a skill: a cartridge that opens as you scroll ---------- */
+  // Scroll position through the tall track is the timeline: a hand taps the cartridge,
+  // it opens, a plain request is typed, and its flow draws node by node.
+  (function () {
+    var how = $("how"), track = $("how-track"), stage = $("how-stage"), bar = $("how-bar"), steps = $("how-steps").children;
+    var name = "call-handoff", f = FLOWS[name], phrase = "catch me up";
+    if (!f) { how.hidden = true; return; }
+    var color = catColor("workflow");
+    stage.appendChild(el("div", "how-shelf"));
+    var cart = el("div", "cart how-cart"); cart.style.setProperty("--c", color);
+    cart.appendChild(el("span", "cart-cat", "workflow")); cart.appendChild(el("span", "cart-name", name)); cart.appendChild(el("span", "cart-when", f.out + "."));
+    var foot = el("span", "cart-foot"); foot.appendChild(el("span", null, "1 skill"));
+    var go = el("span", "cart-go", "See the flow "); go.appendChild(el("b", null, "→")); foot.appendChild(go);
+    cart.appendChild(foot); cart.appendChild(el("span", "pins")); stage.appendChild(cart);
+    stage.appendChild(el("div", "how-ring"));
+    var hand = svg("svg", { viewBox: "0 0 24 24", "class": "how-hand" });
+    hand.appendChild(svg("path", { d: "M5 2.5l13.5 8.2-6 1.4 3.6 7-2.9 1.5-3.6-7-4.6 4.2z", fill: "#eef6f2", stroke: "#10201f", "stroke-width": "1.6", "stroke-linejoin": "round" }));
+    stage.appendChild(hand);
+    // The cue that says how to play it: a mouse wheel, or a swiping finger on touch screens.
+    var cue = el("div", "how-cue");
+    var mouse = svg("svg", { viewBox: "0 0 26 38", "class": "mouse" });
+    mouse.appendChild(svg("rect", { x: 2, y: 2, width: 22, height: 34, rx: 11, fill: "none", stroke: "#10201f", "stroke-width": 3 }));
+    mouse.appendChild(svg("rect", { x: 11, y: 8, width: 4, height: 8, rx: 2, fill: "#10201f", "class": "wheel" }));
+    var touch = svg("svg", { viewBox: "0 0 26 38", "class": "touch" });
+    touch.appendChild(svg("path", { d: "M13 34V6M6 13l7-7 7 7", fill: "none", stroke: "#10201f", "stroke-width": 3, "stroke-linecap": "round", "stroke-linejoin": "round", opacity: .35 }));
+    touch.appendChild(svg("circle", { cx: 13, cy: 22, r: 6, fill: "#10201f", "class": "finger" }));
+    cue.appendChild(mouse); cue.appendChild(touch);
+    cue.appendChild(el("span", "mouse", "Scroll down to play it"));
+    cue.appendChild(el("span", "touch", "Swipe up to play it"));
+    var chev = svg("svg", { viewBox: "0 0 16 16", "class": "chev" }); chev.setAttribute("style", "width:16px;height:16px");
+    chev.appendChild(svg("path", { d: "M3 5.5l5 5 5-5", fill: "none", stroke: "#10201f", "stroke-width": 2.6, "stroke-linecap": "round", "stroke-linejoin": "round" }));
+    cue.appendChild(chev); stage.appendChild(cue);
+    var sayBox = el("p", "how-say"); sayBox.appendChild(el("small", null, "You say"));
+    var typed = el("span"); sayBox.appendChild(typed); sayBox.appendChild(el("i")); stage.appendChild(sayBox);
+    var flow = el("div", "how-flow"), w = svg("svg", { "class": "wires" }), fg = el("div", "flow-grid");
+    flow.appendChild(w); flow.appendChild(fg); stage.appendChild(flow);
+    flow.style.setProperty("--c", color);
+
+    var nodes = [], hot = null, packet = null, total = 0, marks = [], arrows = [];
+    function build() {
+      fg.innerHTML = ""; while (w.firstChild) w.removeChild(w.firstChild);
+      var items = [{ k: "when", t: "When", l: f.when }];
+      f.steps.forEach(function (st, i) { items.push({ k: st[2] === "check" ? "check" : "step", t: "Step " + (i + 1), l: st[0], n: st[1] }); });
+      items.push({ k: "out", t: "Result", l: f.out });
+      var cols = flow.clientWidth >= 640 ? 3 : 2;
+      fg.style.setProperty("--cols", cols);
+      nodes = items.map(function (it, i) {
+        var row = (i / cols) | 0, pos = i % cols, n = el("div", "node " + it.k);
+        n.style.gridRow = row + 1; n.style.gridColumn = (row % 2 ? cols - 1 - pos : pos) + 1;
+        n.appendChild(el("small", null, it.t)); n.appendChild(el("strong", null, it.l));
+        if (it.n) n.appendChild(el("span", null, it.n));
+        fg.appendChild(n); return n;
+      });
+      var pts = nodes.map(function (n) { return [n.offsetLeft + n.offsetWidth / 2, n.offsetTop + n.offsetHeight / 2, n]; });
+      var d = pts.map(function (q, i) { return (i ? "L" : "M") + q[0].toFixed(1) + " " + q[1].toFixed(1); }).join(" ");
+      w.appendChild(svg("path", { d: d, "class": "wire" }));
+      hot = svg("path", { d: d, "class": "wire hot" }); w.appendChild(hot);
+      total = hot.getTotalLength(); hot.style.strokeDasharray = total;
+      marks = [0]; arrows = [];
+      for (var i = 1; i < pts.length; i++) {
+        var a = pts[i - 1], b = pts[i]; marks.push(marks[i - 1] + Math.hypot(b[0] - a[0], b[1] - a[1]));
+        var horiz = Math.abs(b[0] - a[0]) > Math.abs(b[1] - a[1]), an = a[2], bn = b[2];
+        var gx = horiz ? (b[0] > a[0] ? (an.offsetLeft + an.offsetWidth + bn.offsetLeft) / 2 : (an.offsetLeft + bn.offsetLeft + bn.offsetWidth) / 2) : a[0];
+        var gy = horiz ? a[1] : (an.offsetTop + an.offsetHeight + bn.offsetTop) / 2;
+        var ar = svg("path", { d: "M-7 -8 L7 0 L-7 8 Z", "class": "arrow", transform: "translate(" + gx.toFixed(1) + " " + gy.toFixed(1) + ") rotate(" + (horiz ? (b[0] > a[0] ? 0 : 180) : 90) + ")" });
+        w.appendChild(ar); arrows.push(ar);
+      }
+      packet = svg("circle", { r: 8, "class": "packet" }); w.appendChild(packet);
+    }
+    function clamp(x) { return x < 0 ? 0 : x > 1 ? 1 : x; }
+    var last = -1, lastStep = -1;
+    function set(p) {
+      if (Math.abs(p - last) < .0005) return; last = p;
+      var a = clamp(p / .16), tap = clamp((p - .12) / .04) * (1 - clamp((p - .17) / .03));
+      var b = clamp((p - .18) / .13), c = clamp((p - .3) / .13), d = clamp((p - .46) / .42), e = clamp((p - .9) / .08);
+      stage.style.setProperty("--a", a.toFixed(3)); stage.style.setProperty("--tap", tap.toFixed(3));
+      stage.style.setProperty("--b", (b * b * (3 - 2 * b)).toFixed(3)); stage.style.setProperty("--d", d.toFixed(3));
+      bar.style.setProperty("--p", p.toFixed(3));
+      typed.textContent = "“" + phrase.slice(0, Math.round(c * phrase.length)) + (c >= 1 ? "”" : "");
+      var dist = total * d;
+      hot.style.strokeDashoffset = total - dist;
+      var tip = hot.getPointAtLength(dist); packet.setAttribute("cx", tip.x); packet.setAttribute("cy", tip.y);
+      packet.setAttribute("opacity", d > 0 && d < 1 ? 1 : 0);
+      var live = -1;
+      nodes.forEach(function (n, i) {
+        var on = d > 0 && marks[i] - 30 <= dist;
+        n.classList.toggle("in", on); if (i) arrows[i - 1].classList.toggle("in", on);
+        if (on) live = i;
+      });
+      nodes.forEach(function (n, i) { n.classList.toggle("live", i === live && (i < nodes.length - 1 ? d < 1 : e > 0)); });
+      var step = p < .18 ? 0 : p < .46 ? 1 : p < .9 ? 2 : 3;
+      if (step !== lastStep) {
+        lastStep = step;
+        Array.prototype.forEach.call(steps, function (li, i) { li.classList.toggle("on", i === step); li.classList.toggle("done", i < step); });
+      }
+    }
+    function measure() {
+      var r = track.getBoundingClientRect(), room = r.height - window.innerHeight;
+      set(room > 0 ? clamp(-r.top / room) : 1);
+    }
+    build();
+    if (CALM || !("IntersectionObserver" in window)) {
+      how.classList.add("calm"); build(); set(1);
+      Array.prototype.forEach.call(steps, function (li) { li.classList.add("on"); });
+      return;
+    }
+    var queued = false;
+    function onScroll() { if (queued) return; queued = true; requestAnimationFrame(function () { queued = false; measure(); }); }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    var rz2;
+    window.addEventListener("resize", function () { clearTimeout(rz2); rz2 = setTimeout(function () { build(); last = -1; measure(); }, 150); });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { build(); last = -1; measure(); });
+    measure();
+  })();
 
   function closePanel() { panel.close(); }
   $("panel-x").addEventListener("click", closePanel);
