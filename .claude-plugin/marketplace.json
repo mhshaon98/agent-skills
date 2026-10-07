@@ -1,7 +1,7 @@
 {
   "name": "dev-discipline",
   "description": "Field-tested engineering-discipline skills: session continuity, verification, data safety, release review, delegation and formatting. One plugin per skill, plus one bundle per category.",
-  "version": "2026-10-06",
+  "version": "2026-10-07",
   "owner": {
     "name": "agent-skills maintainers",
     "url": "https://github.com/mhshaon98/agent-skills"
@@ -314,6 +314,23 @@
       ]
     },
     {
+      "name": "eng-report",
+      "source": "./",
+      "description": "Apply an engineering house style (modelled on Rockwell, Siemens, ABB, Schneider and Endress+Hauser technical publications) to a Word, Markdown or PDF document, in the user's own logo and colours, with ANSI safety notices and document-control blocks. Use on \"/eng-report\", \"make this a proper engineering report\", or \"format this like an automation vendor manual\"; on first use it asks for the company's logo and brand colours.",
+      "version": "dfcb67261d7e",
+      "category": "formatting",
+      "keywords": [
+        "skill",
+        "formatting"
+      ],
+      "homepage": "https://github.com/mhshaon98/agent-skills/tree/main/skills/eng-report",
+      "repository": "https://github.com/mhshaon98/agent-skills",
+      "license": "MIT",
+      "skills": [
+        "./skills/eng-report"
+      ]
+    },
+    {
       "name": "slop-clean",
       "source": "./",
       "description": "Project-wide sweep that removes heavy AI slop from design and copy while keeping deliberate, evidenced creative choices (bold colour, density, texture, voice). Manual only (/slop-clean [path]); never self-trigger.",
@@ -448,8 +465,8 @@
     {
       "name": "formatting-pack",
       "source": "./",
-      "description": "Bundle of every formatting skill: apply-richformat, doc-metadata, slop-clean",
-      "version": "8b6b65746053",
+      "description": "Bundle of every formatting skill: apply-richformat, doc-metadata, eng-report, slop-clean",
+      "version": "2477d495d92d",
       "category": "bundle",
       "keywords": [
         "bundle",
@@ -461,6 +478,7 @@
       "skills": [
         "./skills/apply-richformat",
         "./skills/doc-metadata",
+        "./skills/eng-report",
         "./skills/slop-clean"
       ]
     },

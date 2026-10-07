@@ -202,6 +202,17 @@ window.SKILL_FLOWS = {
     ],
     out: "A file that looks like you made it"
   },
+  "eng-report": {
+    when: "A document has to look like a vendor manual",
+    steps: [
+      ["Brand profile on file?", "Company name, logo and colours, saved once", "check", "no: ask for the logo and colours"],
+      ["Pick the skeleton", "Test report, memo, procedure, manual, specification"],
+      ["Fix the content", "Safety notices before their steps, one action per step, tables for data"],
+      ["Run the engine", "Numbered headings, notice panels, header, footer, cover"],
+      ["Check and render", "Rule check, then look at every page"]
+    ],
+    out: "A Word document in your branding, with document control on every page"
+  },
   "slop-clean": {
     when: "You run /slop-clean",
     steps: [
