@@ -317,7 +317,7 @@
       "name": "eng-report",
       "source": "./",
       "description": "Apply an engineering house style (modelled on Rockwell, Siemens, ABB, Schneider and Endress+Hauser technical publications) to a Word, Markdown or PDF document, in the user's own logo and colours, with ANSI safety notices and document-control blocks. Use on \"/eng-report\", \"make this a proper engineering report\", or \"format this like an automation vendor manual\"; on first use it asks for the company's logo and brand colours.",
-      "version": "10faba10bba0",
+      "version": "cc4835c073a4",
       "category": "formatting",
       "keywords": [
         "skill",
@@ -466,7 +466,7 @@
       "name": "formatting-pack",
       "source": "./",
       "description": "Bundle of every formatting skill: apply-richformat, doc-metadata, eng-report, slop-clean",
-      "version": "6c2a39246640",
+      "version": "db659f72feb8",
       "category": "bundle",
       "keywords": [
         "bundle",
