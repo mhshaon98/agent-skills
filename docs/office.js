@@ -1,6 +1,6 @@
 // The office scene. Generated from workshop.js (same robot, physics and brain) with office
 // scenery and stations swapped in; edit shared behaviour there and scenery here.
-// The hero: a wide pixel-art workshop you can play with. A robot builds skill
+// The hero: a wide pixel-art office you can play with. A robot builds skill
 // cartridges, shelves them, tidies whatever gets knocked about, and reacts to
 // being picked up, thrown, and dropped on things.
 // Rendering: three.js, orthographic, drawn small and scaled up with hard pixels.
@@ -87,7 +87,7 @@ export function mount(canvas, ui) {
   solid(1, 20, 40, ROOM.x0 - 1, 10, 0); solid(1, 20, 40, ROOM.x1 + 1, 10, 0);
   solid(60, 20, 1, 0, 10, ROOM.z0 - 1); solid(60, 20, 1, 0, 10, ROOM.z1 + 1);
 
-  /* ---------- the street, the buildings, the sky ---------- */
+  /* ---------- the room ---------- */
   const room = new THREE.Group(); scene.add(room);
   const css = (n) => "#" + n.toString(16).padStart(6, "0");
   const shade = (n, k) => { const c = new THREE.Color(n).multiplyScalar(k); return "#" + c.getHexString(); };
@@ -203,7 +203,7 @@ export function mount(canvas, ui) {
     else if (v === 4) { const arm = new THREE.Group(); arm.position.set(x, 2.27, z - 0.2); room.add(arm); part(cyl(0.08, 1.4, 6), BLACK, arm, 0, 0.7, 0); for (const s of [-1, 1]) { part(box(2.0, 1.2, 0.1, 0.04), BLACK, arm, s * 1.05, 1.5, 0.05 * s, { line: 0.02 }).rotation.y = s * -0.15; } part(box(1.7, 0.08, 0.5, 0.02), BLACK, room, x - 0.6, 2.32, z + 0.7); chair(x + 0.5, z + 1.9, Math.PI + 0.6); block(2.8, 0.1, 0.9, OT.desk, null, x + 1.4, 3.3, z - 1.05); for (const s of [-1, 1]) part(box(0.08, 0.5, 0.7, 0.02), BLACK, room, x + 1.4 + s * 1.2, 3.05, z - 1.05, { flat: true }); stickies(x + 0.6, 3.0, z - 1.12, [0xf2d94a, 0xf2d94a, 0x35d6c0]); penCup(x + 2.2, 3.35, z - 1.0); part(box(0.5, 0.3, 0.4, 0.04), PAPER, room, x + 0.8, 3.5, z - 1.0); flatPlane(2.6, 1.0, posterTex, x - 1.6, 3.6, z - 1.14); }
     else { monitor(room, x + 0.8, 2.27, z - 0.4, 1.9, 1.15, idleTex, -0.1); part(box(0.9, 0.3, 0.9, 0.05), BLACK, room, x - 2.0, 2.42, z); part(box(1.2, 0.03, 0.9, 0.01), PAPER, room, x - 0.6, 2.29, z + 0.4, { flat: true }).rotation.y = 0.3; bin(x - 2.6, z + 1.2); chair(x + 1.0, z + 1.6, Math.PI); flatPlane(1.0, 1.6, photoTex, x - 2.6, 3.4, z - 1.14); }
   }
-  // back-left corner: the butcher-block bench on casters, and an espresso L-desk with a bookcase
+  // back-left corner: a wooden bench on casters, a dark L-desk and a bookcase
   desk(-22.6, -9.4, 5.4, 2.3, { top: OT.wood, edge: 0xa87a44, leg: 0xf2efe4, casters: true }); monitor(room, -23.6, 2.27, -9.9, 2.0, 1.2, idleTex, 0.3);
   part(cyl(0.07, 1.3, 6), BLACK, room, -21.4, 2.9, -10.0); part(box(1.0, 0.1, 0.1, 0.03), BLACK, room, -21.0, 3.5, -10.0).rotation.z = 0.5; part(box(1.4, 0.3, 0.8, 0.04), 0xdfe2e6, room, -22.2, 2.42, -9.0); wire([[-22.8, 2.5, -9.0], [-22.4, 2.9, -8.8], [-21.8, 2.5, -9.1]], 0x2f6fb5);
   block(4.4, 2.3, 1.6, OT.dark, null, -24.6, 1.15, -14.2); block(4.8, 0.16, 2.0, OT.desk, null, -24.6, 2.36, -14.2); block(3.2, 3.6, 1.2, OT.dark, null, -20.6, 1.8, -15.0); carton(-20.6, 4.0, -15.0, 1.5, 0.7, 1.0);
@@ -214,7 +214,7 @@ export function mount(canvas, ui) {
   const clouds = [], birds = [], washing = [], fronds = [], bulbs = [], acs = [], fans = acs, palm = new THREE.Group(), RY = 30;
 
   /* ---------- stations ---------- */
-  // charging corner: black filing cabinet with a UPS and a paper stack, a tray sorter beside it, a floor mat
+  // charging corner: filing cabinet with a paper stack, a tray sorter beside it, a floor mat
   part(cyl(PAD.r, 0.08, 28), 0x2a3330, room, PAD.x, 0.04, PAD.z, { flat: true });
   const padRing = part(new THREE.TorusGeometry(PAD.r * 0.62, 0.1, 8, 28), 0x8fd67a, room, PAD.x, 0.12, PAD.z, { glow: true }); padRing.rotation.x = Math.PI / 2;
   part(box(2.6, 3.2, 1.8, 0.06), BLACK, room, -21.8, 1.6, -4.6, { line: 0.02 }); for (const y of [0.85, 2.35]) { part(box(2.3, 1.3, 0.06, 0.02), 0x26282e, room, -21.8, y, -3.68, { flat: true }); part(box(0.7, 0.1, 0.08, 0.02), GREY, room, -21.8, y + 0.3, -3.62, { flat: true }); }
@@ -238,18 +238,18 @@ export function mount(canvas, ui) {
   for (const s of [-1, 1]) { const flap = block(3.3, 0.08, 1.3, OT.card, null, CRATE.x, 2.25, CRATE.z + s * 1.95, { flat: true }); flap.rotation.x = s * 0.7; const side = block(1.3, 0.08, 2.9, OT.card, null, CRATE.x + s * 2.0, 2.2, CRATE.z, { flat: true }); side.rotation.z = -s * 0.8; }
   part(box(1.5, 0.6, 0.04, 0.01), PAPER, room, CRATE.x - 0.4, 1.1, CRATE.z + 1.6, { flat: true }); part(box(0.5, 0.2, 0.05, 0.01), 0xd94b4b, room, CRATE.x - 0.7, 1.2, CRATE.z + 1.62, { flat: true }); part(box(0.3, 1.9, 0.04, 0.005), TAPE, room, CRATE.x + 0.9, 0.95, CRATE.z + 1.59, { flat: true });
   const chuteLamp = part(ball(0.14), 0xf2d94a, room, CRATE.x + 1.3, 2.4, CRATE.z - 1.3, { glow: true });
-  // the desk. Partition behind, an L of two white tops, the rig, the screens and the clutter.
+  // the desk: partition behind, an L of two white tops, screens and clutter
   partition(BENCH.x, -5.75, 12.4, 4.6); partition(-8.15, -4.3, 3.0, 4.6, { side: true });
   block(4.0, 0.14, 2.9, OT.desk, null, BENCH.x - 2.9, 2.2, BENCH.z, { line: 0.012 }); block(5.76, 0.14, 2.9, OT.desk, null, BENCH.x + 2.02, 2.2, BENCH.z, { line: 0.012 });
   part(box(9.8, 0.07, 0.05, 0.01), DESK_E, room, BENCH.x, 2.13, BENCH.z + 1.45, { flat: true });
   for (const dx of [-4.2, -0.9, 3.9]) { part(box(0.26, 2.0, 0.5, 0.04), LEG, room, BENCH.x + dx, 1.05, BENCH.z); part(box(0.4, 0.14, 2.5, 0.04), LEG, room, BENCH.x + dx, 0.07, BENCH.z); }
   solid(4.9, 1.15, 1.45, BENCH.x, 1.15, BENCH.z);
-  // under the desk: bin with liner, power strip on the leg, a brick, loops of cable
+  // under the desk: bin, power strip, loops of cable
   part(cyl(0.6, 1.5, 10, 0.7), BLACK, room, 0.6, 0.75, BENCH.z + 0.3, { line: 0.02 }); part(cyl(0.76, 0.14, 10), PAPER, room, 0.6, 1.5, BENCH.z + 0.3, { flat: true });
   part(box(0.2, 1.3, 0.3, 0.03), 0xe09a4f, room, BENCH.x - 0.9, 0.9, BENCH.z + 0.36); for (let i = 0; i < 4; i++) part(box(0.06, 0.16, 0.2, 0.01), BLACK, room, BENCH.x - 0.78, 0.45 + i * 0.3, BENCH.z + 0.4, { flat: true });
   part(box(0.8, 0.26, 0.5, 0.04), BLACK, room, -1.4, 0.13, BENCH.z + 1.0);
   wire([[-3.2, 2.1, BENCH.z + 0.6], [-2.8, 0.9, BENCH.z + 0.8], [-2.2, 1.3, BENCH.z + 0.7], [-1.4, 0.3, BENCH.z + 1.0]], BLACK); wire([[1.6, 2.1, BENCH.z + 0.2], [1.2, 0.7, BENCH.z + 0.5], [-0.4, 1.0, BENCH.z + 0.5], [-0.8, 0.5, BENCH.z + 0.4]], BLACK); wire([[-1.0, 0.1, BENCH.z + 1.2], [0.4, 0.08, BENCH.z + 1.7], [2.2, 0.08, BENCH.z + 1.4]], BLACK);
-  // left wing: the DIN-rail rig lying along the partition, laptop sleeve, notebook, wallet, puck, coaster, pen cup, stand
+  // left wing: a test rig along the partition and small desk clutter
   const machine = new THREE.Group(); machine.position.set(-5.0, 2.3, BENCH.z - 0.3); room.add(machine);
   part(box(3.0, 0.12, 0.34, 0.02), 0xb9bcc2, machine, 0, 0.08, -0.55);
   [[-1.1, 0xdfe2e6, 0.6, 0.8], [-0.4, 0x8d939c, 0.7, 0.9], [0.35, 0xdfe2e6, 0.5, 0.7], [0.9, 0xf2efe4, 0.36, 0.6]].forEach(([x, c, w, hh]) => { part(box(w, hh, 0.6, 0.04), c, machine, x, 0.14 + hh / 2, -0.5, { line: 0.04 }); part(box(w * 0.6, 0.08, 0.04, 0.01), 0x8fd67a, machine, x, hh, -0.18, { glow: true }); part(box(w * 0.7, 0.06, 0.04, 0.01), BLACK, machine, x, hh * 0.45, -0.18, { flat: true }); });
@@ -258,12 +258,12 @@ export function mount(canvas, ui) {
   const beacon = part(ball(0.13), 0xff3b4a, machine, 0.9, 0.95, -0.4, { glow: true });
   wire([[-6.1, 2.9, BENCH.z - 0.7], [-6.5, 2.4, BENCH.z + 0.2], [-5.8, 2.32, BENCH.z + 0.8], [-4.6, 2.32, BENCH.z + 0.5], [-4.2, 2.6, BENCH.z - 0.4]], 0x2f6fb5); wire([[-4.7, 2.8, BENCH.z - 0.6], [-4.4, 2.34, BENCH.z + 0.1], [-3.4, 2.32, BENCH.z + 0.4], [-2.9, 2.32, BENCH.z + 0.9]], 0x2f6fb5); wire([[-5.4, 2.7, BENCH.z - 0.6], [-5.2, 2.34, BENCH.z], [-5.6, 2.32, BENCH.z + 0.5]], PAPER);
   solid(1.4, 0.2, 0.5, -5.0, 2.5, BENCH.z - 0.8);
-  part(box(1.7, 0.2, 1.15, 0.08), 0x202227, room, -5.9, 2.38, BENCH.z + 0.75, { line: 0.02 }).rotation.y = 0.12; part(box(0.3, 0.1, 0.2, 0.03), GREY, room, -5.7, 2.52, BENCH.z + 0.8);              // laptop sleeve with a key ring
-  part(box(1.5, 0.08, 1.05, 0.03), BLACK, room, -3.9, 2.31, BENCH.z + 0.75).rotation.y = -0.1; part(box(1.0, 0.1, 0.72, 0.02), 0xb98a72, room, -4.05, 2.4, BENCH.z + 0.75).rotation.y = -0.1; part(box(0.5, 0.08, 0.3, 0.02), 0x6a4a3e, room, -3.3, 2.4, BENCH.z + 0.5);   // laptop, notebook, wallet
+  part(box(1.7, 0.2, 1.15, 0.08), 0x202227, room, -5.9, 2.38, BENCH.z + 0.75, { line: 0.02 }).rotation.y = 0.12; part(box(0.3, 0.1, 0.2, 0.03), GREY, room, -5.7, 2.52, BENCH.z + 0.8);              // sleeve
+  part(box(1.5, 0.08, 1.05, 0.03), BLACK, room, -3.9, 2.31, BENCH.z + 0.75).rotation.y = -0.1; part(box(1.0, 0.1, 0.72, 0.02), 0xb98a72, room, -4.05, 2.4, BENCH.z + 0.75).rotation.y = -0.1; part(box(0.5, 0.08, 0.3, 0.02), 0x6a4a3e, room, -3.3, 2.4, BENCH.z + 0.5);   // flat clutter
   part(new THREE.SphereGeometry(0.34, 12, 8, 0, 6.3, 0, 1.5), PAPER, room, -4.3, 2.3, BENCH.z - 0.05, { line: 0.05 }); part(cyl(0.3, 0.06, 10), 0xc9a36a, room, -3.6, 2.3, BENCH.z - 0.1, { flat: true });
   penCup(-3.3, 2.27, BENCH.z - 0.9);
   const stand = new THREE.Group(); stand.position.set(-6.6, 2.27, BENCH.z - 0.2); stand.rotation.y = 0.5; room.add(stand); for (const s of [-1, 1]) { part(box(0.1, 1.2, 0.1, 0.02), PAPER, stand, s * 0.7, 0.55, 0.2).rotation.x = 0.5; part(box(0.1, 0.9, 0.1, 0.02), PAPER, stand, s * 0.7, 0.42, -0.2).rotation.x = -0.4; } part(box(1.5, 0.1, 0.1, 0.02), PAPER, stand, 0, 0.3, 0.45); part(box(1.5, 0.1, 0.1, 0.02), PAPER, stand, 0, 0.95, -0.02);
-  // right top: curved ultrawide, portrait screen on an arm, keyboard, mouse, phone, stand, tray, bottles
+  // right top: wide screen, portrait screen on an arm, keyboard, mouse, phone, tray, bottles
   const codeTex = paint(54, 16, () => {});
   const ultra = new THREE.Group(); ultra.position.set(BENCH.x + 1.4, 2.27, BENCH.z - 0.55); room.add(ultra);
   [-1, 0, 1].forEach((k) => { const seg = new THREE.Group(); seg.position.set(k * 1.14, 0, Math.abs(k) * 0.13); seg.rotation.y = -k * 0.22; ultra.add(seg); part(box(1.2, 1.32, 0.12, 0.03), BLACK, seg, 0, 1.36, 0, { line: 0.02 }); const t = codeTex.clone(); t.repeat.set(1 / 3, 1); t.offset.set((k + 1) / 3, 0); t.needsUpdate = true; (ultra.userData.t = ultra.userData.t || []).push(t); part(box(1.14, 1.22, 0.03, 0.01), 0xffffff, seg, 0, 1.36, 0.07, { glow: true, map: t }); });
@@ -280,7 +280,7 @@ export function mount(canvas, ui) {
   part(cyl(0.13, 0.55, 8), 0xdff3f6, room, BENCH.x + 2.5, 2.55, BENCH.z + 0.15); part(box(0.2, 0.2, 0.02, 0.005), 0x2f6fb5, room, BENCH.x + 2.5, 2.55, BENCH.z + 0.29, { flat: true }); part(cyl(0.04, 0.22, 5), PAPER, room, BENCH.x + 2.5, 2.92, BENCH.z + 0.15);   // pump bottle
   part(cyl(0.08, 0.26, 6), 0xe09a4f, room, BENCH.x + 2.15, 2.4, BENCH.z + 0.3); part(cyl(0.085, 0.07, 6), PAPER, room, BENCH.x + 2.15, 2.56, BENCH.z + 0.3, { flat: true });
   part(box(1.0, 0.03, 1.3, 0.01), PAPER, room, BENCH.x - 0.5, 2.29, BENCH.z + 0.95, { flat: true }).rotation.y = 0.25;
-  // on the partition: framed whiteboard with the tally, magnets, taped sheet, tags, tray; stickies; a calendar; a wall poster further along
+  // on the partition: framed whiteboard with the tally, magnets, sheets, tags; a calendar; a poster further along
   const counter = paint(128, 52, () => {});
   let built = 0, shipped = 0, energy = 0.8;
   function drawCounter() { const g = counter.userData.g; g.fillStyle = "#f4f4ee"; g.fillRect(0, 0, 128, 52); g.font = "bold 13px monospace"; g.textBaseline = "middle"; g.fillStyle = "#2f6fb5"; g.fillText("BUILT " + String(built).padStart(3, "0"), 6, 14); g.fillStyle = "#d94b4b"; g.fillText("SENT  " + String(shipped).padStart(3, "0"), 6, 32); g.fillStyle = "#e9e9e0"; g.fillRect(82, 5, 22, 18); g.fillStyle = "#9aa0aa"; for (let i = 0; i < 4; i++) g.fillRect(84, 8 + i * 3, 14, 1); g.fillStyle = "#d94b4b"; g.fillRect(118, 6, 4, 4); g.fillRect(118, 20, 4, 4); g.fillStyle = "#f2d94a"; g.fillRect(117, 12, 6, 6); g.fillStyle = "#f2d94a"; g.fillRect(104, 40, 9, 9); g.fillStyle = "#3d4450"; g.fillRect(40, 2, 3, 3); g.fillRect(98, 2, 3, 3); counter.needsUpdate = true; }
@@ -296,7 +296,7 @@ export function mount(canvas, ui) {
   const vendMesh = part(box(1.7, 3.6, 1.6, 0.1), 0xf2efe4, room, 16.6, 1.8, -4.6, { line: 0.02 }); solid(0.85, 2.6, 0.8, 16.6, 2.6, -4.6);
   const tankMesh = part(cyl(0.7, 1.7, 12), 0x8fd0f6, room, 16.6, 4.5, -4.6, { line: 0.03 }); part(cyl(0.3, 0.3, 8), 0x2f6fb5, room, 16.6, 3.72, -4.6);
   part(box(0.24, 0.16, 0.2, 0.03), 0x2f6fb5, room, 16.3, 2.9, -3.75); part(box(0.24, 0.16, 0.2, 0.03), 0xd94b4b, room, 16.9, 2.9, -3.75); part(box(1.2, 0.1, 0.5, 0.02), GREY, room, 16.6, 2.3, -3.7); for (let i = 0; i < 4; i++) part(cyl(0.16, 0.05, 8), PAPER, room, 17.9, 0.05 + i * 0.05, -3.9, { flat: true });
-  // break corner: an espresso cabinet with a radio, a rug in front
+  // break corner: a dark cabinet with a radio, a rug in front
   const tileTex = paint(32, 32, (g) => { g.fillStyle = "#33463c"; g.fillRect(0, 0, 32, 32); g.strokeStyle = "#55685b"; g.lineWidth = 2; g.strokeRect(3, 3, 26, 26); g.strokeStyle = "#8c978a"; g.strokeRect(8, 8, 16, 16); });
   const tile = new THREE.Mesh(cyl(DANCE.r, 0.06, 28), toon(0xffffff, tileTex)); tile.position.set(DANCE.x, 0.03, DANCE.z); tile.receiveShadow = true; room.add(tile);
   const juke = new THREE.Group(); juke.position.set(21.2, 0, -4.4); room.add(juke);
@@ -586,7 +586,7 @@ export function mount(canvas, ui) {
     const x = rb.position.x, z = rb.position.z, back = z < 0.4;
     squash = Math.min(1, v / 26); burst(x, 0.3, z, Math.min(14, v | 0), 5);
     brain.plan = []; brain.step = null;
-    if (Math.hypot(x - PAD.x, z - PAD.z) < PAD.r + 0.5) brain.push({ wait: 2.6, pose: "charge", face: 0, enter: () => { say("> ooh, the UPS. topping up"); mood("bolt"); }, tick: (dt) => { energy = Math.min(1, energy + dt / 2); }, exit: () => { calmFace(); mood("happy", 900); } });
+    if (Math.hypot(x - PAD.x, z - PAD.z) < PAD.r + 0.5) brain.push({ wait: 2.6, pose: "charge", face: 0, enter: () => { say("> ooh, the charger. topping up"); mood("bolt"); }, tick: (dt) => { energy = Math.min(1, energy + dt / 2); }, exit: () => { calmFace(); mood("happy", 900); } });
     else if (Math.hypot(x - DANCE.x, z - DANCE.z) < DANCE.r + 0.5) brain.push({ wait: 1.6, pose: "wave", face: 0, enter: () => { say("> nice rug. good spot for a break"); mood("happy", 1500); } });
     else if (Math.abs(x - CRATE.x) < 2.6 && back) brain.push({ wait: 1.3, pose: "bend", face: Math.PI, enter: () => { say("> rummaging"); mood("wow", 1200); }, exit: () => { for (let i = 0; i < Math.min(3, MAX_PARTS - count("part")); i++) { const p = makePart(CRATE.x, 3, CRATE.z); p.body.velocity.set((Math.random() - 0.3) * 14, 13, 4 + Math.random() * 5); p.body.angularVelocity.set(4, 3, 2); } } });
     else if (Math.abs(x - SHELF.x) < 3.4 && back) brain.push({ wait: 1.5, pose: "cheer", face: Math.PI, enter: () => { say("> " + slots.filter((s) => s.cart).length + " of 8 on the shelf"); mood("check", 1400); } });
@@ -855,7 +855,7 @@ export function mount(canvas, ui) {
     if (calm) { if (drawn) return; } else { t += dt; acc += dt; let n = 0; while (acc >= STEP && n++ < 4) { tick(STEP); acc -= STEP; } }
     animate(dt); draw();
   }
-  say("> booting workshop");
+  say("> morning. booting up");
   requestAnimationFrame(frame);
   return actions;
 }
