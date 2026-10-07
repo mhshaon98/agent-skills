@@ -47,7 +47,8 @@ E="$HOME/.claude/skills/eng-report/scripts/eng_report.py"; PY=$(command -v pytho
 (Installed somewhere other than `~/.claude/skills`? Adjust the path.)
 
 - The user has no logo, or wants none: save the profile without `--logo`; the header and
-  cover then set the company name in type.
+  cover then set the company name in type. Re-running `brand` to change a colour keeps
+  the stored logo; `--no-logo` removes it.
 - The user wants an unbranded document: skip the profile and pass `--plain` in Step 4.
 - An accent close to a safety colour (red, orange, yellow, safety blue) is allowed but
   say so once: the notice panels keep their ANSI colours and must stay distinguishable
@@ -108,6 +109,8 @@ E="$HOME/.claude/skills/eng-report/scripts/eng_report.py"; PY=$(command -v pytho
   `references/templates.md`.
 - `--brand-file other.json` uses a different profile for one run; `--plain` uses none.
 - PDF input: extract the text, rebuild it as Markdown, then `build`.
+- Restyling a document the engine already produced: pass `--no-cover`, or it gains a
+  second cover page. Its notice panels are left as they are.
 - The engine refuses to overwrite its input, and stops with `NO BRAND PROFILE` when there
   is none and `--plain` was not given: go back to Step 1 and ask.
 
