@@ -70,6 +70,7 @@ CATEGORIES = {
     "apply-richformat": "formatting",
     "slop-clean": "formatting",
     "doc-metadata": "formatting",
+    "eng-report": "formatting",
     "client-cms": "tooling",
     "commissioning-logger": "tooling",
     "usage-here": "tooling",

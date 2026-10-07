@@ -5,7 +5,7 @@
   "repo": "https://github.com/mhshaon98/agent-skills",
   "raw_base": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/",
   "site": "https://mhshaon98.github.io/agent-skills/",
-  "updated": "2026-10-06",
+  "updated": "2026-10-07",
   "marketplace": {
     "name": "dev-discipline",
     "add": "/plugin marketplace add mhshaon98/agent-skills",
@@ -469,6 +469,26 @@
       "files": [
         "skills/doc-metadata/SKILL.md",
         "skills/doc-metadata/scripts/set_doc_metadata.py"
+      ]
+    },
+    {
+      "name": "eng-report",
+      "description": "Apply an engineering house style (modelled on Rockwell, Siemens, ABB, Schneider and Endress+Hauser technical publications) to a Word, Markdown or PDF document, in the user's own logo and colours, with ANSI safety notices and document-control blocks. Use on \"/eng-report\", \"make this a proper engineering report\", or \"format this like an automation vendor manual\"; on first use it asks for the company's logo and brand colours.",
+      "category": "formatting",
+      "targets": [
+        "claude",
+        "codex"
+      ],
+      "version": "dfcb67261d7e",
+      "path": "skills/eng-report",
+      "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/eng-report/SKILL.md",
+      "file_count": 5,
+      "files": [
+        "skills/eng-report/SKILL.md",
+        "skills/eng-report/references/brand.md",
+        "skills/eng-report/references/house-rules.md",
+        "skills/eng-report/references/templates.md",
+        "skills/eng-report/scripts/eng_report.py"
       ]
     },
     {

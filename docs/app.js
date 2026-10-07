@@ -214,7 +214,8 @@
     ["verify-work", "Stops your agent saying \u201cdone\u201d before it has actually run the thing."],
     ["pre-release-review", "A second, fresh pair of eyes on the change before it ships."],
     ["safe-data-write", "Backup first, rollback ready, any time real data is about to change."],
-    ["usage-here", "See what a session cost and how much of your limit it used."]
+    ["usage-here", "See what a session cost and how much of your limit it used."],
+    ["eng-report", "Turns a rough Word file into a vendor-grade engineering report, in your logo and colours."]
   ];
   $("cmd-picks").textContent = "curl -fsSL " + RAW_BASE + "install.sh | bash -s -- " + PICKS.map(function (p) { return p[0]; }).join(" ");
   function buildPicks() {
