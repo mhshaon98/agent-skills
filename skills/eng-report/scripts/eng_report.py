@@ -21,7 +21,7 @@ import argparse, json, os, re, shutil, sys
 from datetime import date
 from docx import Document
 from docx.enum.section import WD_ORIENT
-from docx.enum.table import WD_TABLE_ALIGNMENT
+from docx.enum.table import WD_TABLE_ALIGNMENT, WD_CELL_VERTICAL_ALIGNMENT
 from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_BREAK
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
@@ -324,7 +324,7 @@ def notice_block(doc, kind, text, anchor=None):
         table_borders(t, fill, 8, inside=False, outer=True)
         sc, mc = t.rows[0].cells; sc.width = Inches(1.25); mc.width = w - Inches(1.25)
         shade(sc, fill); cell_margins(sc); cell_margins(mc, left=140)
-        sp = sc.paragraphs[0]; sp.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        sp = sc.paragraphs[0]; sp.alignment = WD_ALIGN_PARAGRAPH.CENTER; sc.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
         set_font(sp.add_run(('⚠ ' if alert else '') + kind), 10, True, fg, italic=ital)
         target = mc
     else:

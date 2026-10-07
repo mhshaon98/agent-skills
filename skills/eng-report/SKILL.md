@@ -44,7 +44,8 @@ E="$HOME/.claude/skills/eng-report/scripts/eng_report.py"; PY=$(command -v pytho
       --logo path/to/logo.png --accent 1F4E79 [--head 1A1A1A] [--link 1F4E79] [--scope project|user]
 ```
 
-(Installed somewhere other than `~/.claude/skills`? Adjust the path.)
+(`E` is `scripts/eng_report.py` inside this skill's own folder. Installed as a plugin, for
+Codex (`~/.codex/skills`), or anywhere else: point `E` at that folder instead.)
 
 - The user has no logo, or wants none: save the profile without `--logo`; the header and
   cover then set the company name in type. Re-running `brand` to change a colour keeps

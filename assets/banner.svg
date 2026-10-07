@@ -68,7 +68,7 @@
     <rect class="cover l2" x="76" y="128" width="240" height="20"/>
 
     <!-- lines 3-6 -->
-    <text x="76" y="172" class="mono fg" font-size="15"><tspan class="green">✓</tspan> 22 skills found — <tspan class="blue">pick yours</tspan></text>
+    <text x="76" y="172" class="mono fg" font-size="15"><tspan class="green">✓</tspan> 24 skills found — <tspan class="blue">pick yours</tspan></text>
     <rect class="cover l3" x="76" y="158" width="330" height="20"/>
 
     <text x="76" y="202" class="mono dim" font-size="15">installed → ~/.claude/skills/</text>
