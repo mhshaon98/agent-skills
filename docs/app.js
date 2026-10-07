@@ -85,7 +85,7 @@
   }
 
   // A face lives either in an SVG (a grid of dots) or on the 3D robot's screen,
-  // which mascot.js paints from the frame handed over through window.MASCOT_FACE.
+  // which the hero scene paints from the frame handed over through window.MASCOT_FACE.
   var bridge = window.MASCOT_FACE = window.MASCOT_FACE || {};
   function Face(host) {
     var dots = [], self = this, on3d = host.tagName.toLowerCase() === "canvas";

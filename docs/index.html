@@ -57,9 +57,10 @@
   /* ---------- hero ---------- */
   .hero { position: relative; max-width: 1680px; margin: 0 auto; }
   .hero { padding: clamp(14px, 2vw, 30px) var(--gutter) clamp(28px, 3.4vw, 56px); }
-  /* the banner: a wide window onto the workshop */
+  /* the banner: a wide window onto the office */
   .tube { position: relative; aspect-ratio: 2.4; border-radius: 20px; overflow: hidden; background: #0b0a1e; box-shadow: 0 0 0 4px #0b1418, 0 0 0 7px var(--ground-lift); }
-  .tube canvas { display: block; width: 100%; height: 100%; }
+  .tube canvas { position: relative; display: block; width: 100%; height: 100%; }
+  .tube .poster { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; }
   .thought { position: absolute; left: 16px; bottom: 14px; margin: 0; padding: 7px 11px; border-radius: 6px; background: rgba(11,10,20,.86); color: #b6ffcf; font-family: var(--mono); font-size: clamp(12px, 1vw, 15px); font-weight: 700; pointer-events: none; }
   .thought::after { content: "_"; animation: blinkled 1s steps(2) infinite; }
   .hint { position: absolute; right: 16px; bottom: 14px; margin: 0; padding: 7px 11px; border-radius: 6px; background: rgba(11,10,20,.7); color: var(--paper-dim); font-family: var(--mono); font-size: 12px; pointer-events: none; }
@@ -76,7 +77,9 @@
   .env button:hover { transform: translateY(-2px); }
   .env button:active { transform: translateY(1px) scale(.96); }
   .env button[aria-pressed="true"] { background: var(--yellow); color: var(--ink); }
-  .nogl { display: none; }
+  /* no WebGL, a blocked CDN or reduced motion: the still picture stays, the controls go */
+  .nogl canvas { opacity: 0; }
+  .nogl .thought, .nogl .hint, .nogl .env { display: none; }
   .eyebrow { margin: 0 0 1.4vw; font-family: var(--mono); font-weight: 700; font-size: clamp(15px, 1.35vw, 22px); line-height: 1; }
   /* A little CRT: rainbow bezel, scanlines, and a name that glitches between two handles. */
   .crt { display: inline-flex; align-items: baseline; padding: .7em 1em .68em; border-radius: 10px; color: #d8ffe9; background: #0b0a14; }
@@ -341,6 +344,7 @@
 <header class="hero" id="hero">
   <div class="stage" id="scene">
     <div class="tube" id="robot">
+      <img class="poster" src="office-poster.webp" alt="" width="1500" height="600" decoding="async">
       <canvas id="mascot" data-face="hero" role="img" aria-label="A pixel-art cutaway of an open-plan office. A robot with a screen for a head builds skill cartridges at a desk, shelves them and tidies up. You can drag the robot and the objects around."></canvas>
       <p class="thought" id="thought" aria-live="off"></p>
       <p class="hint">Drag the robot. Throw things. Click the whiteboard, the printer, the cooler, the lights.</p>
@@ -424,7 +428,7 @@
       <div class="way rv" style="--c:#f2d94a">
         <div class="way-n">3</div>
         <h3>Claude Code plugins</h3>
-        <p>Add the marketplace once, then install, update and remove skills through <code>/plugin</code>.</p>
+        <p>Add the marketplace once, then install, update and remove skills through <code>/plugin</code>. It carries 22 of the 23: <code>astra-conductor</code> is for Codex only.</p>
         <div class="cmd"><code id="cmd-mp"></code><button class="copy" type="button" data-copy="cmd-mp">Copy</button></div>
         <div class="cmd"><code id="cmd-pi"></code><button class="copy" type="button" data-copy="cmd-pi">Copy</button></div>
       </div>
@@ -478,9 +482,16 @@
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/","cannon-es":"https://cdn.jsdelivr.net/npm/cannon-es@0.20.0/dist/cannon-es.js"}}</script>
 <script type="module">
   // The street-workshop scene is kept in workshop.js (same mount() interface) but is not loaded.
-  const { mount } = await import("./office.js?v=3");
-  const ui = { thought: document.getElementById("thought") };
-  if (!mount(document.getElementById("mascot"), ui)) document.getElementById("scene").classList.add("nogl");
+  // Without WebGL, with the CDN blocked, or with reduced motion asked for, the poster stands in.
+  const ui = { thought: document.getElementById("thought") }, canvas = document.getElementById("mascot");
+  let live = false;
+  if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    try { const { mount } = await import("./office.js?v=4"); live = !!mount(canvas, ui); } catch (e) { live = false; }
+  }
+  if (!live) {
+    document.getElementById("scene").classList.add("nogl");
+    canvas.setAttribute("aria-label", "A pixel-art cutaway of an open-plan office. A robot with a screen for a head works at a desk beside a shelf of skill cartridges.");
+  }
   document.querySelector(".env").addEventListener("click", (e) => {
     const b = e.target.closest("[data-act]"); if (!b || !ui.act) return;
     const name = b.dataset.act, on = ui.act(name);
