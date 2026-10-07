@@ -246,11 +246,111 @@
   footer { max-width: 1680px; margin: clamp(64px, 9vw, 120px) auto 0; padding: 32px var(--gutter) 48px; display: flex; flex-wrap: wrap; gap: 16px 32px; align-items: center; justify-content: space-between; border-top: 2px solid var(--ground-lift); color: var(--paper-dim); font-size: 15px; }
   footer a { color: var(--paper); font-weight: 600; }
 
-  /* ---------- corner buddy ---------- */
-  .buddy { position: fixed; right: 18px; bottom: 18px; z-index: 40; width: 84px; padding: 0; border: 0; background: none; transform: translateY(140%); transition: transform .6s var(--spring); }
-  .buddy.up { transform: none; }
-  .buddy svg { display: block; width: 100%; height: auto; animation: bob 3s ease-in-out infinite; }
-  .buddy:hover svg { animation: hop .6s var(--spring); }
+  /* ---------- corner guide: the robot from the office, riding along ---------- */
+  .guide { position: fixed; right: 18px; bottom: 14px; z-index: 40; display: flex; align-items: flex-end; gap: 6px; pointer-events: none; transform: translateX(calc(100% + 40px)); transition: transform .7s var(--spring); }
+  .guide.up { transform: none; }
+  .guide-say { position: relative; margin: 0 0 58px; max-width: 232px; padding: 11px 14px; border-radius: 14px 14px 4px 14px; background: var(--paper); color: var(--ink); font-size: 15px; font-weight: 700; line-height: 1.25; opacity: 0; transform: translate(14px, 10px) scale(.86); transform-origin: 100% 100%; transition: opacity .25s, transform .45s var(--spring); }
+  .guide-say::after { content: ""; position: absolute; right: -8px; bottom: 6px; width: 16px; height: 14px; background: var(--paper); clip-path: polygon(0 0, 100% 100%, 0 100%); }
+  .guide-say.on { opacity: 1; transform: none; }
+  .buddy { flex: none; width: 92px; padding: 0; border: 0; background: none; pointer-events: auto; }
+  .buddy svg { display: block; width: 100%; height: auto; overflow: visible; --lean: 0deg; --ant: 0deg; --roll: 0deg; --belt: 0; animation: bob 3.2s ease-in-out infinite; }
+  .b-all { transform-box: view-box; transform-origin: 60px 146px; transform: rotate(var(--lean)); }
+  .b-wheel { transform-box: fill-box; transform-origin: center; transform: rotate(var(--roll)); }
+  .b-belt { stroke-dashoffset: var(--belt); }
+  .b-ant-l, .b-ant-r { transform-box: view-box; transform: rotate(var(--ant)); }
+  .b-ant-l { transform-origin: 52px 32px; }
+  .b-ant-r { transform-origin: 68px 32px; }
+  .b-head { transform-box: view-box; transform-origin: 60px 92px; transition: transform .45s var(--spring); }
+  .b-needle { transform-box: view-box; transform-origin: 60px 116px; transform: rotate(calc(var(--lean) * -6)); }
+  .b-arm { transform-box: view-box; transition: transform .4s var(--spring); }
+  .b-arm-l { transform-origin: 36px 108px; }
+  .b-arm-r { transform-origin: 84px 108px; }
+  .buddy:hover .b-head, .buddy:focus-visible .b-head, .buddy.tall .b-head { transform: translateY(-9px); }
+  .buddy:hover .b-arm-r, .buddy.wave .b-arm-r { animation: armwave .9s ease-in-out 2; }
+  .buddy.point .b-arm-l { transform: rotate(118deg); }
+  .buddy.cheer .b-arm-l { transform: rotate(140deg); }
+  .buddy.cheer .b-arm-r { transform: rotate(-140deg); }
+  .buddy.hop svg { animation: hop .6s var(--spring); }
+  .buddy.nod .b-head { animation: nod .5s ease-in-out 2; }
+  .buddy.zoom svg { animation: zoom .7s var(--out); }
+  @keyframes armwave { 0%, 100% { transform: rotate(-95deg); } 50% { transform: rotate(-140deg); } }
+  @keyframes nod { 50% { transform: translateY(4px) rotate(4deg); } }
+  @keyframes zoom { 30% { transform: translateY(8px) scaleY(.86); } 70% { transform: translateY(-46px) scaleY(1.08); } }
+
+  /* ---------- what is a skill: one cartridge, opened by scrolling ---------- */
+  .how-track { height: 360vh; }
+  .how-pin { position: sticky; top: 0; height: 100vh; height: 100svh; display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.5fr); gap: clamp(20px, 4vw, 64px); align-items: center; }
+  .how-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .how-steps li { display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: start; padding: 14px 16px; border-radius: 16px; color: var(--paper-dim); transition: background .3s, color .3s, transform .45s var(--spring); }
+  .how-steps b { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 10px; background: var(--ground-lift); color: var(--paper); font-family: var(--mono); font-size: 15px; transition: background .3s, color .3s; }
+  .how-steps strong { display: block; font-size: clamp(19px, 1.7vw, 26px); font-weight: 800; line-height: 1.1; letter-spacing: -.02em; }
+  .how-steps span { display: block; margin-top: 4px; font-size: 15.5px; font-weight: 600; line-height: 1.35; }
+  .how-steps li.on { background: var(--ground-lift); color: var(--paper); transform: translateX(8px); }
+  .how-steps li.on b { background: var(--yellow); color: var(--ink); }
+  .how-steps li.done b { background: var(--hot); color: var(--ink); }
+  .how-bar { height: 6px; margin: 18px 0 20px; border-radius: 3px; background: var(--ground-lift); overflow: hidden; }
+  .how-bar i { display: block; height: 100%; width: 100%; background: var(--hot); transform-origin: 0 50%; transform: scaleX(var(--p, 0)); }
+  .how-stage { position: relative; height: min(72vh, 620px); border-radius: 28px 28px 28px 8px; background: var(--ground-deep); overflow: hidden; --a: 0; --b: 0; --d: 0; --e: 0; }
+  .how-shelf { position: absolute; left: 0; right: 0; top: calc(50% + 96px); height: 14px; background: var(--ground-lift); opacity: calc(1 - var(--b)); }
+  .how-cart { position: absolute; left: calc(18px + (50% - 18px) * (1 - var(--b))); top: calc(18px + (50% - 18px) * (1 - var(--b))); width: min(300px, 70%); min-height: 176px; opacity: 1; cursor: default;
+    transform: translate(calc(-50% * (1 - var(--b))), calc(-50% * (1 - var(--b)))) scale(calc(1 - .42 * var(--b) - .05 * var(--tap, 0))) rotate(calc(-3deg * (1 - var(--b)))); transform-origin: 0 0; transition: none; }
+  .how-hand { position: absolute; left: 50%; top: 50%; width: 56px; height: 56px; margin: 28px 0 0 64px; opacity: calc(var(--a) * (1 - var(--b) * 3)); transform: translate(calc(120px * (1 - var(--a))), calc(150px * (1 - var(--a)))) scale(calc(1 - .12 * var(--tap, 0))); }
+  .how-ring { position: absolute; left: 50%; top: 50%; width: 70px; height: 70px; margin: 0 0 0 34px; border-radius: 50%; border: 4px solid var(--paper); opacity: calc(var(--tap, 0) * (1 - var(--b) * 3)); transform: scale(calc(.5 + var(--tap, 0))); }
+  .how-say { position: absolute; right: 18px; top: 22px; max-width: 52%; padding: 12px 16px; border-radius: 16px 16px 4px 16px; background: var(--paper); color: var(--ink); font-size: clamp(16px, 1.5vw, 22px); font-weight: 800; line-height: 1.15; opacity: var(--b); transform: translateY(calc(18px * (1 - var(--b)))); }
+  .how-say small { display: block; margin-bottom: 3px; font-family: var(--mono); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; opacity: .7; }
+  .how-say i { display: inline-block; width: .5em; height: 1em; margin-left: 2px; vertical-align: -.12em; background: var(--ink); animation: blinkled 1s steps(2) infinite; }
+  .how-flow { position: absolute; left: 18px; right: 18px; top: 150px; bottom: 18px; opacity: calc(var(--d) * 12); }
+  .how-cue { position: absolute; left: 50%; bottom: 22px; display: flex; align-items: center; gap: 12px; padding: 10px 18px 10px 12px; border-radius: 999px; background: var(--yellow); color: var(--ink); font-weight: 800; font-size: clamp(15px, 1.2vw, 18px); line-height: 1; white-space: nowrap; opacity: calc(1 - var(--a) * 2.4); transform: translate(-50%, calc(var(--a) * 30px)); }
+  .how-cue svg { flex: none; width: 26px; height: 38px; }
+  .how-cue .wheel { animation: wheel 1.5s var(--out) infinite; }
+  .how-cue .chev { animation: chev 1.5s ease-in-out infinite; }
+  .how-cue .touch { display: none; }
+  .how-cue .finger { animation: swipe 1.6s var(--out) infinite; }
+  @media (pointer: coarse) { .how-cue .mouse { display: none; } .how-cue .touch { display: inline; } .how-cue svg.touch { display: block; } }
+  .how.calm .how-cue { display: none; }
+  @keyframes wheel { 0% { transform: translateY(0); opacity: 1; } 70%, 100% { transform: translateY(9px); opacity: 0; } }
+  @keyframes chev { 50% { transform: translateY(4px); } }
+  @keyframes swipe { 0% { transform: translateY(10px); opacity: 0; } 25% { opacity: 1; } 80%, 100% { transform: translateY(-12px); opacity: 0; } }
+  .how-flow .wire:not(.hot) { display: none; }
+  .how-flow .flow-grid { gap: 26px 28px; }
+  .how-flow .node { padding: 11px 13px; border-radius: 13px; }
+  .how-flow .node strong { font-size: clamp(14px, 1.2vw, 17px); }
+  .how-flow .node span { font-size: 12.5px; margin-top: 3px; }
+  .how-flow .node small { margin-bottom: 3px; font-size: 10px; }
+  .how-flow .node.when { padding-left: 22px; }
+  .how-flow .node.out { padding-right: 22px; }
+  .how-flow .node.live { transform: scale(1.02) rotate(-1deg); }
+  .how-flow .node.out.live { box-shadow: 0 0 0 6px rgba(242, 217, 74, .35); }
+  .how.calm .how-track { height: auto; }
+  .how.calm .how-pin { position: static; height: auto; padding-bottom: 8px; }
+  .how.calm .how-hand, .how.calm .how-ring, .how.calm .how-say i { display: none; }
+  @media (max-width: 899px) {
+    .how-pin { grid-template-columns: 1fr; grid-template-rows: auto 1fr; gap: 12px; align-items: stretch; padding: 12px 0 86px; }
+    .how-steps li { display: none; padding: 10px 12px; }
+    .how-steps li.on { display: grid; transform: none; }
+    .how.calm .how-steps li { display: grid; }
+    .how-steps span { font-size: 14.5px; }
+    .how-bar { margin: 10px 0 0; }
+    .how-go { display: none; }
+    .how.calm .how-go { display: inline-flex; margin-top: 14px; }
+    .how-stage { height: auto; min-height: 380px; border-radius: 20px 20px 20px 6px; }
+    .how.calm .how-stage { height: 520px; }
+    .how-cart { width: min(230px, 62%); min-height: 150px; padding: 16px 16px 28px; }
+    .how-cart .cart-name { font-size: 23px; }
+    .how-cart .cart-when { font-size: 14px; }
+    .how-flow { top: 150px; left: 12px; right: 12px; bottom: 12px; }
+    .how-flow .flow-grid { gap: 16px 18px; }
+    .how-flow .node span { display: none; }
+    .how-say { right: 12px; top: 14px; max-width: 56%; }
+  }
+
+  /* ---------- "you can open these": nudges on the shelf until the first one is opened ---------- */
+  .cart .tap { position: absolute; right: 44px; top: -2px; padding: 7px 11px; border-radius: 0 0 10px 10px; background: var(--ink); color: var(--paper); font-family: var(--mono); font-size: 12px; font-weight: 700; animation: tapbob 1.4s ease-in-out infinite; }
+  .cart.nudge .cart-go { animation: gopulse 1.4s ease-in-out infinite; }
+  .cart.in.peek { transform: translateY(-10px) rotate(-1.4deg); transition-delay: 0s; }
+  .easy { display: inline-block; vertical-align: middle; margin-left: 6px; padding: 5px 9px; border-radius: 7px; background: var(--ink); color: var(--paper); font-family: var(--mono); font-size: 12px; font-weight: 700; letter-spacing: 0; }
+  @keyframes tapbob { 50% { transform: translateY(5px); } }
+  @keyframes gopulse { 50% { transform: scale(1.08); } }
 
   /* ---------- skill panel ---------- */
   dialog { border: 0; padding: 0; color: var(--paper); background: var(--ground-deep); width: min(1040px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); border-radius: 28px 28px 28px 8px; overflow: auto; }
@@ -258,7 +358,7 @@
   dialog[open] { animation: panel .5s var(--spring); }
   dialog[open]::backdrop { animation: fade .3s forwards; }
   .panel-top { display: flex; gap: 18px; align-items: center; padding: 22px 24px; background: var(--c); color: var(--ink); }
-  .panel-top svg { flex: none; width: 92px; height: auto; }
+  .panel-top svg { flex: none; width: 92px; height: auto; overflow: visible; }
   .panel-top .cart-cat { display: block; }
   .panel-top h2 { font-size: clamp(30px, 4.6vw, 56px); word-break: break-word; }
   .x { margin-left: auto; align-self: flex-start; flex: none; width: 44px; height: 44px; border: 0; border-radius: 12px; background: var(--ink); color: var(--paper); font-size: 20px; font-weight: 800; transition: transform .3s var(--spring); }
@@ -327,7 +427,9 @@
     .panel-body { padding: 18px 16px; }
     .panel-foot { grid-template-columns: 1fr; }
     .flow-grid { gap: 30px; }
-    .buddy { width: 64px; right: 12px; bottom: 12px; }
+    .guide { right: 10px; bottom: 10px; }
+    .buddy { width: 70px; }
+    .guide-say { max-width: 190px; margin-bottom: 44px; font-size: 14px; }
     .row { grid-template-columns: auto 1fr; }
     .row em { grid-column: 2; }
   }
@@ -335,6 +437,7 @@
     *, *::before, *::after { animation: none !important; transition: none !important; }
     h1 span b { transform: none; }
     .pitch, .cta-row, .drop, .cart, .rv, .node, .arrow { opacity: 1; transform: none; }
+    .guide, .guide-say { transition: none; }
     html { scroll-behavior: auto; }
   }
 </style>
@@ -374,6 +477,29 @@
 <div class="ticker" aria-hidden="true"><div class="ticker-track" id="ticker"></div></div>
 
 <main>
+<section id="how" class="how">
+  <div class="head">
+    <h2>What is a skill?</h2>
+    <p class="lede">A small instruction pack for your coding agent. You say a few plain words, and it follows the pack's steps instead of guessing. Scroll to watch one work.</p>
+  </div>
+  <div class="how-track" id="how-track">
+    <div class="how-pin">
+      <div class="how-side">
+        <ol class="how-steps" id="how-steps">
+          <li><b>1</b><div><strong>Pick a cartridge</strong><span>Each cartridge is one skill. Tap it to open it.</span></div></li>
+          <li><b>2</b><div><strong>Say it in plain words</strong><span>Nothing to memorise. "Catch me up" is enough.</span></div></li>
+          <li><b>3</b><div><strong>The skill lays out the steps</strong><span>Your agent follows them in order, every time.</span></div></li>
+          <li><b>4</b><div><strong>You get the result</strong><span>A careful job, without asking for each part.</span></div></li>
+        </ol>
+        <div class="how-bar" aria-hidden="true"><i id="how-bar"></i></div>
+        <a class="btn how-go" href="#shelf">Try a real one
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v11M3 8.5l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      </div>
+      <div class="how-stage" id="how-stage" aria-hidden="true"></div>
+    </div>
+  </div>
+</section>
+
 <section id="picks">
   <div class="head">
     <h2>Start with these</h2>
@@ -408,12 +534,12 @@
   <div class="manual-in">
     <div class="head">
       <h2>Three ways in</h2>
-      <p class="lede">Use one route per skill, then start a new session. Last updated <time id="updated" datetime="2026-10-06">6 Oct 2026</time>.</p>
+      <p class="lede">Not technical? Use number 1: copy the sentence, paste it to your agent, and it does the rest. Then start a new session. Last updated <time id="updated" datetime="2026-10-06">6 Oct 2026</time>.</p>
     </div>
     <div class="ways">
       <div class="way rv" style="--c:#7cc4f2">
         <div class="way-n">1</div>
-        <h3>Ask your agent</h3>
+        <h3>Ask your agent <span class="easy">Easiest</span></h3>
         <p>Paste this into Claude Code or Codex. It reads the catalog, suggests what fits you and installs what you pick.</p>
         <div class="cmd"><code id="cmd-agent"></code><button class="copy" type="button" data-copy="cmd-agent">Copy</button></div>
         <p class="after">After that, just talk. Say &ldquo;ship it&rdquo; and the release review runs itself.</p>
@@ -458,13 +584,16 @@
   <span>MIT licensed</span>
 </footer>
 
-<button class="buddy" id="buddy" type="button" aria-label="Back to top">
-  <svg viewBox="0 0 120 104" aria-hidden="true"><path d="M58 24L40 5M62 24L80 5" fill="none" stroke="#8f97c9" stroke-width="3" stroke-linecap="round"/><circle cx="40" cy="5" r="5" fill="#e4f222"/><circle cx="80" cy="5" r="5" fill="#ff5fa2"/><rect x="42" y="17" width="36" height="8" rx="3" fill="#35d6c0"/><rect x="6" y="22" width="108" height="80" rx="14" fill="#eef0ff"/><rect x="13" y="29" width="76" height="66" rx="9" fill="#0a1f14"/><circle cx="101" cy="42" r="5.5" fill="#ff5fa2"/><circle cx="101" cy="58" r="5.5" fill="#e4f222"/><path d="M95 72h12M95 78h12M95 84h12" stroke="#120c22" stroke-width="2.4" stroke-linecap="round"/><svg data-face="buddy" x="18" y="40" width="66" height="42" viewBox="0 0 11 7"></svg></svg>
-</button>
+<div class="guide" id="guide">
+  <p class="guide-say" id="guide-say" aria-hidden="true"></p>
+  <button class="buddy" id="buddy" type="button" aria-label="Back to top">
+  <svg viewBox="0 0 120 150" aria-hidden="true"><g class="b-all"><g class="b-tread"><rect x="22" y="128" width="76" height="20" rx="10" fill="#10201f"/><path class="b-belt" d="M32 131h56M32 145h56" fill="none" stroke="#eef6f2" stroke-width="2" stroke-dasharray="3 6" stroke-linecap="round"/><g class="b-wheel"><circle cx="36" cy="138" r="5.5" fill="#f2d94a"/><path d="M36 133.5v9" stroke="#10201f" stroke-width="2"/></g><g class="b-wheel"><circle cx="60" cy="138" r="5.5" fill="#f2d94a"/><path d="M60 133.5v9" stroke="#10201f" stroke-width="2"/></g><g class="b-wheel"><circle cx="84" cy="138" r="5.5" fill="#f2d94a"/><path d="M84 133.5v9" stroke="#10201f" stroke-width="2"/></g></g><g class="b-arm b-arm-l"><path d="M36 108L20 120" fill="none" stroke="#8fa3a8" stroke-width="5" stroke-linecap="round"/><path d="M20 120l-7-1M20 120l-2 7" fill="none" stroke="#10201f" stroke-width="3.4" stroke-linecap="round"/></g><g class="b-arm b-arm-r"><path d="M84 108L100 120" fill="none" stroke="#8fa3a8" stroke-width="5" stroke-linecap="round"/><path d="M100 120l7-1M100 120l2 7" fill="none" stroke="#10201f" stroke-width="3.4" stroke-linecap="round"/></g><rect x="32" y="100" width="56" height="32" rx="9" fill="#2ec4a9"/><circle cx="60" cy="116" r="8" fill="#10201f"/><path class="b-needle" d="M60 116v-6" stroke="#f2d94a" stroke-width="2.2" stroke-linecap="round"/><circle cx="42" cy="108" r="2.6" fill="#f2d94a"/><circle cx="78" cy="108" r="2.6" fill="#b9a7f0"/><rect x="54" y="84" width="12" height="20" fill="#8fa3a8"/><g class="b-head"><path class="b-ant b-ant-l" d="M52 32L40 9" fill="none" stroke="#8fa3a8" stroke-width="3" stroke-linecap="round"/><circle class="b-tip b-ant-l" cx="40" cy="9" r="5" fill="#f2d94a"/><path class="b-ant b-ant-r" d="M68 32L80 9" fill="none" stroke="#8fa3a8" stroke-width="3" stroke-linecap="round"/><circle class="b-tip b-ant-r" cx="80" cy="9" r="5" fill="#7cc4f2"/><rect x="14" y="28" width="92" height="64" rx="13" fill="#eef6f2"/><rect x="21" y="35" width="64" height="50" rx="8" fill="#0a1f14"/><circle cx="96" cy="47" r="4.6" fill="#2ec4a9"/><circle cx="96" cy="61" r="4.6" fill="#f2d94a"/><path d="M91 73h10M91 78h10M91 83h10" stroke="#10201f" stroke-width="2.2" stroke-linecap="round"/><svg data-face="buddy" x="26" y="43" width="54" height="34.4" viewBox="0 0 11 7"></svg></g></g></svg>
+  </button>
+</div>
 
 <dialog id="panel" aria-labelledby="panel-name">
   <div class="panel-top">
-    <svg viewBox="0 0 120 104" aria-hidden="true"><path d="M58 24L40 5M62 24L80 5" fill="none" stroke="#8f97c9" stroke-width="3" stroke-linecap="round"/><circle cx="40" cy="5" r="5" fill="#e4f222"/><circle cx="80" cy="5" r="5" fill="#ff5fa2"/><rect x="42" y="17" width="36" height="8" rx="3" fill="#35d6c0"/><rect x="6" y="22" width="108" height="80" rx="14" fill="#eef0ff"/><rect x="13" y="29" width="76" height="66" rx="9" fill="#0a1f14"/><circle cx="101" cy="42" r="5.5" fill="#ff5fa2"/><circle cx="101" cy="58" r="5.5" fill="#e4f222"/><path d="M95 72h12M95 78h12M95 84h12" stroke="#120c22" stroke-width="2.4" stroke-linecap="round"/><svg data-face="panel" x="18" y="40" width="66" height="42" viewBox="0 0 11 7"></svg></svg>
+    <svg viewBox="0 0 120 96" aria-hidden="true"><path class="b-ant b-ant-l" d="M52 32L40 9" fill="none" stroke="#8fa3a8" stroke-width="3" stroke-linecap="round"/><circle class="b-tip b-ant-l" cx="40" cy="9" r="5" fill="#f2d94a"/><path class="b-ant b-ant-r" d="M68 32L80 9" fill="none" stroke="#8fa3a8" stroke-width="3" stroke-linecap="round"/><circle class="b-tip b-ant-r" cx="80" cy="9" r="5" fill="#7cc4f2"/><rect x="14" y="28" width="92" height="64" rx="13" fill="#eef6f2"/><rect x="21" y="35" width="64" height="50" rx="8" fill="#0a1f14"/><circle cx="96" cy="47" r="4.6" fill="#2ec4a9"/><circle cx="96" cy="61" r="4.6" fill="#f2d94a"/><path d="M91 73h10M91 78h10M91 83h10" stroke="#10201f" stroke-width="2.2" stroke-linecap="round"/><svg data-face="panel" x="26" y="43" width="54" height="34.4" viewBox="0 0 11 7"></svg></svg>
     <div><span class="cart-cat" id="panel-cat"></span><h2 id="panel-name"></h2></div>
     <button class="x" id="panel-x" type="button" aria-label="Close">&#x2715;</button>
   </div>
