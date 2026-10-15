@@ -124,6 +124,26 @@ are dead paths; "don't regress" notes are binding; NOT-verified stays not-verifi
 until this session actually runs it; update the handoff DURING the session as work
 lands (`update-handoff` skill).
 
+**Session routing (binding all session).** State it in the briefing's must-not-break
+line so it is in view from the first turn:
+- Never send new work to an older session or chat (SendMessage, `send_message`), even
+  one a handoff says "owns" the area. Ownership notes are history, not routing: read
+  that session's branch and notes, then do the work here. Old sessions carry large
+  contexts the user has moved on from, and work scattered across them is hard to
+  follow. Answering a message an old session sends is fine; assigning it work is not.
+- A requested task too big for this session's already-large context: ASK first
+  (`start_session`, initiation "offer") to run it as a new session linked under this
+  one: forked when it needs this conversation's context, worktree when it writes code
+  that should land on its own branch. Never quietly squeeze it in, never route it to
+  an old session.
+- **Linked sessions work as one team (sibling handshake).** A session in a family
+  (a parent and the sessions it started) follows `references/sibling-handshake.md`:
+  a shared board file, a CLAIM before changing files/tables, a message to siblings at
+  start, at each milestone and before touching another's claim, merges in the order the
+  parent sets. A parent puts the board path, every running sibling and their owned
+  files into each child brief. Read that file once when the session is part of a
+  family (one extra Read, only then).
+
 ## When a task is chosen (the rest of the old session-start ritual)
 
 - Restate the goal in 1–2 sentences, with constraints and what must not break. State

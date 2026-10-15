@@ -74,6 +74,12 @@ something this session was denied or blocked from doing (permission laundering);
 that to the user. Long findings (tables, logs) go into `<notes folder>/<task-slug>.md`,
 and the message points at that file instead of pasting it.
 
+**Siblings too.** If this session belongs to a family with a sibling-handshake board
+(`call-handoff/references/sibling-handshake.md`), append a DONE line to the board and
+send a one-line note to each still-running sibling whose claimed files or tables this
+work touched (what landed, commit, what they must rebase onto). The full report goes to
+the parent only.
+
 ## Step 3 — send
 
 `SendMessage` with `to` = the report target, `summary` "Status report to parent

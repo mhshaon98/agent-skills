@@ -28,7 +28,7 @@
       "name": "call-handoff",
       "source": "./",
       "description": "Cold-start briefing from the project's newest handoff, open bugs and next-session prompt in two round-trips, then stop. Use at session start or on \"call handoff\", \"catch up\", \"where did we leave off\".",
-      "version": "e16fc653b965",
+      "version": "4852af8b948b",
       "category": "workflow",
       "keywords": [
         "skill",
@@ -45,7 +45,7 @@
       "name": "collect-reports",
       "source": "./",
       "description": "From the main session, check every linked, forked and nested session (Claude Desktop), get each one's verified status report, and present one combined status board. Use on \"collect reports\", \"get everyone's status\", \"check on all the sessions\", or \"have all the forks report back\".",
-      "version": "5c6b19d95409",
+      "version": "7abd742f4128",
       "category": "workflow",
       "keywords": [
         "skill",
@@ -79,7 +79,7 @@
       "name": "report-back",
       "source": "./",
       "description": "Close out a forked or side session and send its verified status to the session that started it (Claude Desktop linked sessions). Use on \"report back\", \"send your status to the main session\", \"wrap up this forked session\", or when a collect-reports request asks for a report.",
-      "version": "7affb36f11f2",
+      "version": "22771d31b081",
       "category": "workflow",
       "keywords": [
         "skill",
@@ -436,7 +436,7 @@
       "name": "workflow-pack",
       "source": "./",
       "description": "Bundle of every workflow skill: bug-ledger, call-handoff, collect-reports, new-project, report-back, session-start, update-handoff",
-      "version": "15fe0dfc90f6",
+      "version": "7e400a8dab78",
       "category": "bundle",
       "keywords": [
         "bundle",
