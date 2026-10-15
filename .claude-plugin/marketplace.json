@@ -28,7 +28,7 @@
       "name": "call-handoff",
       "source": "./",
       "description": "Cold-start briefing from the project's newest handoff, open bugs and next-session prompt in two round-trips, then stop. Use at session start or on \"call handoff\", \"catch up\", \"where did we leave off\".",
-      "version": "4852af8b948b",
+      "version": "978ba43a6d98",
       "category": "workflow",
       "keywords": [
         "skill",
@@ -436,7 +436,7 @@
       "name": "workflow-pack",
       "source": "./",
       "description": "Bundle of every workflow skill: bug-ledger, call-handoff, collect-reports, new-project, report-back, session-start, update-handoff",
-      "version": "7e400a8dab78",
+      "version": "d6bdb83f2559",
       "category": "bundle",
       "keywords": [
         "bundle",
