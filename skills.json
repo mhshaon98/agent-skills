@@ -79,6 +79,22 @@
       ]
     },
     {
+      "name": "collect-reports",
+      "description": "From the main session, check every linked, forked and nested session (Claude Desktop), get each one's verified status report, and present one combined status board. Use on \"collect reports\", \"get everyone's status\", \"check on all the sessions\", or \"have all the forks report back\".",
+      "category": "workflow",
+      "targets": [
+        "claude",
+        "codex"
+      ],
+      "version": "5c6b19d95409",
+      "path": "skills/collect-reports",
+      "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/collect-reports/SKILL.md",
+      "file_count": 1,
+      "files": [
+        "skills/collect-reports/SKILL.md"
+      ]
+    },
+    {
       "name": "new-project",
       "description": "Bootstrap a brand-new project with proven architecture defaults and continuity scaffolding. Use when starting a new project from scratch, or when touching a legacy project that has no handoff/git/structure yet.",
       "category": "workflow",
@@ -92,6 +108,22 @@
       "file_count": 1,
       "files": [
         "skills/new-project/SKILL.md"
+      ]
+    },
+    {
+      "name": "report-back",
+      "description": "Close out a forked or side session and send its verified status to the session that started it (Claude Desktop linked sessions). Use on \"report back\", \"send your status to the main session\", \"wrap up this forked session\", or when a collect-reports request asks for a report.",
+      "category": "workflow",
+      "targets": [
+        "claude",
+        "codex"
+      ],
+      "version": "7affb36f11f2",
+      "path": "skills/report-back",
+      "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/report-back/SKILL.md",
+      "file_count": 1,
+      "files": [
+        "skills/report-back/SKILL.md"
       ]
     },
     {
@@ -112,13 +144,13 @@
     },
     {
       "name": "update-handoff",
-      "description": "End-of-session wrap in one pass: a DETAILED handoff (always; depth scales with how much the session did, nothing in context is allowed to slip), lessons, memory, bug ledger and NEXT-SESSION-PROMPT.md. Use on \"update handoff\", \"wrap up\", \"end the session\", or before context runs out.",
+      "description": "End-of-session wrap in one pass: a detailed holistic handoff (this session plus every linked session and worktree), lessons, memory, bug ledger and NEXT-SESSION-PROMPT.md. Use on \"update handoff\", \"wrap up\", \"end the session\", or before context runs out.",
       "category": "workflow",
       "targets": [
         "claude",
         "codex"
       ],
-      "version": "efead75b8816",
+      "version": "2fc04afbcb37",
       "path": "skills/update-handoff",
       "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/update-handoff/SKILL.md",
       "file_count": 2,

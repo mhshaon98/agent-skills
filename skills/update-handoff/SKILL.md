@@ -1,6 +1,6 @@
 ---
 name: update-handoff
-description: 'End-of-session wrap in one pass: a DETAILED handoff (always; depth scales with how much the session did, nothing in context is allowed to slip), lessons, memory, bug ledger and NEXT-SESSION-PROMPT.md. Use on "update handoff", "wrap up", "end the session", or before context runs out.'
+description: 'End-of-session wrap in one pass: a detailed holistic handoff (this session plus every linked session and worktree), lessons, memory, bug ledger and NEXT-SESSION-PROMPT.md. Use on "update handoff", "wrap up", "end the session", or before context runs out.'
 ---
 
 # Update Handoff — end-of-session wrap in one pass
@@ -18,6 +18,7 @@ date "+NOW: %Y-%m-%d %H%M"
 if [ ! -d .git ] && [ -f WHERE-IS-THE-CODE.md ]; then T=$(grep -oE '([A-Za-z]:[\/]|~/)[^`"<>|*?]+' WHERE-IS-THE-CODE.md | head -1 | tr '\134' '/' | sed -e "s|^~|$HOME|" -e 's|[[:space:]]*$||' | awk '{ if (match($0, /^[A-Za-z]:/)) $0 = "/" tolower(substr($0, 1, 1)) substr($0, 3); print }'); [ -d "$T" ] && { echo "ENTRY POINT -> writing into $T"; cd "$T"; }; fi; pwd
 if [ -d handoffs ] && grep -q '^## Topic table' CLAUDE.md 2>/dev/null; then echo "LAYERED: topic files:"; find handoffs -maxdepth 1 -name '*.md' 2>/dev/null | sort; else H=$(find . -maxdepth 1 -name 'HANDOFF-*.md' 2>/dev/null | sed 's|^\./||' | sort | tail -1); echo "CURRENT HANDOFF: ${H:-NONE}"; fi
 git status --porcelain=v1 2>/dev/null | head -20; git log --oneline -8 2>/dev/null || ls -t | head -10
+echo "WORKTREES:"; git worktree list 2>/dev/null; git for-each-ref --format='%(refname:short) %(upstream:track)' refs/heads 2>/dev/null | head -30
 [ -n "${SKILLS_REPO:-}" ] && { echo "SKILLS CLONE:"; git -C "$SKILLS_REPO" status -sb 2>/dev/null | head -1; git -C "$SKILLS_REPO" status --porcelain=v1 2>/dev/null | head -10; }
 ```
 
@@ -50,6 +51,55 @@ each with its own state, files, commits, decisions and exact next step), plus a
 list off against the draft: every item is in the handoff or consciously dropped as
 trivial. If the session is huge, write the handoff FIRST (before lessons and memory) so
 a context limit mid-wrap cannot lose it.
+
+## Step 1c — linked sessions and worktrees sweep (ALWAYS when any exist)
+
+The handoff is holistic: it covers every session and worktree working on this project,
+not just this one. Skip the session part when the `ccd_session_mgmt` tools are missing
+(plain CLI), but still do the worktree part.
+
+- **Side session?** In parallel with the Step 1 gather, call
+  `mcp__ccd_session_mgmt__get_session` with `"self"`. If it shows a `parentSessionId`,
+  ask the user once: "report-back to the main session, or write a full handoff?" Default
+  to `report-back`; the parent owns the holistic handoff.
+- **Reuse**: if `collect-reports` ran in this session and nothing has changed since,
+  reuse its board and its git checks. If reports are missing and the user wants them
+  fresh, run `collect-reports` first.
+- **Otherwise**, also in parallel with the Step 1 gather, call
+  `mcp__ccd_session_mgmt__list_sessions` with `{"linked": true, "include_archived":
+  true, "limit": 50}`. That gives the forks, the sessions this one started, and their
+  children; the current session is not in the list. For each linked session:
+  - **State**: running / idle / archived, title, last activity. RUNNING means not done:
+    record what it is doing, and do NOT wait for it unless the user asked. Never predict
+    its result.
+  - **Its last report**: look first at the `<side-sessions-event>` notes,
+    cross-session messages and subagent hand-backs already in this context, then at
+    the shared notes folder if the system prompt names one. Failing those, call
+    `mcp__ccd_session_mgmt__list_events` (limit ~15) and read its last wrap-up recap
+    and final message. (`get_session` gives only metadata: worktree, branch and state.)
+  - **Its code**: the worktree paths come from the session calls, so this is a second
+    round-trip, with one Bash call covering all worktrees. Run `git -C <wt> status -sb`,
+    then `git log --oneline <base>..<branch>` for unmerged commits, then check whether
+    it is pushed. Base is the branch the worktree was cut from; if that is unknown, use
+    `git symbolic-ref refs/remotes/origin/HEAD`. A report is a claim, so check the
+    branch before writing "done".
+- **Background work in this session**: running Bash jobs, subagents and workflows.
+- **Orphan worktrees**: list every `git worktree list` entry with no live session.
+  Merged and clean means "safe to delete (ask the user)". Unmerged or dirty means a TODO.
+
+Write all of this into the handoff as a **"Linked sessions & worktrees"** section,
+under §2 Current state. Use one table row per session or worktree, with these columns:
+
+- session, as a `[title](#local_…)` link
+- branch / worktree path
+- state
+- merged into what
+- pushed?
+- last reported result
+- next step / owner
+
+Below the table, list the decisions those sessions got from the user and anything they
+need from the user. Their open items also go into the ordered TODO.
 
 ## Step 2 — decide what needs updating (write nothing yet)
 
@@ -109,6 +159,10 @@ lessons in the handoff marked "PROMOTE TO LESSONS".
 - [ ] **Project pushed** — if the project has a remote, `git push` (ask the user first
       before pushing anything public or production-facing; a private project remote at a
       checkpoint is routine).
+- [ ] **Linked sessions covered**: every linked session and worktree from Step 1c is in
+      the handoff's "Linked sessions & worktrees" table with a checked state (running
+      ones marked RUNNING, not done); merged worktrees offered for cleanup, never deleted
+      unasked.
 - [ ] **Context-sweep coverage**: every request, change, commit, decision, exact fact and
       in-flight item from Step 1b is in the handoff (or deliberately dropped as trivial).
 - [ ] Handoff, `NEXT-SESSION-PROMPT.md`, and `BUG_LIST.md` agree with each other.

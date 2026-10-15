@@ -14,7 +14,7 @@
   <a href="llms.txt">llms.txt</a>
 </p>
 
-<p align="center"><sub><!-- stats -->Last updated: 2026-10-15 · 24 skills · 11 playbooks<!-- /stats --></sub></p>
+<p align="center"><sub><!-- stats -->Last updated: 2026-10-15 · 26 skills · 11 playbooks<!-- /stats --></sub></p>
 
 # Agent Skills Catalog
 
@@ -123,9 +123,11 @@ Session continuity: start, hand off, track bugs, bootstrap projects. Bundle: `wo
 | --- | --- | --- |
 | [bug-ledger](skills/bug-ledger/SKILL.md) | Use when a bug is reported, found, fixed, or reopened, or before working in a bug-prone area. Check BUG_LIST.md before debugging: many "new" bugs are regressions of fixed ones. | 1 |
 | [call-handoff](skills/call-handoff/SKILL.md) | Cold-start briefing from the project's newest handoff, open bugs and next-session prompt in two round-trips, then stop. Use at session start or on "call handoff", "catch up", "where did we leave off". | 2 |
+| [collect-reports](skills/collect-reports/SKILL.md) | From the main session, check every linked, forked and nested session (Claude Desktop), get each one's verified status report, and present one combined status board. Use on "collect reports", "get everyone's status", "check on all the sessions", or "have all the forks report back". | 1 |
 | [new-project](skills/new-project/SKILL.md) | Bootstrap a brand-new project with proven architecture defaults and continuity scaffolding. Use when starting a new project from scratch, or when touching a legacy project that has no handoff/git/structure yet. | 1 |
+| [report-back](skills/report-back/SKILL.md) | Close out a forked or side session and send its verified status to the session that started it (Claude Desktop linked sessions). Use on "report back", "send your status to the main session", "wrap up this forked session", or when a collect-reports request asks for a report. | 1 |
 | [session-start](skills/session-start/SKILL.md) | Old name for the session-start ritual, which now lives in call-handoff; run that skill instead. | 1 |
-| [update-handoff](skills/update-handoff/SKILL.md) | End-of-session wrap in one pass: a DETAILED handoff (always; depth scales with how much the session did, nothing in context is allowed to slip), lessons, memory, bug ledger and NEXT-SESSION-PROMPT.md. Use on "update handoff", "wrap up", "end the session", or before context runs out. | 2 |
+| [update-handoff](skills/update-handoff/SKILL.md) | End-of-session wrap in one pass: a detailed holistic handoff (this session plus every linked session and worktree), lessons, memory, bug ledger and NEXT-SESSION-PROMPT.md. Use on "update handoff", "wrap up", "end the session", or before context runs out. | 2 |
 
 ### Safety
 
