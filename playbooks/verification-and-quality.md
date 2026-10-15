@@ -96,6 +96,33 @@ session — a bad edit multiplies. Validate progressively, never all-at-once:
 - Rollback story before the change: keep the config in git and note the last-good
   commit in the handoff when touching core files.
 
+### 6a. A/B a skill change before keeping it
+
+A skill edit (description or body) is kept only when it beats the current version on
+the same cases, run by a small A/B harness from a plain terminal (not from inside an
+agent session, where the outer instructions leak into both arms).
+
+- **Frozen baseline**: the current skill from a git ref (default `HEAD`) or a folder
+  snapshot, copied before the run. Candidate copied too. Identical arms are refused.
+- **Blind held-out cases**: written before the candidate exists and off-limits in the
+  candidate author's brief. Results print as counts only. Once a held-out set has scored a
+  candidate it is selection evidence; certify the next candidate on fresh held-out cases.
+- **Grader outside the write scope**: cases, rubrics and the comparer live outside the
+  candidate's folder; the runner refuses a candidate nested with them. A grader fix
+  invalidates earlier comparisons: rerun both arms.
+- **Repeated runs**: 3 runs by default, both arms every attempt; never rerun only the
+  candidate until it wins.
+- **Tie keeps current**: KEEP CANDIDATE needs ≥1 win, zero losses (a near-miss or other
+  protected case is never traded for a gain elsewhere), nothing incomplete, and ≥1
+  held-out win when held-out cases ran. Tie, mixed, dev-only gain or incomplete →
+  KEEP CURRENT.
+- **Bounded cost**: a total budget split evenly per arm, a cap on attempts per skill
+  against one baseline, and every attempt logged.
+- An A/B win is evidence on these cases in an isolated run; the behavioural-probe rule
+  above still applies to the kept change.
+
+Protocol adapted from cstack `rsi` (MIT, Copyright (c) 2026 Charles Zheng, commit 27a18e5).
+
 ## 7. Refactor checklist
 
 Refactors are where working behavior silently dies. Before starting:

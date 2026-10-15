@@ -9,6 +9,42 @@ The rule under all of it: **the picture is a pure function of the frame, and
 the frame clock is the measured recording.** Nothing is hand-keyed to a
 stopwatch, and nothing expressive is a switch.
 
+## 0. What it says: the script gate
+
+Everything below decides when and how. This section decides WHAT, before anything is
+recorded. A few checks are adapted from cstack's `video-script` (MIT), marked *(cstack)*.
+A series' own approved length, pacing and structure win over this section; the
+taste-decision log (§6) wins.
+
+- **The script is a table:** beat id | narration | picture. It has a hook row, a source or
+  caveat next to any factual line, and "app truth" (every screen is the shipped screen,
+  nothing cut or invented). Status `DRAFT awaiting owner OK`. **Nothing is recorded or
+  rendered until the owner has approved the words, the hook and the length.**
+- **Shape:** hook 0–3 s > tension or promise 3–8 s > proofs > payoff > end card.
+  Per-project runtime and structure decisions win.
+- **The second sentence (3–10 s) answers the hook or raises the stakes.** Background, a
+  restated subject or "let me explain" here is where avoidable drop-off happens. Push
+  background past 15 s, or cut it. *(cstack)*
+- **Frame 1 shows the subject the first sentence names.** *(cstack)*
+- **Every claim is shown, and voice, caption and screen give the same number.** *(cstack)*
+- **Every promise in the hook is paid off on screen.** The payoff is the last content line.
+  Cut lines that restate or announce what's coming. *(cstack)*
+- **Deliver two alternative hooks**, each with its own second sentence, beside the chosen
+  one. The owner picks. *(cstack)*
+- **Explainers** (how something works) *(cstack)*:
+  - Each part answers a problem the previous part created, and says that problem out loud
+    first, including why the obvious fix fails.
+  - Choose parts by following the chain inward from the viewer's everyday experience, not
+    by listing components.
+  - End on a recap that runs through every part in order. **Recap test:** a part the recap
+    doesn't need is a detour.
+  - Give each thing one name for the whole script.
+  - An analogy must map step for step onto the real mechanism. Check it the way an expert
+    would ("would they correct the sentence as said?"). "Only", "never" and "all" are where
+    it turns false.
+- **CTA:** pick one rule per product and keep it (for example: the shared end card with a
+  store badge on every post, or at most one CTA every third post).
+
 ## 1. Pipeline: the take drives the picture, never the reverse
 
 1. **Script as JSON with stable ids.** One file, the only hand-written timing
@@ -111,6 +147,13 @@ Port the app's own rig if one exists; do not re-invent motion for video.
   return it in the pauses; the last beat, with no voice to protect, plays open.
 - **`volumedetect` gate**: max volume under 0 dB on the rendered file, so no cue
   or bed clips.
+- **Mix traps and the cue sheet** (checks only; where cues sit does not change):
+  - read the transcribe-back for words an effect masked;
+  - level effects on 50 ms windows, never at unity gain;
+  - keep one cue sheet with use counts;
+  - `alimiter level=0:latency=1`;
+  - check that `loudnorm` did not go dynamic;
+  - pad the `sidechaincompress` key with `apad`.
 
 ## 5. Per-composition checks, and the review ritual
 
@@ -142,7 +185,10 @@ STRIPS for the face route, a hop, a roll, and the lighting (highlight sits at
 the same screen position every frame while the face turns); a teleport probe
 printing position and per-frame displacement (a contact sheet hides a large jump
 every time); then **transcribe the rendered output back** and compare word
-timings to the timeline (worst drift under ~0.15 s). Reproduce route-dependent
+timings to the timeline (worst drift under ~0.15 s; a dropped or drifting word
+under an effect means it was masked). Then the **mute test** (the story must read
+from picture alone, captions off) and a newcomer retell, scored against the
+series' own approved intro, never a fixed bar. Reproduce route-dependent
 "missing view" bugs on both routes; a button that exists but paints nothing is a
 geometry bug, not z-order.
 
@@ -159,7 +205,8 @@ badge style.
 
 ## 7. Start a new post in 10 steps
 
-1. Copy the script JSON; write lines with ids, foreign fields, `open`/`tail`.
+1. Script table through the §0 gate, approved by the owner. Then copy the script
+   JSON; write lines with ids, foreign fields, `open`/`tail`.
 2. Record: one take, right voice/model, high stability.
 3. Build the timeline from the take (with a refine pass for any foreign line).
    The build fails if the take drifts from the script; fix the take.
@@ -171,7 +218,8 @@ badge style.
 7. Run the checks green (order, displacement, in-frame, blinks, end geometry,
    shadow clearance, seam for loops).
 8. Render; run the `volumedetect` gate.
-9. Review ritual: strips, teleport probe, transcribe-back drift.
+9. Review ritual: strips, teleport probe, transcribe-back drift and masking,
+   mute test.
 10. Log any new taste decision; publish media only after the user or client approves
     the direction.
 

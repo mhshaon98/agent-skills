@@ -96,6 +96,12 @@ anything is rendered.
 - Master to the series' approved level (e.g. about -16 LUFS, peak under -1 dBTP)
   with a gain plus a transparent limiter; then measure the click onset against its
   frame.
+- Mix traps:
+  - `alimiter level=0:latency=1`, or the limiter shifts the click off its frame;
+  - check that `loudnorm` did not go dynamic;
+  - level UI ticks on 50 ms windows, never at unity gain;
+  - pad the `sidechaincompress` key with `apad` so the bed's fade survives;
+  - one cue sheet with use counts. Measure the encoded mp4, not the master.
 
 ## 6. Checks to write (pure, before rendering)
 
@@ -110,6 +116,10 @@ finite.
 
 - Stills at every beat and a strip through each move; zoom the hinge. Watch for
   hairlines, dead screens, clipped copy, overlapping chrome.
+- Mute test plus a newcomer retell: the feature must read from picture alone,
+  captions off.
+- Reels feed, new compositions: keep copy and the device's key UI out of the right
+  rail too (the app's UI covers roughly x > 930 at y > 1100 on 1080 x 1920).
 - Stories (9:16) is its own composition: the same 4:5 stage centred in
   1080 x 1920, with travel distances raised so falls and scrolls leave the taller
   frame (padding the 4:5 file would cut them off mid-screen). Everything stays in
