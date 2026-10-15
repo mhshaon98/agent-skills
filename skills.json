@@ -69,13 +69,14 @@
         "claude",
         "codex"
       ],
-      "version": "e16fc653b965",
+      "version": "4852af8b948b",
       "path": "skills/call-handoff",
       "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/call-handoff/SKILL.md",
-      "file_count": 2,
+      "file_count": 3,
       "files": [
         "skills/call-handoff/SKILL.md",
-        "skills/call-handoff/references/layouts.md"
+        "skills/call-handoff/references/layouts.md",
+        "skills/call-handoff/references/sibling-handshake.md"
       ]
     },
     {
@@ -86,7 +87,7 @@
         "claude",
         "codex"
       ],
-      "version": "5c6b19d95409",
+      "version": "7abd742f4128",
       "path": "skills/collect-reports",
       "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/collect-reports/SKILL.md",
       "file_count": 1,
@@ -118,7 +119,7 @@
         "claude",
         "codex"
       ],
-      "version": "7affb36f11f2",
+      "version": "22771d31b081",
       "path": "skills/report-back",
       "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/report-back/SKILL.md",
       "file_count": 1,
