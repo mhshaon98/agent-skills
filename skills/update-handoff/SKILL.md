@@ -67,8 +67,10 @@ a context limit mid-wrap cannot lose it.
   Read this skill's `references/layered.md`.
 - **Retrospective**: a new gotcha → a dated entry in whatever lessons file you keep;
   a default that got beaten → edit that guidance in place; a rule that turned out wrong
-  → fix it. Bar for promoting a lesson: durable, verified in real work, generalizable,
-  still true in six months.
+  → fix it, or propose removing it if it misled. Each lesson states the effect it should
+  have and one case where it should NOT fire. Also ask which check this session resolved
+  no uncertainty: cost with no value means trim it. Bar for promoting a lesson: durable,
+  verified in real work, generalizable, still true in six months.
 - **Memory**: cross-session lessons → your assistant's memory files (one fact per file
   plus an index line). Reference from the handoff, don't duplicate into it.
 - **`BUG_LIST.md`**: update entries for any bug fixed or reopened this session.

@@ -5,7 +5,7 @@
   "repo": "https://github.com/mhshaon98/agent-skills",
   "raw_base": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/",
   "site": "https://mhshaon98.github.io/agent-skills/",
-  "updated": "2026-10-07",
+  "updated": "2026-10-15",
   "marketplace": {
     "name": "dev-discipline",
     "add": "/plugin marketplace add mhshaon98/agent-skills",
@@ -118,7 +118,7 @@
         "claude",
         "codex"
       ],
-      "version": "703d93a0ec4a",
+      "version": "efead75b8816",
       "path": "skills/update-handoff",
       "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/update-handoff/SKILL.md",
       "file_count": 2,
