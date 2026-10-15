@@ -42,6 +42,23 @@
       ]
     },
     {
+      "name": "collect-reports",
+      "source": "./",
+      "description": "From the main session, check every linked, forked and nested session (Claude Desktop), get each one's verified status report, and present one combined status board. Use on \"collect reports\", \"get everyone's status\", \"check on all the sessions\", or \"have all the forks report back\".",
+      "version": "5c6b19d95409",
+      "category": "workflow",
+      "keywords": [
+        "skill",
+        "workflow"
+      ],
+      "homepage": "https://github.com/mhshaon98/agent-skills/tree/main/skills/collect-reports",
+      "repository": "https://github.com/mhshaon98/agent-skills",
+      "license": "MIT",
+      "skills": [
+        "./skills/collect-reports"
+      ]
+    },
+    {
       "name": "new-project",
       "source": "./",
       "description": "Bootstrap a brand-new project with proven architecture defaults and continuity scaffolding. Use when starting a new project from scratch, or when touching a legacy project that has no handoff/git/structure yet.",
@@ -56,6 +73,23 @@
       "license": "MIT",
       "skills": [
         "./skills/new-project"
+      ]
+    },
+    {
+      "name": "report-back",
+      "source": "./",
+      "description": "Close out a forked or side session and send its verified status to the session that started it (Claude Desktop linked sessions). Use on \"report back\", \"send your status to the main session\", \"wrap up this forked session\", or when a collect-reports request asks for a report.",
+      "version": "7affb36f11f2",
+      "category": "workflow",
+      "keywords": [
+        "skill",
+        "workflow"
+      ],
+      "homepage": "https://github.com/mhshaon98/agent-skills/tree/main/skills/report-back",
+      "repository": "https://github.com/mhshaon98/agent-skills",
+      "license": "MIT",
+      "skills": [
+        "./skills/report-back"
       ]
     },
     {
@@ -78,8 +112,8 @@
     {
       "name": "update-handoff",
       "source": "./",
-      "description": "End-of-session wrap in one pass: a DETAILED handoff (always; depth scales with how much the session did, nothing in context is allowed to slip), lessons, memory, bug ledger and NEXT-SESSION-PROMPT.md. Use on \"update handoff\", \"wrap up\", \"end the session\", or before context runs out.",
-      "version": "efead75b8816",
+      "description": "End-of-session wrap in one pass: a detailed holistic handoff (this session plus every linked session and worktree), lessons, memory, bug ledger and NEXT-SESSION-PROMPT.md. Use on \"update handoff\", \"wrap up\", \"end the session\", or before context runs out.",
+      "version": "2fc04afbcb37",
       "category": "workflow",
       "keywords": [
         "skill",
@@ -401,8 +435,8 @@
     {
       "name": "workflow-pack",
       "source": "./",
-      "description": "Bundle of every workflow skill: bug-ledger, call-handoff, new-project, session-start, update-handoff",
-      "version": "a29dcd8c8aa9",
+      "description": "Bundle of every workflow skill: bug-ledger, call-handoff, collect-reports, new-project, report-back, session-start, update-handoff",
+      "version": "15fe0dfc90f6",
       "category": "bundle",
       "keywords": [
         "bundle",
@@ -414,7 +448,9 @@
       "skills": [
         "./skills/bug-ledger",
         "./skills/call-handoff",
+        "./skills/collect-reports",
         "./skills/new-project",
+        "./skills/report-back",
         "./skills/session-start",
         "./skills/update-handoff"
       ]

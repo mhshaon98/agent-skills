@@ -55,6 +55,8 @@ CATEGORIES = {
     "new-project": "workflow",
     "session-start": "workflow",
     "update-handoff": "workflow",
+    "report-back": "workflow",
+    "collect-reports": "workflow",
     "app-audit": "safety",
     "compliance-check": "safety",
     "pre-release-review": "safety",
