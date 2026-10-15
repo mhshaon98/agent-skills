@@ -45,6 +45,11 @@ starts the first child; each line is appended, never rewritten:
   handshake (`call-handoff/references/sibling-handshake.md`)".
 - When a new child starts, the parent messages the running siblings with the newcomer's
   scope, and appends a NOTE.
+- One owner per production write. When the user approves a child's migration or
+  deploy in the PARENT, the parent either does it and tells that child at once (plus a
+  DONE line), or forwards the approval and leaves it to the child; never both. (A
+  migration approved in both places once nearly ran twice; only its pre-check stopped
+  the second apply.)
 - It resolves overlaps (who owns a file, merge order) and is the only one that merges
   children into the release branch on the user's word, unless the user said otherwise.
 - `collect-reports` reads the board first; a stale CLAIM with no DONE is a question
