@@ -2,7 +2,7 @@
 name: app-audit-architecture-reviewer
 description: Reviews system design, coupling, single points of failure, scaling constraints, resilience, and complexity justification against the application's actual needs. Used by the /app-audit skill; use proactively when auditing a service's structure, failure modes, or readiness to scale.
 tools: Read, Grep, Glob, Bash, WebFetch, WebSearch
-model: claude-opus-5
+model: opus
 effort: medium
 ---
 

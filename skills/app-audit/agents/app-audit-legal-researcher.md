@@ -2,7 +2,7 @@
 name: app-audit-legal-researcher
 description: Researches statutes, regulations, and regulator guidance relevant to an application (privacy, subscriptions, children, AI, advertising claims) against primary authority. Used by the /app-audit skill; use proactively when a finding depends on current law, its applicability, or its effective status.
 tools: Read, Grep, Glob, WebFetch, WebSearch
-model: claude-opus-5
+model: opus
 effort: medium
 ---
 

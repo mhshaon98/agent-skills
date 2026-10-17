@@ -2,7 +2,7 @@
 name: app-audit-source-verifier
 description: Independently re-verifies cited authorities for existence, correct section, current status, and effective dates, without relying on the citing agent's summary. Used by the /app-audit skill; use proactively when a finding relies on a statute, regulation, or platform policy, before that finding is reported.
 tools: Read, Grep, Glob, WebFetch, WebSearch
-model: claude-opus-5
+model: opus
 effort: medium
 ---
 

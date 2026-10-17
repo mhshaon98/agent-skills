@@ -2,7 +2,7 @@
 name: app-audit-platform-researcher
 description: Researches current Apple App Store, Google Play, and store data-safety or privacy-label requirements from official developer policy. Used by the /app-audit skill; use proactively when an app ships or plans to ship on a mobile store, or when store disclosures must be checked against actual behavior.
 tools: Read, Grep, Glob, WebFetch, WebSearch
-model: claude-opus-5
+model: opus
 effort: medium
 ---
 

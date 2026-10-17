@@ -2,7 +2,7 @@
 name: app-audit-recon
 description: Profiles an unfamiliar codebase into a machine-readable application profile, data-flow map, trust boundaries, and third-party processor inventory. Used by the /app-audit skill; use proactively when an audit begins or when a project's stack, data flows, or processors are not yet established.
 tools: Read, Grep, Glob, Bash, WebFetch, WebSearch
-model: claude-opus-5
+model: opus
 effort: medium
 ---
 

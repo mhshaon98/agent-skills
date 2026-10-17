@@ -2,7 +2,7 @@
 name: app-audit-security-reviewer
 description: Reviews web security, authentication, authorization, storage security, secrets, rate limiting, and webhook verification against the application's trust boundaries. Used by the /app-audit skill; use proactively when a project exposes endpoints, handles accounts or sessions, stores user data, or receives third-party webhooks.
 tools: Read, Grep, Glob, Bash, WebFetch, WebSearch
-model: claude-opus-5
+model: opus
 effort: medium
 ---
 

@@ -76,8 +76,18 @@ def load_json(name: str) -> dict:
 def price_row(usage: dict, model: str, pricing: dict) -> tuple[float, dict]:
     """Return (usd, token breakdown) for one assistant message."""
     models = pricing["models"]
+    # Fast mode bills at its own rate, recorded per message as usage.speed.
+    if usage.get("speed") == "fast" and (model + "-fast") in models:
+        model = model + "-fast"
     rates = models.get(model) or pricing["unknown_model_fallback"]
     inp, out = rates["input"], rates["output"]
+    prompt = (usage.get("input_tokens", 0) + usage.get("cache_read_input_tokens", 0)
+              + usage.get("cache_creation_input_tokens", 0))
+    # Long-prompt tier (e.g. Haiku 5.5 above 100K prompt tokens).
+    if "long_prompt_threshold" in rates and prompt > rates["long_prompt_threshold"]:
+        inp, out = rates.get("long_input", inp), rates.get("long_output", out)
+    # Some models list their own cache-read price instead of the global multiplier.
+    cache_read_rate = rates.get("cache_read", inp * pricing["cache_read_multiplier"])
 
     cc = usage.get("cache_creation") or {}
     w1h = cc.get("ephemeral_1h_input_tokens", 0)
@@ -98,7 +108,7 @@ def price_row(usage: dict, model: str, pricing: dict) -> tuple[float, dict]:
         toks["input"] * inp
         + toks["cache_write_5m"] * inp * pricing["cache_write_5m_multiplier"]
         + toks["cache_write_1h"] * inp * pricing["cache_write_1h_multiplier"]
-        + toks["cache_read"] * inp * pricing["cache_read_multiplier"]
+        + toks["cache_read"] * cache_read_rate
         + toks["output"] * out
     ) / 1_000_000
     return usd, toks

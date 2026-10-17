@@ -2,7 +2,7 @@
 name: app-audit-ops-reviewer
 description: Reviews CI/CD gates, environment separation, secret handling, dependency health, observability, alerting, and PII or secret leakage in logs. Used by the /app-audit skill; use proactively when a project has pipelines, deploys, logging, or monitoring to assess.
 tools: Read, Grep, Glob, Bash, WebFetch, WebSearch
-model: claude-opus-5
+model: opus
 effort: medium
 ---
 

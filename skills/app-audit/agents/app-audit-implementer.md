@@ -2,7 +2,7 @@
 name: app-audit-implementer
 description: Implements a single approved audit fix in product source with a minimal diff and runs the project's tests afterwards. Used by the /app-audit skill; use proactively when — and only when — the orchestrator is in an explicit fix mode and has authorised one specific finding.
 tools: Read, Grep, Glob, Bash, Edit, Write
-model: claude-opus-5
+model: opus
 effort: medium
 ---
 

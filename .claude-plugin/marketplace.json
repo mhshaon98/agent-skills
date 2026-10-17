@@ -130,7 +130,7 @@
       "name": "app-audit",
       "source": "./",
       "description": "Automated technical and disclosure compliance-assistance audit of a project: profiling, read-only specialist subagents, fresh research, optional Codex peer review, one consolidated report. Use on /app-audit, \"audit this app\", or a pre-launch security/privacy/store check.",
-      "version": "242d461beb4f",
+      "version": "0d5e04a602f8",
       "category": "safety",
       "keywords": [
         "skill",
@@ -147,7 +147,7 @@
       "name": "compliance-check",
       "source": "./",
       "description": "Check what is actually live (store listing and labels, published policies, deployed backend, retention jobs) against the code and published words, then work the remediation runbook. Use on /compliance-check, \"what's left on compliance\", \"close out the audit\", or before a store submission.",
-      "version": "0f635b92d510",
+      "version": "080c47941d60",
       "category": "safety",
       "keywords": [
         "skill",
@@ -419,7 +419,7 @@
       "name": "usage-here",
       "source": "./",
       "description": "Report what this session cost: tokens and dollars by model, share of the 5-hour and weekly limits, top three prompts. Use on \"usage here\", \"what did this session cost\", \"how much have I burned\", \"token usage\", or questions about limits mid-session.",
-      "version": "c437186106a0",
+      "version": "3413b4a4d5ae",
       "category": "tooling",
       "keywords": [
         "skill",
@@ -459,7 +459,7 @@
       "name": "safety-pack",
       "source": "./",
       "description": "Bundle of every safety skill: app-audit, compliance-check, pre-release-review, safe-data-write, security-pass, verify-work",
-      "version": "9fa2007e91d8",
+      "version": "14e0ec5a6855",
       "category": "bundle",
       "keywords": [
         "bundle",
@@ -522,7 +522,7 @@
       "name": "tooling-pack",
       "source": "./",
       "description": "Bundle of every tooling skill: client-cms, commissioning-logger, usage-here",
-      "version": "187249f4ae7c",
+      "version": "3e72424ddc9d",
       "category": "bundle",
       "keywords": [
         "bundle",
