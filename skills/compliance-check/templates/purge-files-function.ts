@@ -6,9 +6,9 @@
 
 // supabase/functions/purge-chat-images/index.ts
 //
-// Completes the 90-day support-chat retention promised in the privacy policy
-// ("Support conversations, and any image attached to one, are deleted 90 days
-// after the last message in the thread"). The SQL job purge_old_chat(90) deletes
+// Completes an N-day chat retention promise (match the exact sentence your privacy
+// policy publishes, e.g. "conversations and their attachments are deleted N days
+// after the last message"). The SQL job purge_old_chat(90) deletes
 // stale threads WITHOUT images; this function deletes stale threads WITH images,
 // because bucket bytes can only be removed through the Storage API.
 //
@@ -21,9 +21,9 @@
 //
 // AUTHORIZATION: fired only by pg_cron through pg_net with the service-role key.
 // verify_jwt = true proves the token is valid; this function additionally
-// requires role == "service_role", exactly like notify.
+// requires role == "service_role".
 
-// PC-SEC-019: exact pinned version, same as the other functions.
+// Pin an exact version (no ranges) for every edge-function import.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.112.3";
 
 const env = (k: string) => Deno.env.get(k)!;

@@ -1,6 +1,6 @@
 ---
 name: collect-reports
-description: From the main session, check every linked, forked and nested session (Claude Desktop), get each one's verified status report, and present one combined status board. Use on "collect reports", "get everyone's status", "check on all the sessions", or "have all the forks report back".
+description: From the main session, collect a verified status report from every linked, forked and nested Claude Desktop session into one board. Use on "collect reports", "get everyone's status", or "have the forks report back".
 ---
 
 # Collect Reports — the main session gathers every side session's status

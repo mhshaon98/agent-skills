@@ -1,6 +1,6 @@
 ---
 name: report-back
-description: Close out a forked or side session and send its verified status to the session that started it (Claude Desktop linked sessions). Use on "report back", "send your status to the main session", "wrap up this forked session", or when a collect-reports request asks for a report.
+description: Close out a forked or side session and send its verified status to the session that started it. Use on "report back", "send your status to the main session", or when collect-reports asks.
 ---
 
 # Report Back — close a side session and brief its parent

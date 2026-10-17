@@ -1,7 +1,7 @@
 {
   "name": "dev-discipline",
   "description": "Field-tested engineering-discipline skills: session continuity, verification, data safety, release review, delegation and formatting. One plugin per skill, plus one bundle per category.",
-  "version": "2026-10-15",
+  "version": "2026-10-17",
   "owner": {
     "name": "agent-skills maintainers",
     "url": "https://github.com/mhshaon98/agent-skills"
@@ -11,7 +11,7 @@
       "name": "bug-ledger",
       "source": "./",
       "description": "Use when a bug is reported, found, fixed, or reopened, or before working in a bug-prone area. Check BUG_LIST.md before debugging: many \"new\" bugs are regressions of fixed ones.",
-      "version": "fd6b5e5c97ab",
+      "version": "57c59ee71c75",
       "category": "workflow",
       "keywords": [
         "skill",
@@ -44,8 +44,8 @@
     {
       "name": "collect-reports",
       "source": "./",
-      "description": "From the main session, check every linked, forked and nested session (Claude Desktop), get each one's verified status report, and present one combined status board. Use on \"collect reports\", \"get everyone's status\", \"check on all the sessions\", or \"have all the forks report back\".",
-      "version": "7abd742f4128",
+      "description": "From the main session, collect a verified status report from every linked, forked and nested Claude Desktop session into one board. Use on \"collect reports\", \"get everyone's status\", or \"have the forks report back\".",
+      "version": "89f6234e0a2d",
       "category": "workflow",
       "keywords": [
         "skill",
@@ -78,8 +78,8 @@
     {
       "name": "report-back",
       "source": "./",
-      "description": "Close out a forked or side session and send its verified status to the session that started it (Claude Desktop linked sessions). Use on \"report back\", \"send your status to the main session\", \"wrap up this forked session\", or when a collect-reports request asks for a report.",
-      "version": "22771d31b081",
+      "description": "Close out a forked or side session and send its verified status to the session that started it. Use on \"report back\", \"send your status to the main session\", or when collect-reports asks.",
+      "version": "912be7449c25",
       "category": "workflow",
       "keywords": [
         "skill",
@@ -96,7 +96,7 @@
       "name": "session-start",
       "source": "./",
       "description": "Old name for the session-start ritual, which now lives in call-handoff; run that skill instead.",
-      "version": "9ea3ea110186",
+      "version": "9746425cd044",
       "category": "workflow",
       "keywords": [
         "skill",
@@ -130,7 +130,7 @@
       "name": "app-audit",
       "source": "./",
       "description": "Automated technical and disclosure compliance-assistance audit of a project: profiling, read-only specialist subagents, fresh research, optional Codex peer review, one consolidated report. Use on /app-audit, \"audit this app\", or a pre-launch security/privacy/store check.",
-      "version": "ec0280e7d3c7",
+      "version": "242d461beb4f",
       "category": "safety",
       "keywords": [
         "skill",
@@ -146,8 +146,8 @@
     {
       "name": "compliance-check",
       "source": "./",
-      "description": "Live compliance close-out: checks what is actually live (store listing and labels, published policies, deployed backend, retention and deletion jobs) against the code and the published words, then works the remediation runbook. Use on /compliance-check, \"what's left on compliance\", \"close out the audit\", or before a store submission.",
-      "version": "9244413ffaef",
+      "description": "Check what is actually live (store listing and labels, published policies, deployed backend, retention jobs) against the code and published words, then work the remediation runbook. Use on /compliance-check, \"what's left on compliance\", \"close out the audit\", or before a store submission.",
+      "version": "0f635b92d510",
       "category": "safety",
       "keywords": [
         "skill",
@@ -198,7 +198,7 @@
       "name": "security-pass",
       "source": "./",
       "description": "Use when touching auth, API keys, secrets, RLS/policies, payment or personal data, any new endpoint that writes, or live backends — and before any release. Security and secrets checklist; every rule traces to a real production finding.",
-      "version": "17c62905a755",
+      "version": "a33007ab73cf",
       "category": "safety",
       "keywords": [
         "skill",
@@ -350,8 +350,8 @@
     {
       "name": "eng-report",
       "source": "./",
-      "description": "Apply an engineering house style (modelled on Rockwell, Siemens, ABB, Schneider and Endress+Hauser technical publications) to a Word, Markdown or PDF document, in the user's own logo and colours, with ANSI safety notices and document-control blocks. Use on \"/eng-report\", \"make this a proper engineering report\", or \"format this like an automation vendor manual\"; on first use it asks for the company's logo and brand colours.",
-      "version": "cc4835c073a4",
+      "description": "Apply an engineering house style (vendor-manual layout, the user's own logo and colours, ANSI safety notices, document-control blocks) to a Word, Markdown or PDF document. Use on /eng-report, \"make this a proper engineering report\", or \"format this like a vendor manual\"; on first use it asks for the company's logo and brand colours.",
+      "version": "8ce75749ac89",
       "category": "formatting",
       "keywords": [
         "skill",
@@ -436,7 +436,7 @@
       "name": "workflow-pack",
       "source": "./",
       "description": "Bundle of every workflow skill: bug-ledger, call-handoff, collect-reports, new-project, report-back, session-start, update-handoff",
-      "version": "d6bdb83f2559",
+      "version": "6c49c91adbef",
       "category": "bundle",
       "keywords": [
         "bundle",
@@ -459,7 +459,7 @@
       "name": "safety-pack",
       "source": "./",
       "description": "Bundle of every safety skill: app-audit, compliance-check, pre-release-review, safe-data-write, security-pass, verify-work",
-      "version": "395145b7a886",
+      "version": "9fa2007e91d8",
       "category": "bundle",
       "keywords": [
         "bundle",
@@ -502,7 +502,7 @@
       "name": "formatting-pack",
       "source": "./",
       "description": "Bundle of every formatting skill: apply-richformat, doc-metadata, eng-report, slop-clean",
-      "version": "db659f72feb8",
+      "version": "9f2a36488149",
       "category": "bundle",
       "keywords": [
         "bundle",

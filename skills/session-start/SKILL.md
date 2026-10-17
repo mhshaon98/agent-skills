@@ -1,6 +1,7 @@
 ---
 name: session-start
 description: Old name for the session-start ritual, which now lives in call-handoff; run that skill instead.
+disable-model-invocation: true
 ---
 
 # Session Start — now part of `call-handoff`
