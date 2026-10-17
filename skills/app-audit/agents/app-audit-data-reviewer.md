@@ -2,7 +2,7 @@
 name: app-audit-data-reviewer
 description: Reviews database schema and query safety, migrations, backups and restore, object storage layout and access, retention implementation, and caching. Used by the /app-audit skill; use proactively when a project has a database, migrations, file storage, or a cache layer.
 tools: Read, Grep, Glob, Bash, WebFetch, WebSearch
-model: claude-opus-5
+model: opus
 effort: medium
 ---
 

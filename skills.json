@@ -168,7 +168,7 @@
         "claude",
         "codex"
       ],
-      "version": "242d461beb4f",
+      "version": "0d5e04a602f8",
       "path": "skills/app-audit",
       "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/app-audit/SKILL.md",
       "file_count": 110,
@@ -293,7 +293,7 @@
         "claude",
         "codex"
       ],
-      "version": "0f635b92d510",
+      "version": "080c47941d60",
       "path": "skills/compliance-check",
       "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/compliance-check/SKILL.md",
       "file_count": 9,
@@ -585,7 +585,7 @@
         "claude",
         "codex"
       ],
-      "version": "c437186106a0",
+      "version": "3413b4a4d5ae",
       "path": "skills/usage-here",
       "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/usage-here/SKILL.md",
       "file_count": 4,

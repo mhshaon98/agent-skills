@@ -170,9 +170,10 @@ read-only constraint, "no chain-of-thought — conclusions, evidence, sources,
 confidence only", and "never print secret values".
 
 **Model tier.** Audit work is judgment work, so the 14 reviewer/researcher
-subagents ship pinned to a frontier reasoning model at medium effort
-(`app-audit-adversarial-reviewer` at high effort). Retune the `model:` line in each
-agent file to whatever your preferred frontier tier is — but keep the reviewers on a
+subagents ship on the `opus` alias (the current frontier Opus model) at medium effort
+(`app-audit-adversarial-reviewer` at high effort), so they keep working as models are
+retired. Pin an exact model id in each agent file's `model:` line instead if you need
+reproducible audits, or retune it to whatever your preferred frontier tier is — but keep the reviewers on a
 judgment-grade model rather than a cheap one; a cheap reviewer produces confident
 wrong PASSes. `app-audit-codex-liaison` stays on a cheaper tier: it builds a prompt
 and relays output verbatim, which is not judgment work. There is no escalation tier

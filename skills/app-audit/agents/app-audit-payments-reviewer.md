@@ -2,7 +2,7 @@
 name: app-audit-payments-reviewer
 description: Reviews payment and billing integrations for webhook signature verification, idempotency, entitlement synchronisation, and subscription lifecycle disclosure. Used by the /app-audit skill; use proactively when a project integrates Stripe, Paddle, RevenueCat, store billing, or any recurring charge.
 tools: Read, Grep, Glob, Bash, WebFetch, WebSearch
-model: claude-opus-5
+model: opus
 effort: medium
 ---
 

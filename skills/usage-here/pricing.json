@@ -1,24 +1,111 @@
 {
-  "_comment": "Anthropic first-party API list prices, USD per million tokens. Source: claude-api skill model table, cached 2026-06-24; verified 2026-07-25. Update when Anthropic changes pricing. Third-party platforms (Bedrock, Vertex) bill separately and are NOT covered here.",
-  "_multipliers_note": "cache_write_5m = 1.25x input, cache_write_1h = 2.0x input, cache_read = 0.1x input. These are Anthropic-wide, not per model.",
+  "_comment": "Anthropic first-party API list prices, USD per million tokens. Source: claude-api skill model table (cached 2026-10-06), checked 2026-10-17. Update when Anthropic changes pricing. Third-party platforms (Bedrock, Vertex) bill separately and are NOT covered here.",
+  "_multipliers_note": "cache_write_5m = 1.25x input, cache_write_1h = 2.0x input, cache_read = 0.1x input unless a model lists its own cache_read price ($/MTok). A '-fast' row is used when a message's usage.speed is 'fast'. long_prompt_threshold/long_input/long_output apply above that many prompt tokens. Fast-mode cache-read and cache-write prices are not published separately; they are billed here at the fast input rate times the multipliers (unverified).",
   "cache_write_5m_multiplier": 1.25,
   "cache_write_1h_multiplier": 2.0,
   "cache_read_multiplier": 0.1,
   "models": {
-    "claude-fable-5":     {"input": 10.0, "output": 50.0, "tier": "fable"},
-    "claude-mythos-5":    {"input": 10.0, "output": 50.0, "tier": "fable"},
-    "claude-opus-5-5":    {"input": 4.0,  "output": 20.0, "tier": "opus", "source": "secondary source 2026-09-22; cache rates derived; NOT checked against Anthropic price page"},
-    "claude-opus-5":      {"input": 5.0,  "output": 25.0, "tier": "opus"},
-    "claude-opus-5-fast": {"input": 10.0, "output": 50.0, "tier": "opus"},
-    "claude-opus-4-8":    {"input": 5.0,  "output": 25.0, "tier": "opus"},
-    "claude-opus-4-7":    {"input": 5.0,  "output": 25.0, "tier": "opus"},
-    "claude-opus-4-6":    {"input": 5.0,  "output": 25.0, "tier": "opus"},
-    "claude-opus-4-5":    {"input": 5.0,  "output": 25.0, "tier": "opus"},
-    "claude-sonnet-5-5":  {"input": 2.0,  "output": 10.0, "tier": "sonnet", "source": "secondary sources 2026-10-06; NOT checked against Anthropic price page"},
-    "claude-sonnet-5":    {"input": 3.0,  "output": 15.0, "tier": "sonnet"},
-    "claude-sonnet-4-6":  {"input": 3.0,  "output": 15.0, "tier": "sonnet"},
-    "claude-sonnet-4-5":  {"input": 3.0,  "output": 15.0, "tier": "sonnet"},
-    "claude-haiku-4-5":   {"input": 1.0,  "output": 5.0,  "tier": "haiku"}
+    "claude-fable-5-1": {
+      "input": 10.0,
+      "output": 50.0,
+      "cache_read": 0.25,
+      "tier": "fable"
+    },
+    "claude-mythos-5-1": {
+      "input": 10.0,
+      "output": 50.0,
+      "cache_read": 0.25,
+      "tier": "fable"
+    },
+    "claude-fable-5": {
+      "input": 10.0,
+      "output": 50.0,
+      "tier": "fable"
+    },
+    "claude-mythos-5": {
+      "input": 10.0,
+      "output": 50.0,
+      "tier": "fable"
+    },
+    "claude-opus-5-5": {
+      "input": 4.0,
+      "output": 20.0,
+      "cache_read": 0.2,
+      "tier": "opus"
+    },
+    "claude-opus-5-5-fast": {
+      "input": 8.0,
+      "output": 40.0,
+      "tier": "opus"
+    },
+    "claude-opus-5": {
+      "input": 5.0,
+      "output": 25.0,
+      "tier": "opus"
+    },
+    "claude-opus-5-fast": {
+      "input": 10.0,
+      "output": 50.0,
+      "tier": "opus"
+    },
+    "claude-opus-4-8": {
+      "input": 5.0,
+      "output": 25.0,
+      "tier": "opus"
+    },
+    "claude-opus-4-7": {
+      "input": 5.0,
+      "output": 25.0,
+      "tier": "opus"
+    },
+    "claude-opus-4-6": {
+      "input": 5.0,
+      "output": 25.0,
+      "tier": "opus"
+    },
+    "claude-opus-4-5": {
+      "input": 5.0,
+      "output": 25.0,
+      "tier": "opus"
+    },
+    "claude-sonnet-5-5": {
+      "input": 2.0,
+      "output": 10.0,
+      "cache_read": 0.2,
+      "tier": "sonnet"
+    },
+    "claude-sonnet-5": {
+      "input": 2.0,
+      "output": 10.0,
+      "tier": "sonnet"
+    },
+    "claude-sonnet-4-6": {
+      "input": 3.0,
+      "output": 15.0,
+      "tier": "sonnet"
+    },
+    "claude-sonnet-4-5": {
+      "input": 3.0,
+      "output": 15.0,
+      "tier": "sonnet"
+    },
+    "claude-haiku-5-5": {
+      "input": 0.1,
+      "output": 0.5,
+      "long_prompt_threshold": 100000,
+      "long_input": 0.5,
+      "long_output": 2.5,
+      "tier": "haiku"
+    },
+    "claude-haiku-4-5": {
+      "input": 1.0,
+      "output": 5.0,
+      "tier": "haiku"
+    }
   },
-  "unknown_model_fallback": {"input": 5.0, "output": 25.0, "tier": "opus"}
+  "unknown_model_fallback": {
+    "input": 4.0,
+    "output": 20.0,
+    "tier": "opus"
+  }
 }

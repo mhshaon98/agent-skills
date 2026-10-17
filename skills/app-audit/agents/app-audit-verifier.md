@@ -2,7 +2,7 @@
 name: app-audit-verifier
 description: Independently reproduces findings and claimed fixes from scratch by re-running tests and scanners and re-tracing code paths, never trusting a diff or a summary. Used by the /app-audit skill; use proactively when a fix must be confirmed or a finding reproduced before it is recorded as resolved.
 tools: Read, Grep, Glob, Bash, WebFetch, WebSearch
-model: claude-opus-5
+model: opus
 effort: medium
 ---
 

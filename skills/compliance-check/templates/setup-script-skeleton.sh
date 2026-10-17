@@ -47,8 +47,8 @@ fi
 case "$KEY" in *"'"*) echo "ABORT: unexpected key format" >&2; exit 1;; esac
 # The key goes through a private temp file (-f), never on the command line, so it
 # stays out of process listings.
-KEYSQL="$(umask 077; mktemp)"
-trap 'rm -f "$KEYSQL"' EXIT
+KEYSQL="$(umask 077; mktemp)"; KEYHDR="$(umask 077; mktemp)"
+trap 'rm -f "$KEYSQL" "$KEYHDR"' EXIT
 cat > "$KEYSQL" <<SQL
 do \$\$ begin
   if exists (select 1 from vault.secrets where name = 'purge_chat_images_key') then
@@ -79,8 +79,10 @@ printf 'no-auth call (expect 401): '
 curl -s -o /dev/null -w '%{http_code}\n' -X POST -H 'Content-Type: application/json' -d '{}' \
   "https://$REF.supabase.co/functions/v1/purge-chat-images"
 printf 'service-role call (expect {"ok":true,...}): '
-curl -s -X POST -H 'Content-Type: application/json' -H "Authorization: Bearer $KEY" -d '{}' \
+printf 'Authorization: Bearer %s\n' "$KEY" > "$KEYHDR"   # printf is a shell builtin: no argv exposure
+curl -s -X POST -H 'Content-Type: application/json' -H @"$KEYHDR" -d '{}' \
   "https://$REF.supabase.co/functions/v1/purge-chat-images"
+rm -f "$KEYHDR"
 echo
 unset KEY
 echo "Done."

@@ -2,7 +2,7 @@
 name: app-audit-ai-reviewer
 description: Reviews AI and LLM integrations for production reliability, cost and loop controls, data leakage, prompt injection, and the privileges an AI path can reach. Used by the /app-audit skill; use proactively when a project calls a model provider, runs an agent loop, or exposes tool calling.
 tools: Read, Grep, Glob, Bash, WebFetch, WebSearch
-model: claude-opus-5
+model: opus
 effort: medium
 ---
 

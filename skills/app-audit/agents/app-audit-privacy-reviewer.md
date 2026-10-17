@@ -2,7 +2,7 @@
 name: app-audit-privacy-reviewer
 description: Compares an application's actual data collection, trackers, consent behavior, and deletion paths against its privacy policy, cookie disclosure, and store disclosures. Used by the /app-audit skill; use proactively when an app collects user data, runs analytics or ad pixels, or offers account or content deletion.
 tools: Read, Grep, Glob, Bash, WebFetch, WebSearch
-model: claude-opus-5
+model: opus
 effort: medium
 ---
 

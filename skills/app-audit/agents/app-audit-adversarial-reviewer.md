@@ -2,7 +2,7 @@
 name: app-audit-adversarial-reviewer
 description: Attacks the audit's own findings and its PASS results on critical controls, testing each for disproof, legitimate explanations, unestablished applicability, exaggerated severity, and insufficient evidence. Used by the /app-audit skill; use proactively when CRITICAL or HIGH findings, or PASS results on critical controls, are ready to be challenged.
 tools: Read, Grep, Glob, Bash, WebFetch, WebSearch
-model: claude-opus-5
+model: opus
 effort: high
 ---
 
