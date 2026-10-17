@@ -154,23 +154,8 @@ Spawn these by exact agent name. All are read-only except the implementer.
 Subagents **investigate and report**; they never orchestrate, never spawn a
 plan of their own, and never decide the audit's conclusions.
 
-| Agent | Spawn when |
-|---|---|
-| `app-audit-recon` | Always, first, alone — its profile drives everything downstream |
-| `app-audit-legal-researcher` | Any compliance domain APPLIES/POSSIBLY_APPLIES at depth ≥ LIGHT (statutes, regulators, subscriptions, AI law, minors) |
-| `app-audit-platform-researcher` | An iOS/Android target, store listing, or store-disclosure question exists |
-| `app-audit-privacy-reviewer` | Any data collection, tracker, cookie, processor, or published privacy disclosure |
-| `app-audit-security-reviewer` | Any server-side code, auth, storage, secret handling, or public endpoint |
-| `app-audit-architecture-reviewer` | Non-trivial architecture, multiple services, or scaling/coupling questions |
-| `app-audit-data-reviewer` | A database, migrations, object storage, cache, or backup story exists |
-| `app-audit-payments-reviewer` | Any payment provider, billing, subscription, entitlement, or payment webhook |
-| `app-audit-ai-reviewer` | Any AI provider, model call, prompt, RAG path, or agent with tools |
-| `app-audit-ops-reviewer` | CI/CD, deployment, observability, logging, or dependency-health surface |
-| `app-audit-adversarial-reviewer` | After findings exist: all CRITICAL/HIGH + sampled PASS on critical controls |
-| `app-audit-source-verifier` | Any consequential citation, before it is relied on; and on resume for stale sources |
-| `app-audit-codex-liaison` | Each Codex checkpoint (A–E) you decide to run — only if a Codex CLI is installed |
-| `app-audit-verifier` | `verify` mode; after any fix; and to reproduce a contested finding |
-| `app-audit-implementer` | **`fix*` modes only**, one finding per brief, safety class stated in the brief |
+The agent-by-agent "spawn when" table: `references/orchestration.md` §10 (read it before
+the first dispatch).
 
 **Parallel dispatch.** After recon returns, send every independent specialist
 and research brief **in a single message with multiple Agent tool calls** so

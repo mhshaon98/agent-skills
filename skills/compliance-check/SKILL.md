@@ -1,6 +1,6 @@
 ---
 name: compliance-check
-description: 'Live compliance close-out: checks what is actually live (store listing and labels, published policies, deployed backend, retention and deletion jobs) against the code and the published words, then works the remediation runbook. Use on /compliance-check, "what''s left on compliance", "close out the audit", or before a store submission.'
+description: Check what is actually live (store listing and labels, published policies, deployed backend, retention jobs) against the code and published words, then work the remediation runbook. Use on /compliance-check, "what's left on compliance", "close out the audit", or before a store submission.
 argument-hint: "[check|closeout|store|retention|health-data|reconcile|embedded]"
 ---
 

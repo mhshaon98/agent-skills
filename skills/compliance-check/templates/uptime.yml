@@ -2,7 +2,7 @@
 # DEFAULT branch (scheduled workflows run only there); see references/production-safety.md §5.
 # Rename the probe URLs and accepted codes.
 #
-# Uptime check (audit Item 9 / M-9). Free, no third-party account: a scheduled job
+# Uptime check. Free, no third-party account: a scheduled job
 # that fails when something users depend on stops answering. GitHub emails the
 # repo owner when a scheduled run fails. Scheduled workflows only run from the
 # default branch, which is why this file lives on main.

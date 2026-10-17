@@ -1,7 +1,7 @@
 # US consumer health data (Washington, Nevada, Connecticut)
 
-**Last verified: 2026-09-12** by `app-audit-legal-researcher` against primary sources, for
-a body-tracking consumer app. **Freshness window: 90 days.** If today is past 2026-12-11, or the app's facts
+**Last verified: 2026-09-12** by `app-audit-legal-researcher` against primary sources.
+**Freshness window: 90 days.** If today is past 2026-12-11, or the app's facts
 differ, re-run the legal researcher with the questions in section 6 before relying on
 anything below. Not legal advice; items marked COUNSEL need a lawyer.
 
@@ -93,8 +93,8 @@ support request plausibly fit (MEDIUM confidence). Connecticut's no-threshold
 sensitive-data consent rule may still bite (COUNSEL). Low-friction safe pattern: a one-time
 notice before the first message that the user acknowledges with a tap:
 
-> Only include health details, like measurements, conditions, or body photos, if you want
-> <person> to use them to help you. Messages are deleted N days after your last one.
+> Only include health details, like symptoms, conditions, or photos, if you want
+> our support team to use them to help you. Messages are deleted N days after your last one.
 > [I understand]   Health data policy
 
 Store the acknowledgement locally, reset it on account deletion, verify on screen.

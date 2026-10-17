@@ -14,7 +14,7 @@
   <a href="llms.txt">llms.txt</a>
 </p>
 
-<p align="center"><sub><!-- stats -->Last updated: 2026-10-15 · 26 skills · 11 playbooks<!-- /stats --></sub></p>
+<p align="center"><sub><!-- stats -->Last updated: 2026-10-17 · 26 skills · 11 playbooks<!-- /stats --></sub></p>
 
 # Agent Skills Catalog
 
@@ -123,9 +123,9 @@ Session continuity: start, hand off, track bugs, bootstrap projects. Bundle: `wo
 | --- | --- | --- |
 | [bug-ledger](skills/bug-ledger/SKILL.md) | Use when a bug is reported, found, fixed, or reopened, or before working in a bug-prone area. Check BUG_LIST.md before debugging: many "new" bugs are regressions of fixed ones. | 1 |
 | [call-handoff](skills/call-handoff/SKILL.md) | Cold-start briefing from the project's newest handoff, open bugs and next-session prompt in two round-trips, then stop. Use at session start or on "call handoff", "catch up", "where did we leave off". | 3 |
-| [collect-reports](skills/collect-reports/SKILL.md) | From the main session, check every linked, forked and nested session (Claude Desktop), get each one's verified status report, and present one combined status board. Use on "collect reports", "get everyone's status", "check on all the sessions", or "have all the forks report back". | 1 |
+| [collect-reports](skills/collect-reports/SKILL.md) | From the main session, collect a verified status report from every linked, forked and nested Claude Desktop session into one board. Use on "collect reports", "get everyone's status", or "have the forks report back". | 1 |
 | [new-project](skills/new-project/SKILL.md) | Bootstrap a brand-new project with proven architecture defaults and continuity scaffolding. Use when starting a new project from scratch, or when touching a legacy project that has no handoff/git/structure yet. | 1 |
-| [report-back](skills/report-back/SKILL.md) | Close out a forked or side session and send its verified status to the session that started it (Claude Desktop linked sessions). Use on "report back", "send your status to the main session", "wrap up this forked session", or when a collect-reports request asks for a report. | 1 |
+| [report-back](skills/report-back/SKILL.md) | Close out a forked or side session and send its verified status to the session that started it. Use on "report back", "send your status to the main session", or when collect-reports asks. | 1 |
 | [session-start](skills/session-start/SKILL.md) | Old name for the session-start ritual, which now lives in call-handoff; run that skill instead. | 1 |
 | [update-handoff](skills/update-handoff/SKILL.md) | End-of-session wrap in one pass: a detailed holistic handoff (this session plus every linked session and worktree), lessons, memory, bug ledger and NEXT-SESSION-PROMPT.md. Use on "update handoff", "wrap up", "end the session", or before context runs out. | 2 |
 
@@ -136,7 +136,7 @@ Verification, data safety, security and release gates. Bundle: `safety-pack@dev-
 | Skill | What it does | Files |
 | --- | --- | --- |
 | [app-audit](skills/app-audit/SKILL.md) | Automated technical and disclosure compliance-assistance audit of a project: profiling, read-only specialist subagents, fresh research, optional Codex peer review, one consolidated report. Use on /app-audit, "audit this app", or a pre-launch security/privacy/store check. | 110 |
-| [compliance-check](skills/compliance-check/SKILL.md) | Live compliance close-out: checks what is actually live (store listing and labels, published policies, deployed backend, retention and deletion jobs) against the code and the published words, then works the remediation runbook. Use on /compliance-check, "what's left on compliance", "close out the audit", or before a store submission. | 9 |
+| [compliance-check](skills/compliance-check/SKILL.md) | Check what is actually live (store listing and labels, published policies, deployed backend, retention jobs) against the code and published words, then work the remediation runbook. Use on /compliance-check, "what's left on compliance", "close out the audit", or before a store submission. | 9 |
 | [pre-release-review](skills/pre-release-review/SKILL.md) | Independent fresh-context review before anything ships. Use on "ship it", "release", "submit", "deploy", "push to production", before any production push, and after a large diff, even when the diff looks fine. | 1 |
 | [safe-data-write](skills/safe-data-write/SKILL.md) | Use before any write, migration, or deletion touching user data: stores, schemas, user-owned files (Excel workbooks, databases, documents). Backup, audit and rollback rules learned from shipped data-loss bugs. | 1 |
 | [security-pass](skills/security-pass/SKILL.md) | Use when touching auth, API keys, secrets, RLS/policies, payment or personal data, any new endpoint that writes, or live backends — and before any release. Security and secrets checklist; every rule traces to a real production finding. | 1 |
@@ -163,7 +163,7 @@ Readable output and AI-slop cleanup. Bundle: `formatting-pack@dev-discipline`.
 | --- | --- | --- |
 | [apply-richformat](skills/apply-richformat/SKILL.md) | Give any text-bearing surface (app screen, document, report, README, chat answer, CLI output, table) visible rank and separation. Use when building or reviewing one, or on "rich formatting", "text vomit", "needs better structure", "make this readable". | 1 |
 | [doc-metadata](skills/doc-metadata/SKILL.md) | Stamp the project's chosen author and company on every Word, Excel, PowerPoint or PDF file the agent creates or edits, and strip tool and AI fingerprints such as "python-docx" or "generated by". Asks the user once per project which identity to use; also on /doc-metadata or "fix the metadata". | 2 |
-| [eng-report](skills/eng-report/SKILL.md) | Apply an engineering house style (modelled on Rockwell, Siemens, ABB, Schneider and Endress+Hauser technical publications) to a Word, Markdown or PDF document, in the user's own logo and colours, with ANSI safety notices and document-control blocks. Use on "/eng-report", "make this a proper engineering report", or "format this like an automation vendor manual"; on first use it asks for the company's logo and brand colours. | 5 |
+| [eng-report](skills/eng-report/SKILL.md) | Apply an engineering house style (vendor-manual layout, the user's own logo and colours, ANSI safety notices, document-control blocks) to a Word, Markdown or PDF document. Use on /eng-report, "make this a proper engineering report", or "format this like a vendor manual"; on first use it asks for the company's logo and brand colours. | 5 |
 | [slop-clean](skills/slop-clean/SKILL.md) | Project-wide sweep that removes heavy AI slop from design and copy while keeping deliberate, evidenced creative choices (bold colour, density, texture, voice). Manual only (/slop-clean [path]); never self-trigger. | 1 |
 
 ### Tooling

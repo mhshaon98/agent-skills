@@ -1,8 +1,8 @@
 -- TEMPLATE (compliance-check). Tested in production.
 -- Thread-level retention: a whole thread goes N days after its LAST message; threads that
 -- reference stored files are skipped here and handled by purge-files-function.ts.
--- Rename before use: dev_messages (messages table: owner, created_at, image_url),
--- chat_reads and dev_conversations (per-owner side tables), public schema.
+-- Rename before use: support_messages (messages table: owner, created_at, image_url),
+-- message_reads and support_threads (per-owner side tables), public schema.
 -- Test with the rolled-back DO-block pattern in references/retention-and-deletion.md §4
 -- BEFORE applying. Schedule daily after publishing the matching policy sentence:
 --   select cron.schedule('purge-old-chat', '17 4 * * *', $$select * from public.purge_old_chat(90)$$);
@@ -25,27 +25,27 @@ begin
          coalesce(array_agg(owner) filter (where not has_image), '{}')
     into threads_skipped_images, stale
   from (select owner, bool_or(image_url is not null) has_image
-        from public.dev_messages
+        from public.support_messages
         group by owner
         having max(created_at) < cutoff) t;
 
   -- Re-check at delete time: a thread that received a new message after the
   -- scan above is no longer stale and must survive.
   with d as (
-    delete from public.dev_messages m
+    delete from public.support_messages m
     where m.owner = any(stale)
-      and not exists (select 1 from public.dev_messages n
+      and not exists (select 1 from public.support_messages n
                       where n.owner = m.owner and (n.created_at >= cutoff or n.image_url is not null))
     returning m.owner)
   select count(distinct owner), count(*) into threads_deleted, messages_deleted from d;
 
   -- Only clear side tables for owners that now have no messages at all.
-  delete from public.chat_reads r
+  delete from public.message_reads r
    where r.owner = any(stale)
-     and not exists (select 1 from public.dev_messages m where m.owner = r.owner);
-  delete from public.dev_conversations c
+     and not exists (select 1 from public.support_messages m where m.owner = r.owner);
+  delete from public.support_threads c
    where c.owner = any(stale)
-     and not exists (select 1 from public.dev_messages m where m.owner = c.owner);
+     and not exists (select 1 from public.support_messages m where m.owner = c.owner);
 
   return next;
 end;
@@ -65,7 +65,7 @@ begin
   end if;
   return query
     select m.owner, coalesce(array_agg(m.image_url) filter (where m.image_url is not null), '{}')
-    from public.dev_messages m
+    from public.support_messages m
     group by m.owner
     having max(m.created_at) < now() - make_interval(days => retain_days)
        and bool_or(m.image_url is not null);
@@ -85,15 +85,15 @@ begin
   end if;
   cutoff := now() - make_interval(days => retain_days);
   with d as (
-    delete from public.dev_messages m
+    delete from public.support_messages m
     where m.owner = o
-      and not exists (select 1 from public.dev_messages n2
+      and not exists (select 1 from public.support_messages n2
                       where n2.owner = o and n2.created_at >= cutoff)
     returning 1)
   select count(*) into n from d;
-  if not exists (select 1 from public.dev_messages where owner = o) then
-    delete from public.chat_reads where owner = o;
-    delete from public.dev_conversations where owner = o;
+  if not exists (select 1 from public.support_messages where owner = o) then
+    delete from public.message_reads where owner = o;
+    delete from public.support_threads where owner = o;
   end if;
   return n;
 end;

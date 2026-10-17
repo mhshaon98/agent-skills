@@ -1,6 +1,6 @@
 ---
 name: eng-report
-description: Apply an engineering house style (modelled on Rockwell, Siemens, ABB, Schneider and Endress+Hauser technical publications) to a Word, Markdown or PDF document, in the user's own logo and colours, with ANSI safety notices and document-control blocks. Use on "/eng-report", "make this a proper engineering report", or "format this like an automation vendor manual"; on first use it asks for the company's logo and brand colours.
+description: Apply an engineering house style (vendor-manual layout, the user's own logo and colours, ANSI safety notices, document-control blocks) to a Word, Markdown or PDF document. Use on /eng-report, "make this a proper engineering report", or "format this like a vendor manual"; on first use it asks for the company's logo and brand colours.
 ---
 
 # eng-report: engineering house style, in your own branding

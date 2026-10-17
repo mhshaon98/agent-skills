@@ -5,7 +5,7 @@
 # function name, vault secret name, cron name/schedule, verify URLs.
 # Never prints the key. Aborts if only a non-JWT secret key exists.
 
-# One-shot setup for the 90-day chat-image purge (audit M-5 follow-up).
+# One-shot setup for the 90-day chat-image purge.
 # Idempotent: safe to re-run. Never prints the service-role key.
 #   1. applies the service_role-only SQL helpers
 #   2. deploys the purge-chat-images edge function
@@ -28,7 +28,7 @@ if [ "$(cat supabase/.temp/project-ref 2>/dev/null)" != "$REF" ]; then
 fi
 
 step "1/5 Apply SQL helpers"
-supabase db query --linked -f supabase/migrations/20260912002000_chat_image_purge_helpers.sql
+supabase db query --linked -f supabase/migrations/<timestamp>_retention_purge_helpers.sql
 
 step "2/5 Deploy purge-chat-images"
 supabase functions deploy purge-chat-images --project-ref "$REF"
@@ -45,13 +45,21 @@ if [ -z "$KEY" ]; then
   exit 1
 fi
 case "$KEY" in *"'"*) echo "ABORT: unexpected key format" >&2; exit 1;; esac
-q "do \$\$ begin
+# The key goes through a private temp file (-f), never on the command line, so it
+# stays out of process listings.
+KEYSQL="$(umask 077; mktemp)"
+trap 'rm -f "$KEYSQL"' EXIT
+cat > "$KEYSQL" <<SQL
+do \$\$ begin
   if exists (select 1 from vault.secrets where name = 'purge_chat_images_key') then
     perform vault.update_secret((select id from vault.secrets where name = 'purge_chat_images_key'), '$KEY');
   else
     perform vault.create_secret('$KEY', 'purge_chat_images_key');
   end if;
-end \$\$;" >/dev/null
+end \$\$;
+SQL
+supabase db query --linked -f "$KEYSQL" >/dev/null
+rm -f "$KEYSQL"
 echo "stored (value not shown)"
 
 step "4/5 Schedule daily job"

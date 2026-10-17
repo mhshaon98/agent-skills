@@ -58,8 +58,20 @@ and update it in the same session a bug is touched.
 
 Each rung is a precondition for the next — don't record a fix until all six are done:
 
-1. **Reproduce** — no repro = a hypothesis, not a bug. A re-triggered old bug repros
-   the old way.
+1. **Reproduce: build the loop first** — no repro = a hypothesis, not a bug. The repro
+   is ONE command you have already run that drives the real bug path and goes **red**
+   on the reporter's exact symptom, and is tight (deterministic, seconds,
+   agent-runnable). Take the first rung that reaches the bug: failing test → curl/HTTP
+   script → CLI with a fixture diffed against a snapshot → headless browser script →
+   replay of a captured request/trace → throwaway harness → fuzz loop (for
+   "sometimes wrong") → `git bisect run` harness → old-vs-new differential → a scripted
+   human-in-the-loop step as last resort. Flaky: raise the repro rate (loop 100×,
+   stress, narrow timing) until it fails often enough to debug. No loop after real
+   effort → say so, list what you tried, ask for environment access, a captured
+   artifact, or temporary instrumentation. **UI / iOS visual bugs:** a screenshot or
+   simulator capture that shows the symptom IS the loop; a hypothesis may come before
+   any automated test, provided the same capture is re-taken after the fix. A
+   re-triggered old bug repros the old way.
 2. **Localize the layer** — UI / API / data / build / external / the test itself; git
    bisect to the introducing commit.
 3. **Reduce to a minimal failing case** — strip unrelated code, simplify inputs.
@@ -67,8 +79,13 @@ Each rung is a precondition for the next — don't record a fix until all six ar
 5. **Regression test** — one test that catches this specific failure.
 6. **Verify end-to-end** — focused test → full suite → build → manual check.
 
+**Done-check:** the step-1 loop has been run and went red before the fix and green
+after (show both runs); a loop that never went red proves nothing about the fix.
+
 Hard rule: once something is broken, STOP adding features until it is fixed — new work
 on top of a break compounds the diagnosis. (adapted from addyosmani/agent-skills, MIT)
+
+Repro ladder and red/green done-check adapted from mattpocock/skills `diagnosing-bugs` (MIT, `49dd158`, 2026-10-17).
 
 ## Debugging rules while working an entry
 

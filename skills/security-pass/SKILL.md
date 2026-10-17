@@ -26,6 +26,9 @@ migration, auth, or payment/personal data.
 
 ## Backend security (Supabase / any hosted DB)
 
+Supabase project: also apply Supabase's own security guidance (views bypassing RLS,
+UPDATE needing a SELECT policy, `WITH CHECK`, `user_metadata` in the JWT).
+
 - **RLS on every table**, isolating by `auth.uid()` where real auth exists. Where it
   doesn't yet, enumerate exactly which operations stay open and write the residual
   risk down as a deliberate decision with an owner and revisit condition.
