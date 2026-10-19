@@ -32,17 +32,18 @@ to skip the sync block).
 S="${SKILLS_REPO:-}"; echo "=== SKILLS SYNC (${S:-none configured})"
 if [ -n "$S" ] && [ -d "$S/.git" ]; then D=$(git -C "$S" status --porcelain=v1 | head -3); if [ -n "$D" ]; then echo "DIRTY skills clone - not pulling:"; echo "$D"; else B=$(git -C "$S" rev-parse HEAD); git -C "$S" pull --ff-only 2>&1 | tail -1; git -C "$S" diff --name-only "$B" HEAD | grep -qE '^(skills|agents|hooks)/' && echo "SKILLS CHANGED -> re-install needed"; fi; git -C "$S" log -1 --format='skills @ %h %ad %s' --date=short; git -C "$S" status -sb | head -1
 elif [ -n "$S" ]; then echo "NO CLONE at $S - clone your skills repo there first"; fi
-echo "=== ENTRY POINT?"; if [ -z "$(find . docs handoffs -maxdepth 1 -name 'HANDOFF-*.md' 2>/dev/null | head -1)" ] && [ ! -d .git ] && ! grep -q '^## Topic table' CLAUDE.md 2>/dev/null; then for P in WHERE-IS-THE-CODE.md CLAUDE.md; do [ -f "$P" ] || continue; T=$(grep -oE '([A-Za-z]:[\/]|~/)[^`"<>|*?]+' "$P" | head -1 | tr '\134' '/' | sed -e "s|^~|$HOME|" -e 's|[[:space:]]*$||' | awk '{ if (match($0, /^[A-Za-z]:/)) $0 = "/" tolower(substr($0, 1, 1)) substr($0, 3); print }'); [ -n "$T" ] && [ -d "$T" ] && { echo "pointer $P -> $T (cd there; this folder is the entry point only)"; cd "$T" || true; break; }; done; fi; pwd
+echo "=== ENTRY POINT?"; if [ -z "$(find _claude _claude/handoffs . docs handoffs -maxdepth 1 -name 'HANDOFF-*.md' 2>/dev/null | head -1)" ] && [ ! -d .git ] && ! grep -q '^## Topic table' CLAUDE.md 2>/dev/null; then for P in _claude/WHERE-IS-THE-CODE.md WHERE-IS-THE-CODE.md CLAUDE.md; do [ -f "$P" ] || continue; T=$(grep -oE '([A-Za-z]:[\/]|~/)[^`"<>|*?]+' "$P" | head -1 | tr '\134' '/' | sed -e "s|^~|$HOME|" -e 's|[[:space:]]*$||' | awk '{ if (match($0, /^[A-Za-z]:/)) $0 = "/" tolower(substr($0, 1, 1)) substr($0, 3); print }'); [ -n "$T" ] && [ -d "$T" ] && { echo "pointer $P -> $T (cd there; this folder is the entry point only)"; cd "$T" || true; break; }; done; fi; pwd
 echo "=== PROJECT SYNC"; if git remote get-url origin >/dev/null 2>&1; then if [ -z "$(git status --porcelain=v1 -uno)" ]; then git pull --ff-only 2>&1 | tail -1; else echo "dirty tree - not pulling"; fi; git status -sb | head -1; else echo "no remote"; fi
-if [ -d handoffs ] && grep -q '^## Topic table' CLAUDE.md 2>/dev/null; then echo "=== LAYERED HANDOFFS (router = CLAUDE.md topic table, already in context - read ONE topic file)"; find handoffs -maxdepth 1 -name '*.md' 2>/dev/null | sort | while read -r f; do echo "$f · $(grep -m1 -i '^Last updated' "$f")"; done
+C=_claude; if [ ! -d _claude ]; then C=.; [ -n "$(ls -d HANDOFF-*.md NEXT-SESSION-PROMPT.md BUG_LIST.md WHERE-IS-THE-CODE.md handoffs 2>/dev/null)" ] && echo "LEGACY LAYOUT: continuity files at project root -> update-handoff moves them into _claude/"; fi
+if grep -q '^## Topic table' CLAUDE.md 2>/dev/null; then echo "=== LAYERED HANDOFFS (router = CLAUDE.md topic table, already in context - read ONE topic file)"; find "$C/handoffs" -maxdepth 1 -name '*.md' 2>/dev/null | sort | while read -r f; do echo "$f · $(grep -m1 -i '^Last updated' "$f")"; done
 else
-HL=$(find . docs handoffs -maxdepth 1 -name 'HANDOFF-*.md' 2>/dev/null | while read -r f; do printf '%s|%s\n' "$(basename "$f")" "$f"; done | sort)
+HL=$( { find "$C" docs -maxdepth 1 -name 'HANDOFF-*.md'; find "$C/handoffs" -maxdepth 2 -name 'HANDOFF-*.md'; } 2>/dev/null | while read -r f; do printf '%s|%s\n' "$(basename "$f")" "$f"; done | sort)
 H=$(printf '%s\n' "$HL" | tail -1 | cut -d'|' -f2)
-echo "=== NEWEST HANDOFF: ${H:-NONE} · prior: $(printf '%s\n' "$HL" | tail -3 | head -2 | cut -d'|' -f2 | tr '\n' ' ')"
+echo "=== NEWEST HANDOFF: ${H:-NONE} · prior: $(printf '%s\n' "$HL" | tail -3 | sed '$d' | cut -d'|' -f2 | tr '\n' ' ')"
 [ -n "$H" ] && sed -n '1,600p' "$H"; fi
 echo "=== RECENCY"; git log --oneline -5 2>/dev/null; git status --porcelain=v1 -uno 2>/dev/null | head -10; ls -t | head -8
-echo "=== OPEN BUGS"; [ -f BUG_LIST.md ] && grep -n "^## \|Status:" BUG_LIST.md | head -40 || echo "no BUG_LIST.md"
-echo "=== NEXT SESSION PROMPT"; [ -f NEXT-SESSION-PROMPT.md ] && cat NEXT-SESSION-PROMPT.md || echo "none"
+B="$C/BUG_LIST.md"; [ -f "$B" ] || B=BUG_LIST.md; echo "=== OPEN BUGS ($B)"; [ -f "$B" ] && grep -n "^## \|Status:" "$B" | head -40 || echo "no BUG_LIST.md"
+N="$C/NEXT-SESSION-PROMPT.md"; [ -f "$N" ] || N=NEXT-SESSION-PROMPT.md; echo "=== NEXT SESSION PROMPT ($N)"; [ -f "$N" ] && cat "$N" || echo "none"
 ```
 
 Optional final line, if you use the `usage-here` skill — it records a usage baseline
@@ -62,7 +63,7 @@ echo "=== USAGE BASELINE"; "$(command -v python3 || command -v python)" "$HOME/.
   tell the user to clone the repo and stop. A pull that fails (offline, diverged) is
   reported, never retried with force.
 
-- **`NEXT-SESSION-PROMPT.md`** (written by `update-handoff`) is the fastest
+- **`_claude/NEXT-SESSION-PROMPT.md`** (written by `update-handoff`) is the fastest
   orientation: if its date matches or post-dates the newest handoff, build the
   briefing around it. If it's OLDER than the handoff or the latest commits, it's
   stale — say so and trust the handoff instead (on any conflict the handoff wins).
@@ -73,6 +74,10 @@ echo "=== USAGE BASELINE"; "$(command -v python3 || command -v python)" "$HOME/.
 - Script printed `pointer …` or `LAYERED HANDOFFS`? Read this skill's
   `references/layouts.md` before the briefing (one extra Read that only these two
   layouts pay).
+- **`LEGACY LAYOUT` printed?** The assistant's continuity files (handoffs, prompt, bug
+  ledger, pointer) still sit at the project root; they belong in `_claude/` (layout:
+  `update-handoff` → "The `_claude/` folder"). Say so in one briefing line; the next
+  `update-handoff` moves them. Don't move them during orientation.
 - **Flat handoff juggling several independent issues** (≥2 unrelated threads — different
   devices, vendors, customer contacts, or source folders — each with its own TODO)?
   Mention once in the briefing that `update-handoff` can split it into layered topic files.

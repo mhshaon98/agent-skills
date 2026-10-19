@@ -32,13 +32,13 @@ only what genuinely failed or is genuinely unavailable, not a repeat of the sess
 ## Ending a session — write the relay prompt (required)
 
 At the end of EVERY session in either environment, output a fenced block the user can
-copy-paste verbatim into the other tool's chat. Also update `HANDOFF-*.md` as usual —
+copy-paste verbatim into the other tool's chat. Also update `_claude/HANDOFF-*.md` as usual —
 the relay prompt is the baton, the handoff is the full state.
 
 ```
 RELAY: <Cowork → Claude Code | Claude Code → Cowork> — <project name>
 Project root: <absolute path on the target machine>
-Read first: <newest HANDOFF-*.md filename; BUG_LIST.md if relevant>
+Read first: <newest _claude/HANDOFF-*.md filename; _claude/BUG_LIST.md if relevant>
 
 DONE (do not redo): <completed work, with verification evidence in one line each —
 "built clean", "all routes curl-verified", "committed as <hash>">
