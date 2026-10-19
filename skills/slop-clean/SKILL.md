@@ -52,7 +52,7 @@ by diff and reading.
 
 ## Step 1: deterministic sweep (code, not AI)
 
-Grep user-facing strings and styles only. Exclude handoffs, bug ledgers, changelogs,
+Grep user-facing strings and styles only. Exclude the `_claude/` folder, handoffs, bug ledgers, changelogs,
 licences, `node_modules`, `dist`, `build`, `vendor*`, lockfiles, generated files, and code
 identifiers or comments.
 

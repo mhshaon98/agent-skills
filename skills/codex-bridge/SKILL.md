@@ -63,8 +63,8 @@ If you use Codex regularly, write its standing contract down somewhere Codex rea
 - **Codex never writes to Claude's surfaces**: any `CLAUDE.md`, any `.claude/`
   directory, any skills folder. If Codex output ever shows up there, treat it as a
   contract breach — tell the user and revert via git.
-- **Codex gets its own voice, in its own file** — e.g. `CODEX-FINDINGS.md` at the
-  target project's root, dated entries newest first. Read it before briefing Codex on
+- **Codex gets its own voice, in its own file** — e.g. `_claude/CODEX-FINDINGS.md` in
+  the target project (legacy: its root), dated entries newest first. Read it before briefing Codex on
   a project (context it already has) and after any Codex task (its questions and
   proposals land there). Its findings are unverified claims until you check the
   evidence.

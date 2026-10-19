@@ -381,7 +381,7 @@
         "claude",
         "codex"
       ],
-      "version": "3e0eceeacbaf",
+      "version": "81a08cecb455",
       "path": "skills/antigravity-bridge",
       "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/antigravity-bridge/SKILL.md",
       "file_count": 3,
@@ -398,7 +398,7 @@
       "targets": [
         "codex"
       ],
-      "version": "32c5d9492438",
+      "version": "0fa4d22fe089",
       "path": "skills/astra-conductor",
       "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/astra-conductor/SKILL.md",
       "file_count": 1,
@@ -413,7 +413,7 @@
       "targets": [
         "claude"
       ],
-      "version": "cc854b4ba0ad",
+      "version": "d5ee61cc84da",
       "path": "skills/codex-bridge",
       "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/codex-bridge/SKILL.md",
       "file_count": 4,
@@ -532,7 +532,7 @@
         "claude",
         "codex"
       ],
-      "version": "48e654211e31",
+      "version": "852324d14597",
       "path": "skills/slop-clean",
       "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/slop-clean/SKILL.md",
       "file_count": 1,
