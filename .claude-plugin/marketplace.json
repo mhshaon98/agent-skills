@@ -1,7 +1,7 @@
 {
   "name": "dev-discipline",
   "description": "Field-tested engineering-discipline skills: session continuity, verification, data safety, release review, delegation and formatting. One plugin per skill, plus one bundle per category.",
-  "version": "2026-10-17",
+  "version": "2026-10-19",
   "owner": {
     "name": "agent-skills maintainers",
     "url": "https://github.com/mhshaon98/agent-skills"
@@ -11,7 +11,7 @@
       "name": "bug-ledger",
       "source": "./",
       "description": "Use when a bug is reported, found, fixed, or reopened, or before working in a bug-prone area. Check BUG_LIST.md before debugging: many \"new\" bugs are regressions of fixed ones.",
-      "version": "57c59ee71c75",
+      "version": "39651e118c8e",
       "category": "workflow",
       "keywords": [
         "skill",
@@ -28,7 +28,7 @@
       "name": "call-handoff",
       "source": "./",
       "description": "Cold-start briefing from the project's newest handoff, open bugs and next-session prompt in two round-trips, then stop. Use at session start or on \"call handoff\", \"catch up\", \"where did we leave off\".",
-      "version": "978ba43a6d98",
+      "version": "887d7eee40de",
       "category": "workflow",
       "keywords": [
         "skill",
@@ -62,7 +62,7 @@
       "name": "new-project",
       "source": "./",
       "description": "Bootstrap a brand-new project with proven architecture defaults and continuity scaffolding. Use when starting a new project from scratch, or when touching a legacy project that has no handoff/git/structure yet.",
-      "version": "68efaaeb40bb",
+      "version": "db2a6ce3e964",
       "category": "workflow",
       "keywords": [
         "skill",
@@ -113,7 +113,7 @@
       "name": "update-handoff",
       "source": "./",
       "description": "End-of-session wrap in one pass: a detailed holistic handoff (this session plus every linked session and worktree), lessons, memory, bug ledger and NEXT-SESSION-PROMPT.md. Use on \"update handoff\", \"wrap up\", \"end the session\", or before context runs out.",
-      "version": "2fc04afbcb37",
+      "version": "19c9102a511b",
       "category": "workflow",
       "keywords": [
         "skill",
@@ -266,7 +266,7 @@
       "name": "cowork-relay",
       "source": "./",
       "description": "Split work between Claude Cowork and Claude Code on one project: each side does all it can and ends with a copy-paste relay prompt for the other. Use in a Cowork session or when a RELAY prompt is pasted.",
-      "version": "eb3fce68dc58",
+      "version": "d24cf72b9512",
       "category": "delegation",
       "keywords": [
         "skill",
@@ -436,7 +436,7 @@
       "name": "workflow-pack",
       "source": "./",
       "description": "Bundle of every workflow skill: bug-ledger, call-handoff, collect-reports, new-project, report-back, session-start, update-handoff",
-      "version": "6c49c91adbef",
+      "version": "172bbe3df693",
       "category": "bundle",
       "keywords": [
         "bundle",
@@ -481,7 +481,7 @@
       "name": "delegation-pack",
       "source": "./",
       "description": "Bundle of every delegation skill: antigravity-bridge, codex-bridge, cowork-relay, fable-conductor, spawn-agent",
-      "version": "9494c02ff376",
+      "version": "b3f1d966fe0c",
       "category": "bundle",
       "keywords": [
         "bundle",

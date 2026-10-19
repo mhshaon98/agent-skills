@@ -15,8 +15,10 @@ already in this session's context; never re-read files this session wrote or dis
 
 ```bash
 date "+NOW: %Y-%m-%d %H%M"
-if [ ! -d .git ] && [ -f WHERE-IS-THE-CODE.md ]; then T=$(grep -oE '([A-Za-z]:[\/]|~/)[^`"<>|*?]+' WHERE-IS-THE-CODE.md | head -1 | tr '\134' '/' | sed -e "s|^~|$HOME|" -e 's|[[:space:]]*$||' | awk '{ if (match($0, /^[A-Za-z]:/)) $0 = "/" tolower(substr($0, 1, 1)) substr($0, 3); print }'); [ -d "$T" ] && { echo "ENTRY POINT -> writing into $T"; cd "$T"; }; fi; pwd
-if [ -d handoffs ] && grep -q '^## Topic table' CLAUDE.md 2>/dev/null; then echo "LAYERED: topic files:"; find handoffs -maxdepth 1 -name '*.md' 2>/dev/null | sort; else H=$(find . -maxdepth 1 -name 'HANDOFF-*.md' 2>/dev/null | sed 's|^\./||' | sort | tail -1); echo "CURRENT HANDOFF: ${H:-NONE}"; fi
+W=_claude/WHERE-IS-THE-CODE.md; [ -f "$W" ] || W=WHERE-IS-THE-CODE.md
+if [ ! -d .git ] && [ -f "$W" ]; then T=$(grep -oE '([A-Za-z]:[\/]|~/)[^`"<>|*?]+' "$W" | head -1 | tr '\134' '/' | sed -e "s|^~|$HOME|" -e 's|[[:space:]]*$||' | awk '{ if (match($0, /^[A-Za-z]:/)) $0 = "/" tolower(substr($0, 1, 1)) substr($0, 3); print }'); [ -d "$T" ] && { echo "ENTRY POINT -> writing into $T"; cd "$T"; }; fi; pwd
+L=$(ls -d HANDOFF-*.md NEXT-SESSION-PROMPT.md BUG_LIST.md WHERE-IS-THE-CODE.md handoffs CODEX-FINDINGS.md ANTIGRAVITY-FINDINGS.md 2>/dev/null); [ -n "$L" ] && { echo "LEGACY ROOT FILES -> move into _claude/ (Step 1d):"; echo "$L"; git ls-files -- $L 2>/dev/null | head -3 | sed 's/^/  tracked: /'; }
+if grep -q '^## Topic table' CLAUDE.md 2>/dev/null; then echo "LAYERED: topic files:"; find _claude/handoffs -maxdepth 1 -name '*.md' 2>/dev/null | sort; else H=$( { find _claude . -maxdepth 1 -name 'HANDOFF-*.md'; find _claude/handoffs -mindepth 2 -maxdepth 2 -name 'HANDOFF-*.md'; } 2>/dev/null | awk -F/ '{print $NF"|"$0}' | sort | tail -1 | cut -d'|' -f2); echo "CURRENT HANDOFF: ${H:-NONE}"; fi
 git status --porcelain=v1 2>/dev/null | head -20; git log --oneline -8 2>/dev/null || ls -t | head -10
 echo "WORKTREES:"; git worktree list 2>/dev/null; git for-each-ref --format='%(refname:short) %(upstream:track)' refs/heads 2>/dev/null | head -30
 [ -n "${SKILLS_REPO:-}" ] && { echo "SKILLS CLONE:"; git -C "$SKILLS_REPO" status -sb 2>/dev/null | head -1; git -C "$SKILLS_REPO" status --porcelain=v1 2>/dev/null | head -10; }
@@ -101,12 +103,48 @@ under §2 Current state. Use one table row per session or worktree, with these c
 Below the table, list the decisions those sessions got from the user and anything they
 need from the user. Their open items also go into the ordered TODO.
 
+## The `_claude/` folder
+
+Every file the assistant keeps for continuity lives in ONE folder, `_claude/`, at the
+project root, so the root holds only the user's own files and folders:
+
+```
+<project>/
+  CLAUDE.md                    stays at root: Claude Code only auto-loads it from there
+  AGENTS.md                    stays at root: Codex only reads it from there
+  _claude/
+    HANDOFF-YYYY-MM-DD-HHMM.md newest handoff only
+    handoffs/                  older handoffs; layered topic files; handoffs/archive/
+    NEXT-SESSION-PROMPT.md
+    BUG_LIST.md
+    WHERE-IS-THE-CODE.md       entry-point pointer, when the code lives elsewhere
+    CODEX-FINDINGS.md, plan.md, PRD.md (when they exist)
+```
+
+`_claude/` is committed like any other folder (never gitignored: the bug ledger and
+handoffs travel with the clone). Deliverables the user asked for (reports, logs, docs
+for people) still go where the user wants them, never into `_claude/`.
+
+## Step 1d — move legacy root files into `_claude/` (once per project)
+
+Gather printed `LEGACY ROOT FILES`? Before the Step 3 batch, move them in ONE Bash call:
+`mkdir -p _claude`, then `git mv` for tracked files (`mv` for untracked ones or no git):
+the newest `HANDOFF-*.md` → `_claude/`, older ones and a `handoffs/` folder →
+`_claude/handoffs/`, and the other listed files → `_claude/`. Then fix references in
+the same batch: the project `CLAUDE.md` (and `AGENTS.md`) lines that name the old paths,
+a topic table's Handoff column, and any memory note about the project layout. Say in the
+handoff that the move happened (one line, with the date). Never move `CLAUDE.md`,
+`AGENTS.md`, `README.md` or any file that is not the assistant's.
+
 ## Step 2 — decide what needs updating (write nothing yet)
 
 - **Entry-point folder?** If the gather printed `ENTRY POINT -> ...`, every file below is
   written into THAT clone (never into the pointer folder), and the project push happens there.
 - **Handoff**: if the newest handoff is from THIS session, edit it in place; otherwise
-  create `HANDOFF-YYYY-MM-DD-HHMM.md` at the project root using this skeleton — what
+  create `_claude/HANDOFF-YYYY-MM-DD-HHMM.md` and move the previous one into
+  `_claude/handoffs/` (a project that keeps dated handoffs per topic subfolder,
+  `_claude/handoffs/<Topic>/HANDOFF-*.md`, gets the new one in the subfolder of the
+  topic this session worked), using this skeleton — what
   the project is → current state → what this session did → decisions + **rejected
   alternatives with evidence** (one **decision record** per architectural choice —
   Decision · Alternatives rejected · Evidence · Date) → **Verified / NOT-verified ledgers** → known issues →
@@ -123,8 +161,8 @@ need from the user. Their open items also go into the ordered TODO.
   verified in real work, generalizable, still true in six months.
 - **Memory**: cross-session lessons → your assistant's memory files (one fact per file
   plus an index line). Reference from the handoff, don't duplicate into it.
-- **`BUG_LIST.md`**: update entries for any bug fixed or reopened this session.
-- **`NEXT-SESSION-PROMPT.md`** (project root — ALWAYS written, OVERWRITE the old one;
+- **`_claude/BUG_LIST.md`**: update entries for any bug fixed or reopened this session.
+- **`_claude/NEXT-SESSION-PROMPT.md`** (ALWAYS written, OVERWRITE the old one;
   one file, never dated copies):
 
   ```markdown
@@ -165,7 +203,8 @@ lessons in the handoff marked "PROMOTE TO LESSONS".
       unasked.
 - [ ] **Context-sweep coverage**: every request, change, commit, decision, exact fact and
       in-flight item from Step 1b is in the handoff (or deliberately dropped as trivial).
-- [ ] Handoff, `NEXT-SESSION-PROMPT.md`, and `BUG_LIST.md` agree with each other.
+- [ ] Handoff, `_claude/NEXT-SESSION-PROMPT.md` and `_claude/BUG_LIST.md` agree with each other,
+      and no continuity file is left at the project root (Step 1d).
 - [ ] No secrets in anything written; every relative date converted to absolute.
 
 Never end with a stale prompt file: even a no-changes wrap refreshes its date and state

@@ -14,7 +14,7 @@
   <a href="llms.txt">llms.txt</a>
 </p>
 
-<p align="center"><sub><!-- stats -->Last updated: 2026-10-17 · 26 skills · 11 playbooks<!-- /stats --></sub></p>
+<p align="center"><sub><!-- stats -->Last updated: 2026-10-19 · 26 skills · 11 playbooks<!-- /stats --></sub></p>
 
 # Agent Skills Catalog
 

@@ -5,7 +5,7 @@ description: 'Use when a bug is reported, found, fixed, or reopened, or before w
 
 # Bug Ledger Discipline
 
-`BUG_LIST.md` at the repo root is the project's institutional bug memory: every bug
+`_claude/BUG_LIST.md` (the assistant's continuity folder; legacy projects: `BUG_LIST.md` at the root) is the project's institutional bug memory: every bug
 ever found, its root cause, and the full attempt history (what worked, what didn't,
 what regressed). The handoff is "where we are now"; the ledger is "everything we've
 ever fought and how." It lives in git so it travels with the clone.

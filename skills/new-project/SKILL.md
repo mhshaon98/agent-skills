@@ -12,7 +12,8 @@ handoff alone.
 
 1. **`git init`** for any code project (recommend and proceed if approved). Commit at
    natural checkpoints; never push/publish without asking.
-2. **First `HANDOFF-YYYY-MM-DD-HHMM.md`** at the project root before the first
+2. **First `_claude/HANDOFF-YYYY-MM-DD-HHMM.md`** (every continuity file goes in
+   `_claude/`; layout in `update-handoff`) before the first
    session ends (use the `update-handoff` skill).
 3. **Project `CLAUDE.md`** with: one-line purpose, how to run, the session ritual
    pointer (newest handoff → `BUG_LIST.md` → goal), and any project-specific rules.
@@ -31,9 +32,9 @@ answers. Build the product definition below from the confirmed answers — "soun
 is not confirmation; restate intent in the user's words and get an explicit yes.
 (adapted from addyosmani/agent-skills, MIT)
 
-## Vertical-slice plan (`tasks/plan.md`, before implementation)
+## Vertical-slice plan (`_claude/plan.md`, before implementation)
 
-For any multi-session build, write a `tasks/plan.md`: study specs read-only first → map
+For any multi-session build, write a `_claude/plan.md`: study specs read-only first → map
 dependencies → break work into **thin end-to-end slices** (one feature path data→API→UI,
 not all-DB-then-all-API-then-all-UI), each with testable acceptance criteria, a
 verification step, affected files, and a size (XS/S/M/L; XL = split further). Order so
@@ -47,7 +48,7 @@ For anything beyond a script or small tool — an app, a backend, anything expec
 span many sessions — capture TWO short documents before major implementation, and keep
 them current as decisions land:
 
-1. **Product definition** (`PRD.md` at the root, or a `## Product` section in the
+1. **Product definition** (`_claude/PRD.md`, or a `## Product` section in the
    project `CLAUDE.md` for mid-size projects): what is being built, for whom, in-scope /
    out-of-scope features, key user journeys, acceptance criteria, platforms, and the
    non-functional requirements that shape architecture (offline? multi-device? privacy
