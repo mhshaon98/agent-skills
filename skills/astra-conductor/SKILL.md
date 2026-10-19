@@ -104,7 +104,7 @@ raise to high/xhigh only for a genuinely hard architecture or debugging call, an
 
 - If Codex runs as an executor under Claude Code's conduction, it stays that way.
   Conducting subagents does not promote Codex to conductor of the project.
-- Findings still go to `CODEX-FINDINGS.md`; a better idea is a PROPOSAL entry, not a
+- Findings still go to `_claude/CODEX-FINDINGS.md`; a better idea is a PROPOSAL entry, not a
   unilateral re-scope.
 - Any skills repository the user keeps, any `CLAUDE.md`, any `.claude/` directory: read-only, forever.
 - User data is sacred — migration + rollback story before any store/schema/user-file

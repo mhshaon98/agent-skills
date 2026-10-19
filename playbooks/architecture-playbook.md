@@ -148,8 +148,8 @@ The ladder trims over-engineering, not correctness. When the user intentionally 
 - Cross-model references as plain UUIDs that map 1:1 to backend tables.
 
 ### Projects spanning multiple agent sessions (treat all of them as this)
-- A dated handoff file at the project root from day one (create it on first touch if
-  missing); memory files for durable gotchas; a "supersedes" chain.
+- A dated handoff file in the project's `_claude/` continuity folder from day one (create
+  it on first touch if missing); memory files for durable gotchas; a "supersedes" chain.
 - Decide architecture with the *next* session in mind: could a cold-start agent continue
   this from the handoff alone? If not, the handoff (or the structure) is wrong.
 

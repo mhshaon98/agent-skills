@@ -232,7 +232,7 @@
       "name": "antigravity-bridge",
       "source": "./",
       "description": "Delegate bounded work or get a third-provider opinion from Google's Antigravity CLI (agy, Gemini). Use on \"ask antigravity\", \"ask gemini\", \"send this to agy\", as a Claude-vs-Codex tie-breaker, or for cheap bounded research sweeps.",
-      "version": "3e0eceeacbaf",
+      "version": "81a08cecb455",
       "category": "delegation",
       "keywords": [
         "skill",
@@ -249,7 +249,7 @@
       "name": "codex-bridge",
       "source": "./",
       "description": "Delegate a task to OpenAI Codex or get a non-Claude second review via the codex plugin. Use on \"ask codex\", \"have codex review/check this\", \"send to codex\", or before a release when a second provider is worth it.",
-      "version": "cc854b4ba0ad",
+      "version": "d5ee61cc84da",
       "category": "delegation",
       "keywords": [
         "skill",
@@ -368,7 +368,7 @@
       "name": "slop-clean",
       "source": "./",
       "description": "Project-wide sweep that removes heavy AI slop from design and copy while keeping deliberate, evidenced creative choices (bold colour, density, texture, voice). Manual only (/slop-clean [path]); never self-trigger.",
-      "version": "48e654211e31",
+      "version": "852324d14597",
       "category": "formatting",
       "keywords": [
         "skill",
@@ -481,7 +481,7 @@
       "name": "delegation-pack",
       "source": "./",
       "description": "Bundle of every delegation skill: antigravity-bridge, codex-bridge, cowork-relay, fable-conductor, spawn-agent",
-      "version": "b3f1d966fe0c",
+      "version": "edc6f60a1804",
       "category": "bundle",
       "keywords": [
         "bundle",
@@ -502,7 +502,7 @@
       "name": "formatting-pack",
       "source": "./",
       "description": "Bundle of every formatting skill: apply-richformat, doc-metadata, eng-report, slop-clean",
-      "version": "9f2a36488149",
+      "version": "1daeae38498e",
       "category": "bundle",
       "keywords": [
         "bundle",

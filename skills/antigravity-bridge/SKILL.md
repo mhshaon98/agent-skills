@@ -161,7 +161,7 @@ Same shape as `codex-bridge`, so a Claude + Codex + Antigravity setup stays cohe
 - **Antigravity never writes to Claude's surfaces:** any `CLAUDE.md`, any `.claude/`, any
   `skills/`, or any skills repository the user keeps. Output appearing there is a contract breach —
   tell the user, revert via git.
-- **Its voice is `ANTIGRAVITY-FINDINGS.md`** at the target project's root (dated entries,
+- **Its voice is `_claude/ANTIGRAVITY-FINDINGS.md`** in the target project (legacy: its root) (dated entries,
   newest first). Check it before briefing it on a project and after any task. **Its
   findings are unverified claims until Claude checks the evidence** — same standing as
   Codex's.
