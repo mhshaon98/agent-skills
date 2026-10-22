@@ -1,7 +1,7 @@
 {
   "name": "dev-discipline",
   "description": "Field-tested engineering-discipline skills: session continuity, verification, data safety, release review, delegation and formatting. One plugin per skill, plus one bundle per category.",
-  "version": "2026-10-19",
+  "version": "2026-10-22",
   "owner": {
     "name": "agent-skills maintainers",
     "url": "https://github.com/mhshaon98/agent-skills"
@@ -113,7 +113,7 @@
       "name": "update-handoff",
       "source": "./",
       "description": "End-of-session wrap in one pass: a detailed holistic handoff (this session plus every linked session and worktree), lessons, memory, bug ledger and NEXT-SESSION-PROMPT.md. Use on \"update handoff\", \"wrap up\", \"end the session\", or before context runs out.",
-      "version": "19c9102a511b",
+      "version": "de4f988a53b7",
       "category": "workflow",
       "keywords": [
         "skill",
@@ -436,7 +436,7 @@
       "name": "workflow-pack",
       "source": "./",
       "description": "Bundle of every workflow skill: bug-ledger, call-handoff, collect-reports, new-project, report-back, session-start, update-handoff",
-      "version": "172bbe3df693",
+      "version": "463478a3ade7",
       "category": "bundle",
       "keywords": [
         "bundle",
