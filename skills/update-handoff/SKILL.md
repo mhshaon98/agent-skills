@@ -135,6 +135,11 @@ the same batch: the project `CLAUDE.md` (and `AGENTS.md`) lines that name the ol
 a topic table's Handoff column, and any memory note about the project layout. Say in the
 handoff that the move happened (one line, with the date). Never move `CLAUDE.md`,
 `AGENTS.md`, `README.md` or any file that is not the assistant's.
+A move is not finished on the checked-out branch alone: in the same wrap, repoint
+instructions in other tracked docs that name the old paths, migrate every other branch (a
+branch already contained in the main line can be deleted with a recovery list; one with its
+own commits gets a layout-only commit), and check every agent rules repo that names the files
+(e.g. a shared Codex `AGENTS.md`). Ask the user before deleting branches.
 
 ## Step 2 — decide what needs updating (write nothing yet)
 
