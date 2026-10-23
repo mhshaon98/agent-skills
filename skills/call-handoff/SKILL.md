@@ -155,5 +155,6 @@ line so it is in view from the first turn:
   assumptions and proceed; ask only when truly blocked.
 - Inspect before changing: read the files, data shapes and current behaviour the task touches; the handoff is an index, not a guarantee.
 - Skim your project's lessons / anti-patterns file (if you keep one) for the sections on today's stack.
+- Substantial task (multi-session, redesign, new feature, research that drives a decision): before planning, run a short deepening pass: (1) what would a top professional add, (2) what is the rawest source material, (3) which specific methods and tools would they use, (4) what outside check proves it right. Rewrite the brief to ask for exactly that; the Q4 checks become the done-criteria.
 - Keep phases separate: Understand → Plan → Build → Verify → Hand off.
 - Once per project, if it spawns OS processes, runs a daemon, ships a container or runs untrusted code: confirm PID/memory caps exist (`security-pass`, runtime section). Skip if the handoff already records them.

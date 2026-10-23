@@ -34,6 +34,9 @@ is not confirmation; restate intent in the user's words and get an explicit yes.
 
 ## Vertical-slice plan (`_claude/plan.md`, before implementation)
 
+Start with a deepening pass: answer (1) what would a top professional add, (2) what is the rawest source material, (3) which specific methods and tools would they use, (4) what outside check proves it right. The answers and the rewritten brief head the
+plan, and the Q4 checks are the plan's done-criteria.
+
 For any multi-session build, write a `_claude/plan.md`: study specs read-only first → map
 dependencies → break work into **thin end-to-end slices** (one feature path data→API→UI,
 not all-DB-then-all-API-then-all-UI), each with testable acceptance criteria, a

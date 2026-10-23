@@ -69,6 +69,10 @@ shortlist. Cache model outputs keyed by data-state.
 
 ## The brief (agents start cold — a vague brief wastes the whole run)
 
+**Substantial delegated work: deepen the brief first.** Answer (1) what would a top professional add, (2) what is the rawest source material, (3) which specific methods and tools would they use, (4) what outside check proves it right. The raw sources
+(named tables, endpoints, files, screenshots) fill "Read first" instead of summaries;
+the runnable outside checks fill DEFINITION OF DONE. Skip it for small, mechanical slices.
+
 ```
 ROLE: <Investigator / Implementer / Reviewer / Debugger / Docs — ONE role>
 MODEL TIER: <frontier / mid / fast — frontier is the DEFAULT for judgment AND
