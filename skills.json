@@ -5,7 +5,7 @@
   "repo": "https://github.com/mhshaon98/agent-skills",
   "raw_base": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/",
   "site": "https://mhshaon98.github.io/agent-skills/",
-  "updated": "2026-10-22",
+  "updated": "2026-10-23",
   "marketplace": {
     "name": "dev-discipline",
     "add": "/plugin marketplace add mhshaon98/agent-skills",
@@ -93,6 +93,22 @@
       "file_count": 1,
       "files": [
         "skills/collect-reports/SKILL.md"
+      ]
+    },
+    {
+      "name": "deepen",
+      "description": "Before planning a substantial build, redesign, feature, research question or subagent brief, answer four questions (what a top professional would add, the rawest source, their methods, what outside check proves it right) and rewrite the brief to ask for exactly that. Deeper, not bigger; the outside checks become verify-work's done-criteria.",
+      "category": "workflow",
+      "targets": [
+        "claude",
+        "codex"
+      ],
+      "version": "67597c4247f0",
+      "path": "skills/deepen",
+      "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/deepen/SKILL.md",
+      "file_count": 1,
+      "files": [
+        "skills/deepen/SKILL.md"
       ]
     },
     {

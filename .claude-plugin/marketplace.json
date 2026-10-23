@@ -1,7 +1,7 @@
 {
   "name": "dev-discipline",
   "description": "Field-tested engineering-discipline skills: session continuity, verification, data safety, release review, delegation and formatting. One plugin per skill, plus one bundle per category.",
-  "version": "2026-10-22",
+  "version": "2026-10-23",
   "owner": {
     "name": "agent-skills maintainers",
     "url": "https://github.com/mhshaon98/agent-skills"
@@ -56,6 +56,23 @@
       "license": "MIT",
       "skills": [
         "./skills/collect-reports"
+      ]
+    },
+    {
+      "name": "deepen",
+      "source": "./",
+      "description": "Before planning a substantial build, redesign, feature, research question or subagent brief, answer four questions (what a top professional would add, the rawest source, their methods, what outside check proves it right) and rewrite the brief to ask for exactly that. Deeper, not bigger; the outside checks become verify-work's done-criteria.",
+      "version": "67597c4247f0",
+      "category": "workflow",
+      "keywords": [
+        "skill",
+        "workflow"
+      ],
+      "homepage": "https://github.com/mhshaon98/agent-skills/tree/main/skills/deepen",
+      "repository": "https://github.com/mhshaon98/agent-skills",
+      "license": "MIT",
+      "skills": [
+        "./skills/deepen"
       ]
     },
     {
@@ -435,8 +452,8 @@
     {
       "name": "workflow-pack",
       "source": "./",
-      "description": "Bundle of every workflow skill: bug-ledger, call-handoff, collect-reports, new-project, report-back, session-start, update-handoff",
-      "version": "55656c1a10b8",
+      "description": "Bundle of every workflow skill: bug-ledger, call-handoff, collect-reports, deepen, new-project, report-back, session-start, update-handoff",
+      "version": "8ee778ab6eeb",
       "category": "bundle",
       "keywords": [
         "bundle",
@@ -449,6 +466,7 @@
         "./skills/bug-ledger",
         "./skills/call-handoff",
         "./skills/collect-reports",
+        "./skills/deepen",
         "./skills/new-project",
         "./skills/report-back",
         "./skills/session-start",

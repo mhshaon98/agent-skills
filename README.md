@@ -14,7 +14,7 @@
   <a href="llms.txt">llms.txt</a>
 </p>
 
-<p align="center"><sub><!-- stats -->Last updated: 2026-10-22 · 26 skills · 11 playbooks<!-- /stats --></sub></p>
+<p align="center"><sub><!-- stats -->Last updated: 2026-10-23 · 27 skills · 11 playbooks<!-- /stats --></sub></p>
 
 # Agent Skills Catalog
 
@@ -124,6 +124,7 @@ Session continuity: start, hand off, track bugs, bootstrap projects. Bundle: `wo
 | [bug-ledger](skills/bug-ledger/SKILL.md) | Use when a bug is reported, found, fixed, or reopened, or before working in a bug-prone area. Check BUG_LIST.md before debugging: many "new" bugs are regressions of fixed ones. | 1 |
 | [call-handoff](skills/call-handoff/SKILL.md) | Cold-start briefing from the project's newest handoff, open bugs and next-session prompt in two round-trips, then stop. Use at session start or on "call handoff", "catch up", "where did we leave off". | 3 |
 | [collect-reports](skills/collect-reports/SKILL.md) | From the main session, collect a verified status report from every linked, forked and nested Claude Desktop session into one board. Use on "collect reports", "get everyone's status", or "have the forks report back". | 1 |
+| [deepen](skills/deepen/SKILL.md) | Before planning a substantial build, redesign, feature, research question or subagent brief, answer four questions (what a top professional would add, the rawest source, their methods, what outside check proves it right) and rewrite the brief to ask for exactly that. Deeper, not bigger; the outside checks become verify-work's done-criteria. | 1 |
 | [new-project](skills/new-project/SKILL.md) | Bootstrap a brand-new project with proven architecture defaults and continuity scaffolding. Use when starting a new project from scratch, or when touching a legacy project that has no handoff/git/structure yet. | 1 |
 | [report-back](skills/report-back/SKILL.md) | Close out a forked or side session and send its verified status to the session that started it. Use on "report back", "send your status to the main session", or when collect-reports asks. | 1 |
 | [session-start](skills/session-start/SKILL.md) | Old name for the session-start ritual, which now lives in call-handoff; run that skill instead. | 1 |
