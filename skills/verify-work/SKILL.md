@@ -35,6 +35,11 @@ Climb as high as the change warrants, and **state which rung you reached**:
   live backend schema not yet executed. Never let an untested platform ride
   implicitly on a tested one's green checkmark.
 
+**Deepening-pass checks are ledger lines.** If the task started with a deepening pass
+(including "what outside check proves it right"), every such check appears in the ledger
+by name, as Verified (with output) or NOT verified (with the reason). A check that
+vanished between plan and report is a failure.
+
 ## Honesty rules
 
 - Failing tests are reported as failing, with output.

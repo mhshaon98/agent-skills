@@ -28,7 +28,7 @@
       "name": "call-handoff",
       "source": "./",
       "description": "Cold-start briefing from the project's newest handoff, open bugs and next-session prompt in two round-trips, then stop. Use at session start or on \"call handoff\", \"catch up\", \"where did we leave off\".",
-      "version": "887d7eee40de",
+      "version": "84120d5cdd90",
       "category": "workflow",
       "keywords": [
         "skill",
@@ -62,7 +62,7 @@
       "name": "new-project",
       "source": "./",
       "description": "Bootstrap a brand-new project with proven architecture defaults and continuity scaffolding. Use when starting a new project from scratch, or when touching a legacy project that has no handoff/git/structure yet.",
-      "version": "db2a6ce3e964",
+      "version": "2fa72bb25b9c",
       "category": "workflow",
       "keywords": [
         "skill",
@@ -164,7 +164,7 @@
       "name": "pre-release-review",
       "source": "./",
       "description": "Independent fresh-context review before anything ships. Use on \"ship it\", \"release\", \"submit\", \"deploy\", \"push to production\", before any production push, and after a large diff, even when the diff looks fine.",
-      "version": "ef52630b71be",
+      "version": "cc2dbf9fe1a3",
       "category": "safety",
       "keywords": [
         "skill",
@@ -215,7 +215,7 @@
       "name": "verify-work",
       "source": "./",
       "description": "Use before claiming work is done, working, or fixed, and before writing a handoff or completion summary. Verification ladder plus the Verified/NOT-verified ledger.",
-      "version": "91082beddc65",
+      "version": "97b7918fa67d",
       "category": "safety",
       "keywords": [
         "skill",
@@ -300,7 +300,7 @@
       "name": "spawn-agent",
       "source": "./",
       "description": "Use BEFORE spawning any subagent (research, implementation, review, debugging) or choosing a model for delegated work. Gate, brief-writing procedure, and model-tier routing; usage limits are a real budget.",
-      "version": "ea08bd80f6d4",
+      "version": "65fbbb6bf2f5",
       "category": "delegation",
       "keywords": [
         "skill",
@@ -436,7 +436,7 @@
       "name": "workflow-pack",
       "source": "./",
       "description": "Bundle of every workflow skill: bug-ledger, call-handoff, collect-reports, new-project, report-back, session-start, update-handoff",
-      "version": "463478a3ade7",
+      "version": "55656c1a10b8",
       "category": "bundle",
       "keywords": [
         "bundle",
@@ -459,7 +459,7 @@
       "name": "safety-pack",
       "source": "./",
       "description": "Bundle of every safety skill: app-audit, compliance-check, pre-release-review, safe-data-write, security-pass, verify-work",
-      "version": "14e0ec5a6855",
+      "version": "e459b293271d",
       "category": "bundle",
       "keywords": [
         "bundle",
@@ -481,7 +481,7 @@
       "name": "delegation-pack",
       "source": "./",
       "description": "Bundle of every delegation skill: antigravity-bridge, codex-bridge, cowork-relay, fable-conductor, spawn-agent",
-      "version": "edc6f60a1804",
+      "version": "d5c8c4e0f694",
       "category": "bundle",
       "keywords": [
         "bundle",

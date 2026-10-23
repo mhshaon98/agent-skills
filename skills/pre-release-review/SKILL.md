@@ -21,7 +21,9 @@ separate agent, not the same context re-reading its diff.**
      model, not via a bare family alias (aliases resolve to whatever is newest; full
      rule in `spawn-agent`).
    - Read-only — the reviewer proposes, never fixes.
-3. **Brief the agent** (agents start cold — the brief must be self-contained):
+3. **Brief the agent** (agents start cold — the brief must be self-contained). If the
+   work had a deepening pass, include its outside checks ("what proves it right") so the
+   reviewer confirms each ran:
 
 ```
 ROLE: Reviewer — independent pre-release pass.

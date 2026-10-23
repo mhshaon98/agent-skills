@@ -69,7 +69,7 @@
         "claude",
         "codex"
       ],
-      "version": "887d7eee40de",
+      "version": "84120d5cdd90",
       "path": "skills/call-handoff",
       "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/call-handoff/SKILL.md",
       "file_count": 3,
@@ -103,7 +103,7 @@
         "claude",
         "codex"
       ],
-      "version": "db2a6ce3e964",
+      "version": "2fa72bb25b9c",
       "path": "skills/new-project",
       "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/new-project/SKILL.md",
       "file_count": 1,
@@ -317,7 +317,7 @@
         "claude",
         "codex"
       ],
-      "version": "ef52630b71be",
+      "version": "cc2dbf9fe1a3",
       "path": "skills/pre-release-review",
       "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/pre-release-review/SKILL.md",
       "file_count": 1,
@@ -365,7 +365,7 @@
         "claude",
         "codex"
       ],
-      "version": "91082beddc65",
+      "version": "97b7918fa67d",
       "path": "skills/verify-work",
       "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/verify-work/SKILL.md",
       "file_count": 1,
@@ -463,7 +463,7 @@
         "claude",
         "codex"
       ],
-      "version": "ea08bd80f6d4",
+      "version": "65fbbb6bf2f5",
       "path": "skills/spawn-agent",
       "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/spawn-agent/SKILL.md",
       "file_count": 1,
