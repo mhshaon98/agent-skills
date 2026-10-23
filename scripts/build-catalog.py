@@ -57,6 +57,7 @@ CATEGORIES = {
     "update-handoff": "workflow",
     "report-back": "workflow",
     "collect-reports": "workflow",
+    "deepen": "workflow",
     "app-audit": "safety",
     "compliance-check": "safety",
     "pre-release-review": "safety",
