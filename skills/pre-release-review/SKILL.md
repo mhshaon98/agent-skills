@@ -38,6 +38,13 @@ not style opinions. Prioritize classes of past escapes:
 - secrets or keys in the diff
 - violations of the project's architectural invariants (project CLAUDE.md / PRD) —
   data ownership, dependency directions, trust boundaries, where logic lives
+- deep-review classes that green tests miss: a second account on a shared device
+  inheriting the first one's stored values, money and quota paths (double purchase,
+  missing refund, tier ignored on one client), day/month/DST boundaries, the same
+  rule drifting between clients and server, double taps and second tabs, lost
+  progress on refresh or close, dead ends after a failure, unbounded server writes,
+  text-length units on non-Latin text, largest text size, copy that misstates a
+  consequence
 VERDICT per finding: CONFIRMED (reproduced/traced to a mechanism) vs PLAUSIBLE
 (needs a check).
 REPORT BACK: findings with file:line evidence; explicit "areas I could not verify".
@@ -50,7 +57,10 @@ REPORT BACK: findings with file:line evidence; explicit "areas I could not verif
 5. **Fix, then re-verify the fixes** (run the thing, not just the build). When a
    finding is a PATTERN, fix the class and grep for siblings — a fix applied only
    to the reported sites leaves the same bug alive next door.
-6. **Record the review in the handoff**: what was reviewed, findings, dispositions.
+6. **Integrated several branches? Run the merged app** (simulator, browser) and click
+   through every main screen before calling it done: tests and builds can pass while the
+   merged app has an infinite render loop or two screens disagree.
+7. **Record the review in the handoff**: what was reviewed, findings, dispositions.
 
 ## Release checklist (run alongside the review)
 

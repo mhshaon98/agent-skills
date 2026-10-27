@@ -58,3 +58,5 @@ vanished between plan and report is a failure.
   run on a machine the user is actively using.
 - Camera/sensor/device behavior can't be machine-verified — keep a human-verification
   checklist in the handoff.
+- A new test that never failed proves nothing: break the fix once and watch it fail;
+  run database assertions as a role that can see the rows.
