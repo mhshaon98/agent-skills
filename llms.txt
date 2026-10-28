@@ -20,7 +20,7 @@ Install protocol: read AGENTS.md first. The machine-readable manifest is skills.
 - [new-project](https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/new-project/SKILL.md): Bootstrap a brand-new project with proven architecture defaults and continuity scaffolding. Use when starting a new project from scratch, or when touching a legacy project that has no handoff/git/structure yet.
 - [report-back](https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/report-back/SKILL.md): Close out a forked or side session and send its verified status to the session that started it. Use on "report back", "send your status to the main session", or when collect-reports asks.
 - [session-start](https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/session-start/SKILL.md): Old name for the session-start ritual, which now lives in call-handoff; run that skill instead.
-- [update-handoff](https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/update-handoff/SKILL.md): End-of-session wrap in one pass: a detailed holistic handoff (this session plus every linked session and worktree), lessons, memory, bug ledger and NEXT-SESSION-PROMPT.md. Use on "update handoff", "wrap up", "end the session", or before context runs out.
+- [update-handoff](https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/update-handoff/SKILL.md): End-of-session wrap in one pass: a detailed holistic handoff (this session plus every linked session and worktree), lessons, memory, bug ledger and NEXT-SESSION-PROMPT.md, then archives finished nested sessions. Use on "update handoff", "wrap up", "end the session", or before context runs out.
 
 ## Skills: Safety
 

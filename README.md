@@ -14,7 +14,7 @@
   <a href="llms.txt">llms.txt</a>
 </p>
 
-<p align="center"><sub><!-- stats -->Last updated: 2026-10-27 · 27 skills · 11 playbooks<!-- /stats --></sub></p>
+<p align="center"><sub><!-- stats -->Last updated: 2026-10-28 · 27 skills · 11 playbooks<!-- /stats --></sub></p>
 
 # Agent Skills Catalog
 
@@ -128,7 +128,7 @@ Session continuity: start, hand off, track bugs, bootstrap projects. Bundle: `wo
 | [new-project](skills/new-project/SKILL.md) | Bootstrap a brand-new project with proven architecture defaults and continuity scaffolding. Use when starting a new project from scratch, or when touching a legacy project that has no handoff/git/structure yet. | 1 |
 | [report-back](skills/report-back/SKILL.md) | Close out a forked or side session and send its verified status to the session that started it. Use on "report back", "send your status to the main session", or when collect-reports asks. | 1 |
 | [session-start](skills/session-start/SKILL.md) | Old name for the session-start ritual, which now lives in call-handoff; run that skill instead. | 1 |
-| [update-handoff](skills/update-handoff/SKILL.md) | End-of-session wrap in one pass: a detailed holistic handoff (this session plus every linked session and worktree), lessons, memory, bug ledger and NEXT-SESSION-PROMPT.md. Use on "update handoff", "wrap up", "end the session", or before context runs out. | 2 |
+| [update-handoff](skills/update-handoff/SKILL.md) | End-of-session wrap in one pass: a detailed holistic handoff (this session plus every linked session and worktree), lessons, memory, bug ledger and NEXT-SESSION-PROMPT.md, then archives finished nested sessions. Use on "update handoff", "wrap up", "end the session", or before context runs out. | 2 |
 
 ### Safety
 
