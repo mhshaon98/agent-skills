@@ -1,13 +1,14 @@
 ---
 name: update-handoff
-description: 'End-of-session wrap in one pass: a detailed holistic handoff (this session plus every linked session and worktree), lessons, memory, bug ledger and NEXT-SESSION-PROMPT.md. Use on "update handoff", "wrap up", "end the session", or before context runs out.'
+description: 'End-of-session wrap in one pass: a detailed holistic handoff (this session plus every linked session and worktree), lessons, memory, bug ledger and NEXT-SESSION-PROMPT.md, then archives finished nested sessions. Use on "update handoff", "wrap up", "end the session", or before context runs out.'
 ---
 
 # Update Handoff — end-of-session wrap in one pass
 
 Closes out a session: handoff + retrospective + memory + a paste-ready prompt for the
 next session. **Efficiency rule: ≤3 tool round-trips** — one gather script, then ALL
-file writes batched in one parallel message. Efficiency means few round-trips, never a
+file writes batched in one parallel message (plus Step 5's one archive batch when nested
+sessions exist). Efficiency means few round-trips, never a
 thin handoff: completeness of the handoff outranks its length. Most of what goes into these files is
 already in this session's context; never re-read files this session wrote or discussed.
 
@@ -164,6 +165,8 @@ own commits gets a layout-only commit), and check every agent rules repo that na
   have and one case where it should NOT fire. Also ask which check this session resolved
   no uncertainty: cost with no value means trim it. Bar for promoting a lesson: durable,
   verified in real work, generalizable, still true in six months.
+- **Nested sessions**: mark each Step 1c row archive-eligible or held, by Step 5's rules,
+  so the handoff table is written with its final state.
 - **Memory**: cross-session lessons → your assistant's memory files (one fact per file
   plus an index line). Reference from the handoff, don't duplicate into it.
 - **`_claude/BUG_LIST.md`**: update entries for any bug fixed or reopened this session.
@@ -206,6 +209,8 @@ lessons in the handoff marked "PROMOTE TO LESSONS".
       the handoff's "Linked sessions & worktrees" table with a checked state (running
       ones marked RUNNING, not done); merged worktrees offered for cleanup, never deleted
       unasked.
+- [ ] **Nested sessions archived** (Step 5): every eligible one archived, every held one
+      named in the handoff with its reason.
 - [ ] **Context-sweep coverage**: every request, change, commit, decision, exact fact and
       in-flight item from Step 1b is in the handoff (or deliberately dropped as trivial).
 - [ ] Handoff, `_claude/NEXT-SESSION-PROMPT.md` and `_claude/BUG_LIST.md` agree with each other,
@@ -216,3 +221,34 @@ Never end with a stale prompt file: even a no-changes wrap refreshes its date an
 line, so `call-handoff` can trust it blindly. And leave the project clean: working tree
 committed or clearly described, no leftover test data (`test…`/`sample…`/`dummy…`
 rows), no half-applied changes, no `_v2`/`_final` duplicate files.
+
+## Step 5: archive the nested sessions (ALWAYS when any exist)
+
+Calling this skill is the user's standing go-ahead to archive every session nested under
+this one once its state is safely in the handoff. It runs LAST, after Step 4, so the
+handoff that records those sessions is already committed and pushed. Skip it when the
+session-management tools are missing, and say so.
+
+- **Scope**: the rows from Step 1c whose `startedBy` chain leads back to this session
+  (children, grandchildren, and forks of it). Never this session, its parent or a
+  sibling. A side session that took the `report-back` path archives nothing; its parent
+  does.
+- **Eligible** only when all of these hold, judged from Step 1c's checks, never from a
+  session's own report:
+  - idle: not running, no live background work;
+  - not waiting on the user: its last turn asks no question the user has not answered;
+  - its last result and open items are in the handoff's linked-sessions table;
+  - its worktree, if any, is clean and every commit on its branch is merged into the base
+    or pushed. Archiving deletes the worktree by default, so anything else dies with it;
+  - no open PR of its own, and not pinned.
+- **Decide before Step 3** so the handoff is written once: eligible rows get state
+  `ARCHIVED (this wrap)`; held rows keep their state plus the reason and what would
+  unblock them ("RUNNING: archive after it finishes", "dirty worktree: commit or discard
+  first").
+- **Archive** deepest first (grandchildren before children), one `archive_session` call
+  per session in one batched message, reason `"handoff <file> written"`. The app may ask
+  the user to approve each call; that is expected. A call that refuses (the session
+  started working again, is open on screen) → fix that row in the handoff, commit and push.
+- Never stop a session, commit for it, discard its changes or answer its question to
+  make it archivable. Archiving is reversible (`unarchive_session`); report the archived
+  sessions as links so the user can reopen one.
