@@ -100,9 +100,9 @@ the baseline to the transcript's first timestamp — the true session start.
 ## Pricing maintenance
 
 `pricing.json` holds per-model rates and the cache multipliers, checked 2026-10-17 against
-the claude-api skill's model price table, cached 2026-10-06 (Sonnet 5 corrected to $2/$10; Fable 5.1, Mythos 5.1,
+the claude-api skill's model price table, cached 2026-10-06 (Sonnet 5 corrected to 2/10 USD per MTok; Fable 5.1, Mythos 5.1,
 Haiku 5.5 with its >100K-prompt tier, and Opus 5.5 fast mode added). A model may list its
-own `cache_read` price ($/MTok; Opus 5.5 and Sonnet 5.5 $0.20, Fable 5.1 $0.25) instead of the
+own `cache_read` price (USD/MTok; Opus 5.5 and Sonnet 5.5 0.20, Fable 5.1 0.25) instead of the
 global multiplier, and a message whose `usage.speed` is `fast` bills at the `<model>-fast` row.
 Unknown model IDs fall
 back to Opus-tier rates — add missing models rather than trust the fallback. When prices
