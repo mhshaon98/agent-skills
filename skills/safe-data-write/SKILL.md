@@ -29,7 +29,7 @@ and the rollback story. If you can't state both, stop and design them first.
    proof of data loss — check whether it was MOVED or quarantined first; re-verify a
    path immediately before any process that initializes-if-empty points at it.
 6. **Concurrency: never decrement/update a counter with read-modify-write** — push
-   arithmetic into a single atomic statement (`UPDATE t SET n = GREATEST(0, n-$1)`)
+   arithmetic into a single atomic statement (`UPDATE t SET n = GREATEST(0, n - :delta)`)
    so the DB serializes. Prove with a concurrency test, not code reading.
 7. **Clamp footguns at the input**: validate config values into safe ranges
    (`max_backups ≥ 1` — `list[:-0]` slices everything).

@@ -1,7 +1,7 @@
 {
   "name": "dev-discipline",
   "description": "Field-tested engineering-discipline skills: session continuity, verification, data safety, release review, delegation and formatting. One plugin per skill, plus one bundle per category.",
-  "version": "2026-10-28",
+  "version": "2026-10-29",
   "owner": {
     "name": "agent-skills maintainers",
     "url": "https://github.com/mhshaon98/agent-skills"
@@ -27,8 +27,8 @@
     {
       "name": "call-handoff",
       "source": "./",
-      "description": "Cold-start briefing from the project's newest handoff, open bugs and next-session prompt in two round-trips, then stop. Use at session start or on \"call handoff\", \"catch up\", \"where did we leave off\".",
-      "version": "84120d5cdd90",
+      "description": "Cold-start briefing from the project's newest handoff, open bugs and next-session prompt in one script pass, turns Remote Control on, then stops. Use at session start or on \"call handoff\", \"catch up\", \"where did we leave off\".",
+      "version": "1015c05c85d9",
       "category": "workflow",
       "keywords": [
         "skill",
@@ -45,7 +45,7 @@
       "name": "collect-reports",
       "source": "./",
       "description": "From the main session, collect a verified status report from every linked, forked and nested Claude Desktop session into one board. Use on \"collect reports\", \"get everyone's status\", or \"have the forks report back\".",
-      "version": "89f6234e0a2d",
+      "version": "c8e4e70dd10f",
       "category": "workflow",
       "keywords": [
         "skill",
@@ -96,7 +96,7 @@
       "name": "report-back",
       "source": "./",
       "description": "Close out a forked or side session and send its verified status to the session that started it. Use on \"report back\", \"send your status to the main session\", or when collect-reports asks.",
-      "version": "912be7449c25",
+      "version": "434e507e5717",
       "category": "workflow",
       "keywords": [
         "skill",
@@ -129,8 +129,8 @@
     {
       "name": "update-handoff",
       "source": "./",
-      "description": "End-of-session wrap in one pass: a detailed holistic handoff (this session plus every linked session and worktree), lessons, memory, bug ledger and NEXT-SESSION-PROMPT.md, then archives finished nested sessions. Use on \"update handoff\", \"wrap up\", \"end the session\", or before context runs out.",
-      "version": "834f5c9ce2c9",
+      "description": "End-of-session wrap in one pass: a detailed holistic handoff (this session plus every linked session and worktree), lessons, memory, bug ledger and NEXT-SESSION-PROMPT.md, then archives finished nested sessions and turns Remote Control off. Use on \"update handoff\", \"wrap up\", \"end the session\", or before context runs out.",
+      "version": "a4e43fbe42e8",
       "category": "workflow",
       "keywords": [
         "skill",
@@ -198,7 +198,7 @@
       "name": "safe-data-write",
       "source": "./",
       "description": "Use before any write, migration, or deletion touching user data: stores, schemas, user-owned files (Excel workbooks, databases, documents). Backup, audit and rollback rules learned from shipped data-loss bugs.",
-      "version": "e14ed4cff0d7",
+      "version": "f45c4d43fe4e",
       "category": "safety",
       "keywords": [
         "skill",
@@ -453,7 +453,7 @@
       "name": "workflow-pack",
       "source": "./",
       "description": "Bundle of every workflow skill: bug-ledger, call-handoff, collect-reports, deepen, new-project, report-back, session-start, update-handoff",
-      "version": "ec70a848a12d",
+      "version": "9bb14ce26757",
       "category": "bundle",
       "keywords": [
         "bundle",
@@ -477,7 +477,7 @@
       "name": "safety-pack",
       "source": "./",
       "description": "Bundle of every safety skill: app-audit, compliance-check, pre-release-review, safe-data-write, security-pass, verify-work",
-      "version": "f4e9829003b9",
+      "version": "4b972703dd0d",
       "category": "bundle",
       "keywords": [
         "bundle",

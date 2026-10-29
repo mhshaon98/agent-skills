@@ -120,7 +120,8 @@ done, 1 running, 0 blocked; nothing pushed". Then:
 4. **Next actions**, in order, each with an owner: the user, this session, or a named
    session.
 5. **Cleanup offer**: archive finished sessions and delete merged clean worktrees, only
-   on the user's yes.
+   on the user's yes. Switch a session's Remote Control off one message before archiving
+   it: archiving is refused while it is on (`update-handoff` Step 5).
 
 Long detail goes to `<notes folder>/status-board-YYYY-MM-DD-HHMM.md` (or the
 scratchpad), linked from the message. Offer `update-handoff` to fold the board into the
