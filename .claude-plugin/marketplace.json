@@ -436,7 +436,7 @@
       "name": "usage-here",
       "source": "./",
       "description": "Report what this session cost: tokens and dollars by model, share of the 5-hour and weekly limits, top three prompts. Use on \"usage here\", \"what did this session cost\", \"how much have I burned\", \"token usage\", or questions about limits mid-session.",
-      "version": "3413b4a4d5ae",
+      "version": "955d5d51816b",
       "category": "tooling",
       "keywords": [
         "skill",
@@ -540,7 +540,7 @@
       "name": "tooling-pack",
       "source": "./",
       "description": "Bundle of every tooling skill: client-cms, commissioning-logger, usage-here",
-      "version": "3e72424ddc9d",
+      "version": "d129367745df",
       "category": "bundle",
       "keywords": [
         "bundle",
