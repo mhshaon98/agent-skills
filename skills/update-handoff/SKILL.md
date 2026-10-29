@@ -1,25 +1,33 @@
 ---
 name: update-handoff
-description: 'End-of-session wrap in one pass: a detailed holistic handoff (this session plus every linked session and worktree), lessons, memory, bug ledger and NEXT-SESSION-PROMPT.md, then archives finished nested sessions. Use on "update handoff", "wrap up", "end the session", or before context runs out.'
+description: 'End-of-session wrap in one pass: a detailed holistic handoff (this session plus every linked session and worktree), lessons, memory, bug ledger and NEXT-SESSION-PROMPT.md, then archives finished nested sessions and turns Remote Control off. Use on "update handoff", "wrap up", "end the session", or before context runs out.'
 ---
 
 # Update Handoff — end-of-session wrap in one pass
 
 Closes out a session: handoff + retrospective + memory + a paste-ready prompt for the
-next session. **Efficiency rule: ≤3 tool round-trips** — one gather script, then ALL
-file writes batched in one parallel message (plus Step 5's one archive batch when nested
-sessions exist). Efficiency means few round-trips, never a
+next session. **Efficiency rule: ≤3 tool round-trips to the written handoff** — the
+gather script (+ the ToolSearch below), the Step 1c session calls, then ALL file writes
+batched in one parallel message. Only what exists adds more: +1 worktree check when
+linked worktrees exist, Step 4's commit/push (nested sessions' Remote Control-off calls
+ride in it), +1 archive batch when nested sessions exist; Step 6 rides in the last message. Efficiency means few round-trips, never a
 thin handoff: completeness of the handoff outranks its length. Most of what goes into these files is
 already in this session's context; never re-read files this session wrote or discussed.
+
+The `ccd_session_mgmt` tools are deferred. Load every one this wrap may use with ONE
+`ToolSearch` in the same message as the Step 1 gather:
+`select:mcp__ccd_session_mgmt__get_session,mcp__ccd_session_mgmt__list_sessions,mcp__ccd_session_mgmt__list_events,mcp__ccd_session_mgmt__archive_session,mcp__ccd_session_mgmt__set_remote_control`.
+No dollar sign followed by a digit in this file: the Skill tool replaces it with a word
+of the invocation's arguments, which breaks shell and awk code.
 
 ## Step 1 — gather (single Bash call)
 
 ```bash
 date "+NOW: %Y-%m-%d %H%M"
 W=_claude/WHERE-IS-THE-CODE.md; [ -f "$W" ] || W=WHERE-IS-THE-CODE.md
-if [ ! -d .git ] && [ -f "$W" ]; then T=$(grep -oE '([A-Za-z]:[\/]|~/)[^`"<>|*?]+' "$W" | head -1 | tr '\134' '/' | sed -e "s|^~|$HOME|" -e 's|[[:space:]]*$||' | awk '{ if (match($0, /^[A-Za-z]:/)) $0 = "/" tolower(substr($0, 1, 1)) substr($0, 3); print }'); [ -d "$T" ] && { echo "ENTRY POINT -> writing into $T"; cd "$T"; }; fi; pwd
+if [ ! -d .git ] && [ -f "$W" ]; then T=$(grep -oE '([A-Za-z]:[\/]|~/)[^`"<>|*?]+' "$W" | head -1 | tr '\134' '/' | sed -e "s|^~|$HOME|" -e 's|[[:space:]]*$||'); case "$T" in [A-Za-z]:/*) T="/$(printf %s "${T%%:*}" | tr 'A-Z' 'a-z')${T#?:}";; esac; [ -d "$T" ] && { echo "ENTRY POINT -> writing into $T"; cd "$T"; }; fi; pwd
 L=$(ls -d HANDOFF-*.md NEXT-SESSION-PROMPT.md BUG_LIST.md WHERE-IS-THE-CODE.md handoffs CODEX-FINDINGS.md ANTIGRAVITY-FINDINGS.md 2>/dev/null); [ -n "$L" ] && { echo "LEGACY ROOT FILES -> move into _claude/ (Step 1d):"; echo "$L"; git ls-files -- $L 2>/dev/null | head -3 | sed 's/^/  tracked: /'; }
-if grep -q '^## Topic table' CLAUDE.md 2>/dev/null; then echo "LAYERED: topic files:"; find _claude/handoffs -maxdepth 1 -name '*.md' 2>/dev/null | sort; else H=$( { find _claude . -maxdepth 1 -name 'HANDOFF-*.md'; find _claude/handoffs -mindepth 2 -maxdepth 2 -name 'HANDOFF-*.md'; } 2>/dev/null | awk -F/ '{print $NF"|"$0}' | sort | tail -1 | cut -d'|' -f2); echo "CURRENT HANDOFF: ${H:-NONE}"; fi
+if grep -q '^## Topic table' CLAUDE.md 2>/dev/null; then echo "LAYERED: topic files:"; find _claude/handoffs -maxdepth 1 -name '*.md' 2>/dev/null | sort; else H=$( { find _claude . -maxdepth 1 -name 'HANDOFF-*.md'; find _claude/handoffs -mindepth 2 -maxdepth 2 -name 'HANDOFF-*.md'; } 2>/dev/null | while read -r f; do printf '%s|%s\n' "${f##*/}" "$f"; done | sort | tail -1 | cut -d'|' -f2); echo "CURRENT HANDOFF: ${H:-NONE}"; fi
 git status --porcelain=v1 2>/dev/null | head -20; git log --oneline -8 2>/dev/null || ls -t | head -10
 echo "WORKTREES:"; git worktree list 2>/dev/null; git for-each-ref --format='%(refname:short) %(upstream:track)' refs/heads 2>/dev/null | head -30
 [ -n "${SKILLS_REPO:-}" ] && { echo "SKILLS CLONE:"; git -C "$SKILLS_REPO" status -sb 2>/dev/null | head -1; git -C "$SKILLS_REPO" status --porcelain=v1 2>/dev/null | head -10; }
@@ -61,18 +69,20 @@ The handoff is holistic: it covers every session and worktree working on this pr
 not just this one. Skip the session part when the `ccd_session_mgmt` tools are missing
 (plain CLI), but still do the worktree part.
 
-- **Side session?** In parallel with the Step 1 gather, call
+- **Side session?** Right after the gather (round-trip 2: the tools exist only once the
+  ToolSearch has returned), call
   `mcp__ccd_session_mgmt__get_session` with `"self"`. If it shows a `parentSessionId`,
   ask the user once: "report-back to the main session, or write a full handoff?" Default
   to `report-back`; the parent owns the holistic handoff.
 - **Reuse**: if `collect-reports` ran in this session and nothing has changed since,
   reuse its board and its git checks. If reports are missing and the user wants them
   fresh, run `collect-reports` first.
-- **Otherwise**, also in parallel with the Step 1 gather, call
+- **Otherwise**, in that same round-trip-2 message, call
   `mcp__ccd_session_mgmt__list_sessions` with `{"linked": true, "include_archived":
   true, "limit": 50}`. That gives the forks, the sessions this one started, and their
   children; the current session is not in the list. For each linked session:
-  - **State**: running / idle / archived, title, last activity. RUNNING means not done:
+  - **State**: running / idle / archived, title, last activity, and `remoteControlActive`
+    (Step 5 must switch Remote Control off before it can archive). RUNNING means not done:
     record what it is doing, and do NOT wait for it unless the user asked. Never predict
     its result.
   - **Its last report**: look first at the `<side-sessions-event>` notes,
@@ -211,6 +221,8 @@ lessons in the handoff marked "PROMOTE TO LESSONS".
       unasked.
 - [ ] **Nested sessions archived** (Step 5): every eligible one archived, every held one
       named in the handoff with its reason.
+- [ ] **Remote Control off** (Step 6): this session's switch is off, or the reason it
+      could not be turned off is in the closing message.
 - [ ] **Context-sweep coverage**: every request, change, commit, decision, exact fact and
       in-flight item from Step 1b is in the handoff (or deliberately dropped as trivial).
 - [ ] Handoff, `_claude/NEXT-SESSION-PROMPT.md` and `_claude/BUG_LIST.md` agree with each other,
@@ -245,10 +257,31 @@ session-management tools are missing, and say so.
   `ARCHIVED (this wrap)`; held rows keep their state plus the reason and what would
   unblock them ("RUNNING: archive after it finishes", "dirty worktree: commit or discard
   first").
+- **Remote Control first.** `call-handoff` switches Remote Control on in every session it
+  starts, and `archive_session` refuses a session while its Remote Control is on, even
+  with nobody viewing it. So for each eligible session with `remoteControlActive` true,
+  send `set_remote_control` (`enabled: false`, its session id) in the same message as
+  Step 4's commit/push call: one message earlier than the archive batch, never in it. A
+  refused switch (the session was started from the phone or claude.ai, so it is locked)
+  → hold that row: "Remote Control locked: the user archives it from the sidebar".
 - **Archive** deepest first (grandchildren before children), one `archive_session` call
   per session in one batched message, reason `"handoff <file> written"`. The app may ask
-  the user to approve each call; that is expected. A call that refuses (the session
-  started working again, is open on screen) → fix that row in the handoff, commit and push.
+  the user to approve each call; that is expected. A refusal that names Remote Control
+  (the Step 1c state was stale) → switch it off for that session and retry once. Any
+  other refusal (the session started working again, is open on screen) → fix that row in
+  the handoff, commit and push.
 - Never stop a session, commit for it, discard its changes or answer its question to
   make it archivable. Archiving is reversible (`unarchive_session`); report the archived
   sessions as links so the user can reopen one.
+
+## Step 6: Remote Control off for this session (ALWAYS, last)
+
+Calling this skill is the user's standing request to switch off the Remote Control that
+`call-handoff` switched on. After Step 4's push has succeeded, send
+`mcp__ccd_session_mgmt__set_remote_control` `{"session_id": "self", "enabled": false}`
+as the LAST call of the final message: after Step 5's archive calls, so their approval
+prompts still reach the user's phone, or alone when there is nothing to archive. Report
+the returned state in the closing message. A refusal (phone-started sessions are
+locked), `unavailable`, or a declined/auto-mode-denied approval → one line saying which,
+never a retry. Skip it: plain CLI; a `report-back` side session (its parent switches it
+off in Step 5); or the user said to keep working or keep Remote Control on.

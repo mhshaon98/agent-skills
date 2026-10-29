@@ -5,7 +5,7 @@
   "repo": "https://github.com/mhshaon98/agent-skills",
   "raw_base": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/",
   "site": "https://mhshaon98.github.io/agent-skills/",
-  "updated": "2026-10-28",
+  "updated": "2026-10-29",
   "marketplace": {
     "name": "dev-discipline",
     "add": "/plugin marketplace add mhshaon98/agent-skills",
@@ -63,13 +63,13 @@
     },
     {
       "name": "call-handoff",
-      "description": "Cold-start briefing from the project's newest handoff, open bugs and next-session prompt in two round-trips, then stop. Use at session start or on \"call handoff\", \"catch up\", \"where did we leave off\".",
+      "description": "Cold-start briefing from the project's newest handoff, open bugs and next-session prompt in one script pass, turns Remote Control on, then stops. Use at session start or on \"call handoff\", \"catch up\", \"where did we leave off\".",
       "category": "workflow",
       "targets": [
         "claude",
         "codex"
       ],
-      "version": "84120d5cdd90",
+      "version": "1015c05c85d9",
       "path": "skills/call-handoff",
       "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/call-handoff/SKILL.md",
       "file_count": 3,
@@ -87,7 +87,7 @@
         "claude",
         "codex"
       ],
-      "version": "89f6234e0a2d",
+      "version": "c8e4e70dd10f",
       "path": "skills/collect-reports",
       "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/collect-reports/SKILL.md",
       "file_count": 1,
@@ -135,7 +135,7 @@
         "claude",
         "codex"
       ],
-      "version": "912be7449c25",
+      "version": "434e507e5717",
       "path": "skills/report-back",
       "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/report-back/SKILL.md",
       "file_count": 1,
@@ -161,13 +161,13 @@
     },
     {
       "name": "update-handoff",
-      "description": "End-of-session wrap in one pass: a detailed holistic handoff (this session plus every linked session and worktree), lessons, memory, bug ledger and NEXT-SESSION-PROMPT.md, then archives finished nested sessions. Use on \"update handoff\", \"wrap up\", \"end the session\", or before context runs out.",
+      "description": "End-of-session wrap in one pass: a detailed holistic handoff (this session plus every linked session and worktree), lessons, memory, bug ledger and NEXT-SESSION-PROMPT.md, then archives finished nested sessions and turns Remote Control off. Use on \"update handoff\", \"wrap up\", \"end the session\", or before context runs out.",
       "category": "workflow",
       "targets": [
         "claude",
         "codex"
       ],
-      "version": "834f5c9ce2c9",
+      "version": "a4e43fbe42e8",
       "path": "skills/update-handoff",
       "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/update-handoff/SKILL.md",
       "file_count": 2,
@@ -349,7 +349,7 @@
         "claude",
         "codex"
       ],
-      "version": "e14ed4cff0d7",
+      "version": "f45c4d43fe4e",
       "path": "skills/safe-data-write",
       "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/safe-data-write/SKILL.md",
       "file_count": 1,

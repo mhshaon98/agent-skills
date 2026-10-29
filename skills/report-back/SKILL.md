@@ -94,7 +94,7 @@ the parent owns the holistic handoff.
     failed, say so and paste the report for the user to forward.
   - A link to the parent, as `[its title](#local_…)`.
   - One line offering to archive this session or delete merged worktrees, only on the
-    user's yes.
+    user's yes (Remote Control off first, one message before the archive, which is refused while it is on).
 
 ## Rules
 

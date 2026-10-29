@@ -14,7 +14,7 @@
   <a href="llms.txt">llms.txt</a>
 </p>
 
-<p align="center"><sub><!-- stats -->Last updated: 2026-10-28 · 27 skills · 11 playbooks<!-- /stats --></sub></p>
+<p align="center"><sub><!-- stats -->Last updated: 2026-10-29 · 27 skills · 11 playbooks<!-- /stats --></sub></p>
 
 # Agent Skills Catalog
 
@@ -122,13 +122,13 @@ Session continuity: start, hand off, track bugs, bootstrap projects. Bundle: `wo
 | Skill | What it does | Files |
 | --- | --- | --- |
 | [bug-ledger](skills/bug-ledger/SKILL.md) | Use when a bug is reported, found, fixed, or reopened, or before working in a bug-prone area. Check BUG_LIST.md before debugging: many "new" bugs are regressions of fixed ones. | 1 |
-| [call-handoff](skills/call-handoff/SKILL.md) | Cold-start briefing from the project's newest handoff, open bugs and next-session prompt in two round-trips, then stop. Use at session start or on "call handoff", "catch up", "where did we leave off". | 3 |
+| [call-handoff](skills/call-handoff/SKILL.md) | Cold-start briefing from the project's newest handoff, open bugs and next-session prompt in one script pass, turns Remote Control on, then stops. Use at session start or on "call handoff", "catch up", "where did we leave off". | 3 |
 | [collect-reports](skills/collect-reports/SKILL.md) | From the main session, collect a verified status report from every linked, forked and nested Claude Desktop session into one board. Use on "collect reports", "get everyone's status", or "have the forks report back". | 1 |
 | [deepen](skills/deepen/SKILL.md) | Before planning a substantial build, redesign, feature, research question or subagent brief, answer four questions (what a top professional would add, the rawest source, their methods, what outside check proves it right) and rewrite the brief to ask for exactly that. Deeper, not bigger; the outside checks become verify-work's done-criteria. | 1 |
 | [new-project](skills/new-project/SKILL.md) | Bootstrap a brand-new project with proven architecture defaults and continuity scaffolding. Use when starting a new project from scratch, or when touching a legacy project that has no handoff/git/structure yet. | 1 |
 | [report-back](skills/report-back/SKILL.md) | Close out a forked or side session and send its verified status to the session that started it. Use on "report back", "send your status to the main session", or when collect-reports asks. | 1 |
 | [session-start](skills/session-start/SKILL.md) | Old name for the session-start ritual, which now lives in call-handoff; run that skill instead. | 1 |
-| [update-handoff](skills/update-handoff/SKILL.md) | End-of-session wrap in one pass: a detailed holistic handoff (this session plus every linked session and worktree), lessons, memory, bug ledger and NEXT-SESSION-PROMPT.md, then archives finished nested sessions. Use on "update handoff", "wrap up", "end the session", or before context runs out. | 2 |
+| [update-handoff](skills/update-handoff/SKILL.md) | End-of-session wrap in one pass: a detailed holistic handoff (this session plus every linked session and worktree), lessons, memory, bug ledger and NEXT-SESSION-PROMPT.md, then archives finished nested sessions and turns Remote Control off. Use on "update handoff", "wrap up", "end the session", or before context runs out. | 2 |
 
 ### Safety
 
