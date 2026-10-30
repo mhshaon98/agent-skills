@@ -5,7 +5,7 @@
   "repo": "https://github.com/mhshaon98/agent-skills",
   "raw_base": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/",
   "site": "https://mhshaon98.github.io/agent-skills/",
-  "updated": "2026-10-29",
+  "updated": "2026-10-30",
   "marketplace": {
     "name": "dev-discipline",
     "add": "/plugin marketplace add mhshaon98/agent-skills",
@@ -528,15 +528,16 @@
         "claude",
         "codex"
       ],
-      "version": "8ce75749ac89",
+      "version": "68d278546f4a",
       "path": "skills/eng-report",
       "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/eng-report/SKILL.md",
-      "file_count": 5,
+      "file_count": 6,
       "files": [
         "skills/eng-report/SKILL.md",
         "skills/eng-report/references/brand.md",
         "skills/eng-report/references/house-rules.md",
         "skills/eng-report/references/templates.md",
+        "skills/eng-report/scripts/callouts.py",
         "skills/eng-report/scripts/eng_report.py"
       ]
     },

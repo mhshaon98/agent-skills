@@ -74,11 +74,13 @@ Appendices.
 
 13. Decimal headings 1 / 1.1 / 1.1.1, appendices lettered A, B, C (Siemens, E+H).
 14. Sentence-case headings (Siemens, Emerson) unless the customer template says Title Case.
-15. Sans-serif body 10–11 pt; tables 9–9.5 pt; footer 8 pt.
+15. Sans-serif body 10–11 pt; tables 9–9.5 pt (manuals and guides: header 9.5 pt, body 8.5 pt,
+    for dense callout and step tables); footer 8 pt.
 16. Table header row shaded with bold text, repeated on every page; units in the header or
     label ("Weight, approx. (kg)"); footnotes directly below in smaller type (Siemens).
 17. Captions: "Table N - Title" above tables (Rockwell), "Figure N - Title" below figures.
-18. Figure callouts numbered 1, 2, 3 with a legend; views lettered A, B, C (E+H).
+18. Figure callouts numbered 1, 2, 3 with a legend; views lettered A, B, C (E+H). How to
+    draw them is §6.
 
 ## 5. Writing
 
@@ -98,3 +100,42 @@ Appendices.
     features and prerequisites; prose for reasoning.
 25. Define abbreviations on first use and list them in an appendix.
 26. Results are stated, not sold: no marketing adjectives, no emoji, no AI label blocks.
+27. Manuals are lean and visual. One callout row per object with a tag and basis on every
+    row makes a manual too long to use. A lean manual has:
+    - a navigation map;
+    - one full screenshot per screen with a short callout table;
+    - cropped, labelled close-ups of the panels the text discusses;
+    - P&ID crops tied to tags and I/O;
+    - a separate "assumed logic" section whose entries are cross-referenced to the
+      project's assumptions list.
+    For process engineers and operators, write screen words only (no PLC tags, no rung
+    references). Say once that the captures come from a simulated controller.
+28. Open questions go to the engineer, not into the text. Where the document has to say
+    that something is unknown, it says so once, in an open-items table with an owner.
+
+## 6. Figures and callouts
+
+29. Size markers from the PRINTED figure, never in screenshot pixels. At a fixed 15 px
+    radius, a 1920 px screenshot printed 6.5 in wide gives about 2.5 mm markers, which are
+    unreadable on paper. Use a 0.26 in (6.6 mm) disc with a digit of about 10 pt. In
+    pixels: `r = 0.13 × image_width_px / print_width_in`. `callouts.py` does this; its
+    `print_in` must equal the `{width=}` the figure gets in the document.
+30. Marker style: yellow disc (#FDC418), black ring, thin white halo, bold black digit. It
+    reads on dark HMI fills and in black-and-white print. Use one marker style per
+    document; mixed styles read as an error.
+31. A marker never covers text. Put it in clear space and run a leader line from it to a
+    small black end dot on the control's EDGE, never on its caption or value. Leaders do
+    not cross each other or pass through another target. Pin each marker by hand (the
+    `marker` field) wherever automatic placement lands it on text.
+32. Check legibility at page size before building: `callouts.py --proof` renders each
+    figure at its print width at 100 dpi. Two thresholds:
+    - text the reader must read in a crop prints at 7 pt or larger. A very wide, short
+      crop (for example 1580×165 px at 6.7 in) prints its labels at 3–4 pt;
+    - if a crop is too wide for its text, crop tighter or stack the labels; never shrink.
+33. Crop so that sheet text the figure relies on is inside the frame (no labels cut at the
+    edge). A 2 px grey frame separates a screenshot from the page.
+34. Every image sits on the same page as its caption. A figure caption binds only to a
+    table that follows it, and the reader should never be left with a near-empty page.
+    The engine sets these rules; check them in the rendered PDF.
+35. One numbering source: figure numbers on the picture, callout table rows and the text
+    references come from one spec, not from three hand-kept lists.
