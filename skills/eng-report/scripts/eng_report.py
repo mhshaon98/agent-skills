@@ -5,6 +5,7 @@
   restyle IN.docx OUT.docx [options]    re-skin an existing document in place of its styles
   build   IN.md   OUT.docx [options]    build a document from Markdown (+ front matter)
   check   FILE.docx                     list house-rule problems (no changes)
+  pdf     FILE.docx [OUT.pdf]           Word: update contents + fields, save, export PDF with bookmarks
 
 Brand profile: brand --company "Acme Controls" [--tagline ...] [--logo logo.png]
   [--accent 1F4E79] [--head 1A1A1A] [--link 1F4E79] [--scope project|user]
@@ -16,6 +17,13 @@ Options (restyle/build): --title  --subtitle  --doc-type  --doc-no  --rev  --dat
 Markdown extras: front matter (--- key: value ---), notices as "> **WARNING:** hazard. text",
 "> **NOTE:** text"; tables in GitHub pipe syntax; "[[revision-history]]" and "[[sign-off]]"
 placeholders; captions as lines starting "Table: " (above a table) or "Figure: ".
+Images on their own line: "![alt](figs/x.png){width=4.2}" or "@@img figs/x.png|4.2@@" (inches, default
+6.5, never wider than the text; paths relative to the .md); "@@img ...@@" also works inside a table cell.
+Blocks: "[[toc]]" (Contents page; the next chapter starts on a new page), "[[box]]" ... "[[endbox]]"
+(bordered summary panel), "[[include tables/x.md]]" (splice a file), "<br>" = line break.
+A numbered list that starts at "1." restarts at 1; one that starts at another number continues.
+Revision history rows from front matter: "history_A: October 2026 | Initial release | J. Smith"
+(By defaults to the author as "J. Smith"). Appendix headings and their sub-headings are unnumbered.
 """
 import argparse, json, os, re, shutil, sys
 from datetime import date
@@ -156,7 +164,11 @@ def repeat_header(row):
     trPr = row._tr.get_or_add_trPr(); e = OxmlElement('w:tblHeader'); e.set(qn('w:val'), 'true'); trPr.append(e)
 
 def cant_split(row):
-    trPr = row._tr.get_or_add_trPr(); trPr.append(OxmlElement('w:cantSplit'))
+    trPr = row._tr.get_or_add_trPr()
+    if trPr.find(qn('w:cantSplit')) is not None: return
+    cs = OxmlElement('w:cantSplit')   # schema order: cantSplit before trHeight / tblHeader / jc / hidden
+    later = [e for e in trPr if e.tag in (qn('w:trHeight'), qn('w:tblHeader'), qn('w:tblCellSpacing'), qn('w:jc'), qn('w:hidden'))]
+    later[0].addprevious(cs) if later else trPr.append(cs)
 
 def set_font(run, size=None, bold=None, color=None, italic=None, name=FONT):
     run.font.name = name
@@ -375,11 +387,16 @@ def style_table(t, b, header=True):
 
 INLINE = re.compile(r'(\*\*[^*]+\*\*|`[^`]+`|\*[^*]+\*|\[[^\]]+\]\([^)]+\))')
 def add_inline(p, text):
+    for k, seg in enumerate(re.split(r'<br\s*/?>', text)):
+        if k: p.add_run().add_break()
+        _inline(p, seg)
+
+def _inline(p, text):
     for part in INLINE.split(text):
         if not part: continue
         if part.startswith('**'): r = p.add_run(part[2:-2]); r.bold = True
         elif part.startswith('`'): r = p.add_run(part[1:-1]); r.font.name = 'Consolas'; set_font(r, 9.5, name='Consolas'); continue
-        elif part.startswith('['):
+        elif part.startswith('[') and re.match(r'\[([^\]]+)\]\(([^)]+)\)', part):
             m = re.match(r'\[([^\]]+)\]\(([^)]+)\)', part); r = p.add_run(f'{m.group(1)}'); r.font.color.rgb = RGBColor.from_string(LINK); r.underline = True
         elif part.startswith('*'): r = p.add_run(part[1:-1]); r.italic = True
         else: r = p.add_run(part)
@@ -439,6 +456,119 @@ def parse_front(md):
             md = md[end + 4:]
     return meta, md
 
+IMG_LINE = re.compile(r'^\s*(?:@@img\s+([^|#@]+?)\s*(?:[|#]\s*([\d.]+))?\s*@@|!\[[^\]]*\]\(([^)]+?)\)(?:\{\s*width\s*=\s*([\d.]+)\s*(in|%)?\s*\})?)\s*$')
+IMG_CELL = re.compile(r'@@img\s+([^|#@]+?)\s*(?:[|#]\s*([\d.]+))?\s*@@')
+BOX_FILL = 'FFF6D5'
+
+def img_path(path, base):
+    path = path.strip(); path = path if os.path.isabs(path) else os.path.join(base, path.replace('/', os.sep))
+    if not os.path.exists(path): sys.exit(f'image not found: {path}')
+    return path
+
+def new_list(doc, style_name):
+    """A new numbering instance for this list style that starts again at 1."""
+    numbering = doc.part.numbering_part.element; s = doc.styles[style_name]; nid = ilvl = None
+    while s is not None and nid is None:
+        npr = s.element.find(qn('w:pPr') + '/' + qn('w:numPr'))
+        if npr is not None and npr.find(qn('w:numId')) is not None:
+            nid = npr.find(qn('w:numId')).get(qn('w:val'))
+            il = npr.find(qn('w:ilvl')); ilvl = il.get(qn('w:val')) if il is not None else '0'
+        s = s.base_style
+    if nid is None: return None
+    absid = next(n.find(qn('w:abstractNumId')).get(qn('w:val')) for n in numbering.findall(qn('w:num')) if n.get(qn('w:numId')) == nid)
+    new = str(max(int(n.get(qn('w:numId'))) for n in numbering.findall(qn('w:num'))) + 1)
+    num = OxmlElement('w:num'); num.set(qn('w:numId'), new)
+    an = OxmlElement('w:abstractNumId'); an.set(qn('w:val'), absid); num.append(an)
+    lo = OxmlElement('w:lvlOverride'); lo.set(qn('w:ilvl'), ilvl or '0')
+    so = OxmlElement('w:startOverride'); so.set(qn('w:val'), '1'); lo.append(so); num.append(lo)
+    numbering.append(num)
+    return new, ilvl or '0'
+
+def set_num(p, nid, ilvl='0'):
+    pPr = p._p.get_or_add_pPr()
+    for e in pPr.findall(qn('w:numPr')): pPr.remove(e)
+    npr = OxmlElement('w:numPr'); il = OxmlElement('w:ilvl'); il.set(qn('w:val'), ilvl)
+    ni = OxmlElement('w:numId'); ni.set(qn('w:val'), nid); npr.append(il); npr.append(ni)
+    ps = pPr.find(qn('w:pStyle')); ps.addnext(npr) if ps is not None else pPr.insert(0, npr)
+
+def toc_block(doc):
+    try: style = doc.styles['TOC Heading'].name
+    except KeyError: style = 'Heading 1'
+    h = doc.add_paragraph('Contents', style=style); h.paragraph_format.page_break_before = True
+    set_num(h, '0')                  # TOC Heading inherits Heading 1 outline numbering: switch it off
+    p = doc.add_paragraph()
+    for kind, val in (('begin', None), ('instr', ' TOC \\o "1-2" \\h \\z \\u '), ('separate', None),
+                      ('text', 'Update this field to build the contents (eng_report.py pdf does it).'), ('end', None)):
+        r = OxmlElement('w:r')
+        if kind == 'instr':
+            e = OxmlElement('w:instrText'); e.set(qn('xml:space'), 'preserve'); e.text = val
+        elif kind == 'text':
+            e = OxmlElement('w:t'); e.text = val
+        else:
+            e = OxmlElement('w:fldChar'); e.set(qn('w:fldCharType'), kind)
+        r.append(e); p._p.append(r)
+
+def col_widths(t, widths):
+    for gc, w in zip(t._tbl.tblGrid.findall(qn('w:gridCol')), widths): gc.set(qn('w:w'), str(int(w * 1440)))
+    for row in t.rows:
+        for c, w in zip(row.cells, widths): c.width = Inches(w)
+    tblPr = t._tbl.tblPr; lay = tblPr.find(qn('w:tblLayout'))
+    if lay is None: lay = OxmlElement('w:tblLayout'); tblPr.append(lay)
+    lay.set(qn('w:type'), 'fixed')
+
+def finish_table(t, text_w, small=True):
+    """Pagination and fit for manuals: rows never split, short tables stay
+    whole, body rows in 8.5 pt, numbered-item tables get a narrow first column."""
+    rows = t.rows; hdr = [c.text.strip() for c in rows[0].cells]
+    for row in rows: cant_split(row)
+    if len(rows) <= 11 and hdr[:1] != ['Step']:
+        for row in list(rows)[:-1]:
+            for c in row.cells:
+                for p in c.paragraphs: p.paragraph_format.keep_with_next = True
+    if small:   # manuals and guides: body rows 8.5 pt, header 9.5 pt
+        for row in list(rows)[1:]:
+            for c in row.cells:
+                for p in c.paragraphs:
+                    for r in p.runs:
+                        if r.font.size is None or r.font.size > Pt(8.5): r.font.size = Pt(8.5)
+    if hdr and hdr[0] in ('No.', 'No', '#', 'Step') and len(hdr) >= 2:
+        first = 0.45; rest = text_w - first
+        pic = lambda k: any(r.cells[k]._tc.findall('.//' + qn('w:drawing')) for r in rows)
+        wt = [65 if pic(k) else min(max(sum(len(r.cells[k].text) for r in rows) / len(rows), 15), 45) for k in range(1, len(hdr))]
+        ws = [max(0.9, rest * w / sum(wt)) for w in wt]; ws = [w * rest / sum(ws) for w in ws]
+        col_widths(t, [first] + ws)
+
+def box_panels(doc):
+    """[[box]] ... [[endbox]]: move everything between the markers into a bordered single-cell panel."""
+    body = doc.element.body
+    while True:
+        marks = [p for p in body.iterchildren(qn('w:p')) if ''.join(x.text or '' for x in p.iter(qn('w:t'))).strip() in ('@@box@@', '@@endbox@@')]
+        if not marks: break
+        kinds = [''.join(x.text or '' for x in m.iter(qn('w:t'))).strip() for m in marks]
+        if len(marks) < 2 or kinds[0] != '@@box@@' or kinds[1] != '@@endbox@@':
+            sys.exit('[[box]] and [[endbox]] must come in pairs, not nested')
+        start, end = marks[0], marks[1]
+        t = doc.add_table(rows=1, cols=1); cell = t.rows[0].cells[0]
+        b = OxmlElement('w:tblBorders')
+        for side in ('top', 'left', 'bottom', 'right'):
+            e = OxmlElement('w:' + side); e.set(qn('w:val'), 'single'); e.set(qn('w:sz'), '12'); e.set(qn('w:color'), INK); b.append(e)
+        t._tbl.tblPr.append(b); shade(cell, BOX_FILL); cell_margins(cell, 100, 100, 140, 140)
+        cell._tc.remove(cell.paragraphs[0]._p)
+        el = start.getnext()
+        while el is not None and el is not end:
+            nxt = el.getnext(); cell._tc.append(el); el = nxt
+        if not cell._tc.findall(qn('w:p')): cell._tc.append(OxmlElement('w:p'))
+        for p in cell.paragraphs:
+            for r in p.runs:
+                if r.font.size is None or r.font.size > Pt(9): r.font.size = Pt(9)
+        start.addprevious(t._tbl); body.remove(start); body.remove(end)
+        sec = doc.sections[0]; col_widths(t, [content_width(sec) / 914400])
+
+def short_name(author):
+    parts = (author or '').split()
+    if len(parts) < 2 or re.search(r'(?i)\b(inc|ltd|llc|gmbh|corp|co|company)\b', author): return author or ''
+    return f'{parts[0][0]}. {" ".join(parts[1:])}'
+
 def revision_table(doc, rows):
     t = doc.add_table(rows=1, cols=4)
     for c, h in zip(t.rows[0].cells, ('Rev', 'Date', 'Description of change', 'By')): c.text = h
@@ -456,7 +586,10 @@ def signoff_table(doc):
     return t
 
 def build(inp, out, meta, a):
-    md = open(inp, encoding='utf-8').read().replace('\r\n', '\n')
+    md = open(inp, encoding='utf-8-sig').read().replace('\r\n', '\n')
+    base = os.path.dirname(os.path.abspath(inp))
+    for _ in range(3):
+        md = re.sub(r'^\[\[include\s+([^\]]+)\]\][ \t]*$', lambda m: open(img_path(m.group(1), base), encoding='utf-8-sig').read().strip(), md, flags=re.M)
     fm, md = parse_front(md)
     for k, v in fm.items():
         if v: meta.setdefault(k, v)
@@ -468,6 +601,7 @@ def build(inp, out, meta, a):
     doc = Document(); page_setup(doc, a.page)
     apply_styles(doc, b, a.numbered)
     lines = md.split('\n'); i = 0; caption = None
+    text_w = content_width(doc.sections[0]) / 914400; page_next = False; in_app = False; cur_list = {}
     def para(text, style=None):
         p = doc.add_paragraph(style=style); add_inline(p, text); return p
     while i < len(lines):
@@ -476,10 +610,38 @@ def build(inp, out, meta, a):
         h = re.match(r'^(#{1,4})\s+(.*)$', ln)
         if h:
             lvl = len(h.group(1)); text = re.sub(TYPED_NO, '', h.group(2)) if a.numbered else h.group(2)
-            if re.match(r'(?i)appendix', text): doc.add_paragraph(text, style='Heading 1')
-            else: doc.add_paragraph(text, style=f'Heading {lvl}')
+            if re.match(r'(?i)appendix', text): hp = doc.add_paragraph(text, style='Heading 1'); in_app = True
+            else:
+                hp = doc.add_paragraph(text, style=f'Heading {lvl}')
+                if lvl == 1: in_app = False
+            if in_app: set_num(hp, '0')          # appendices are lettered in the text, not numbered
+            if page_next and hp.style.name == 'Heading 1': hp.paragraph_format.page_break_before = True; page_next = False
+            cur_list.clear(); i += 1; continue
+        if ln.strip() == '[[revision-history]]':
+            by = short_name(meta.get('author', ''))
+            hist = [(k[8:].upper(), *[x.strip() for x in v.split('|')]) for k, v in fm.items() if k.startswith('history_')]
+            hist = [(h + ('', '', '', ''))[:4] for h in hist] or [('A', meta['date'], 'Initial release', by)]
+            t = revision_table(doc, [(r, d, c, w or by) for r, d, c, w in hist]); style_table(t, b)
+            for row in t.rows: cant_split(row)
+            for row in t.rows:
+                for c in row.cells:
+                    for p in c.paragraphs: p.paragraph_format.keep_with_next = True
             i += 1; continue
-        if ln.strip() == '[[revision-history]]': style_table(revision_table(doc, None), b); i += 1; continue
+        if ln.strip() == '[[toc]]': toc_block(doc); page_next = True; i += 1; continue
+        if ln.strip() in ('[[box]]', '@@box@@', '[[endbox]]', '@@endbox@@'):
+            doc.add_paragraph('@@endbox@@' if 'end' in ln else '@@box@@'); i += 1; continue
+        if ln.strip() == '@@restart@@': cur_list.clear(); i += 1; continue
+        if re.fullmatch(r'\[\[[^\]]*\]\]', ln.strip()) and ln.strip() not in ('[[sign-off]]', '[[page-break]]'):
+            sys.exit(f'unknown block {ln.strip()} (line {i + 1}): use [[toc]], [[box]], [[endbox]], [[include path]], '
+                     '[[revision-history]], [[sign-off]], [[page-break]]')
+        im = IMG_LINE.match(ln)
+        if im:
+            p = doc.add_paragraph(); w = float(im.group(2) or im.group(4) or 0) or 6.5
+            if im.group(5) == '%': w = text_w * w / 100
+            p.add_run().add_picture(img_path(im.group(1) or im.group(3), base), width=Inches(min(w, text_w)))
+            p.alignment = WD_ALIGN_PARAGRAPH.CENTER; pf = p.paragraph_format
+            pf.keep_with_next = True; pf.space_before = Pt(0); pf.space_after = Pt(0)
+            i += 1; continue
         if ln.strip() == '[[sign-off]]': style_table(signoff_table(doc), b); i += 1; continue
         if ln.strip() in ('---', '***', '[[page-break]]'): doc.add_paragraph().add_run().add_break(WD_BREAK.PAGE); i += 1; continue
         if ln.startswith('>'):
@@ -491,32 +653,53 @@ def build(inp, out, meta, a):
             continue
         if ln.startswith('Table:'): caption = ln[6:].strip(); i += 1; continue
         if ln.startswith('Figure:'):
-            p = doc.add_paragraph(style='Caption'); p.add_run(ln[7:].strip()); i += 1; continue
+            p = doc.add_paragraph(style='Caption'); add_inline(p, ln[7:].strip())
+            nxt = next((x for x in lines[i + 1:] if x.strip()), '')
+            p.paragraph_format.keep_with_next = nxt.startswith('Table:')   # a figure caption binds only to its table
+            i += 1; continue
         if ln.lstrip().startswith('|'):
             rows = []
             while i < len(lines) and lines[i].lstrip().startswith('|'):
-                cells = [c.strip() for c in lines[i].strip().strip('|').split('|')]
+                row_txt = re.sub(r'@@img[^@]*@@', lambda m: m.group(0).replace('|', '#'), lines[i].strip())
+                cells = [c.strip() for c in row_txt.strip('|').split('|')]
                 if not all(re.fullmatch(r':?-{2,}:?', c) for c in cells if c): rows.append(cells)
                 i += 1
             if not rows: continue
             if caption:
-                cp = doc.add_paragraph(style='Caption'); cp.add_run(caption); caption = None
+                cp = doc.add_paragraph(style='Caption'); add_inline(cp, caption); caption = None
             ncol = max(len(r) for r in rows); t = doc.add_table(rows=0, cols=ncol)
             for r in rows:
                 cells = t.add_row().cells
-                for c, v in zip(cells, r + [''] * (ncol - len(r))): add_inline(c.paragraphs[0], v)
-            style_table(t, b); doc.add_paragraph().paragraph_format.space_after = Pt(2); continue
+                for c, v in zip(cells, r + [''] * (ncol - len(r))):
+                    m = IMG_CELL.search(v); cp_ = c.paragraphs[0]
+                    if m:
+                        before = v[:m.start()].strip()
+                        if before: add_inline(cp_, before); cp_.add_run().add_break()
+                        cp_.add_run().add_picture(img_path(m.group(1), base), width=Inches(float(m.group(2) or 1.5)))
+                        after = v[m.end():].strip()
+                        if after: cp_.add_run().add_break(); add_inline(cp_, after)
+                    else: add_inline(cp_, v)
+            style_table(t, b); finish_table(t, text_w, bool(re.search(r'(?i)manual|guide|instruction', meta.get('doc_type', '')))); doc.add_paragraph().paragraph_format.space_after = Pt(2); continue
         lm = re.match(r'^(\s*)([-*+]|\d+[.)])\s+(.*)$', ln)
         if lm:
             nested = len(lm.group(1)) >= 2
             style = ('List Number' if lm.group(2)[0].isdigit() else 'List Bullet') + (' 2' if nested else '')
-            try: para(lm.group(3), style)
-            except KeyError: para(lm.group(3), 'List Bullet')
+            try: lp = para(lm.group(3), style)
+            except KeyError: lp = para(lm.group(3), 'List Bullet')
+            if lm.group(2)[0].isdigit() and lp.style.name.startswith('List Number'):
+                # Markdown semantics: a list that starts at 1 restarts; any other start number continues
+                prev = next((x for x in reversed(lines[:i]) if x.strip()), '')
+                after_list = bool(re.match(r'^\s*\d+[.)]\s', prev)) and (len(prev) - len(prev.lstrip()) >= 2) == nested
+                if (int(re.match(r'\d+', lm.group(2)).group()) == 1 and not after_list) or lp.style.name not in cur_list:
+                    nl = new_list(doc, lp.style.name)
+                    if nl: cur_list[lp.style.name] = nl
+                if lp.style.name in cur_list: set_num(lp, *cur_list[lp.style.name])
             i += 1; continue
         buf = [ln.strip()]; i += 1
-        while i < len(lines) and lines[i].strip() and not re.match(r'^(#|>|\||\s*([-*+]|\d+[.)])\s|Table:|Figure:|\[\[)', lines[i]):
+        while i < len(lines) and lines[i].strip() and not re.match(r'^(#|>|\||\s*([-*+]|\d+[.)])\s|Table:|Figure:|\[\[|@@|!\[)', lines[i]):
             buf.append(lines[i].strip()); i += 1
         para(' '.join(buf))
+    box_panels(doc)
     if a.cover: cover_page(doc, meta, b)
     header_footer(doc, meta, b, a.cover)
     finish(doc, meta, b, out)
@@ -544,16 +727,51 @@ def check(path):
         if re.match(r'(?i)^(warning|caution|danger|notice)\b', t) and not p._p.getparent().tag.endswith('tc'):
             issues.append(f'para {i}: unboxed signal word -> notice panel')
         if re.search(r'(?i)\b(bottom line|key takeaways?|why it matters)\s*:', t): issues.append(f'para {i}: AI-style label block -> plain prose')
+        if re.search(r'`|\*\*|@@|\[\[|<br|!\[', t): issues.append(f'para {i}: raw Markdown in the text ({t[:40]!r}) -> fix the source')
+    for ti, tb in enumerate(doc.tables):
+        bad = [c.text.strip()[:30] for row in tb.rows for c in row.cells if re.search(r'`|\*\*|@@|<br', c.text)]
+        if bad: issues.append(f'table {ti+1}: raw Markdown in {bad[:2]} -> fix the source')
+    for kind in ('Figure', 'Table'):
+        caps = [p.text.strip() for p in doc.paragraphs if p.style.name == 'Caption' and p.text.strip().startswith(kind)]
+        nums = [int(m.group(1)) for c in caps for m in [re.match(kind + r'\s+(\d+)\b', c)] if m]
+        chapter = any(re.match(kind + r'\s+\d+[-.]\d', c) for c in caps)
+        if nums and not chapter and nums != list(range(1, len(nums) + 1)): issues.append(f'{kind} captions not numbered 1..{len(nums)} in order: {nums[:12]}')
     for s in doc.sections:
         ftxt = ' '.join([p.text for p in s.footer.paragraphs] + [c.text for t in s.footer.tables for row in t.rows for c in row.cells])
         if not ftxt.strip(): issues.append('section without footer identity (doc no / rev / date / page)')
     print('\n'.join(issues) if issues else 'no issues found'); return issues
 
+def to_pdf(inp, out=None):
+    """Word renders the PDF: contents and fields updated (and saved into the .docx), heading bookmarks on."""
+    inp = os.path.abspath(inp); out = os.path.abspath(out or os.path.splitext(inp)[0] + '.pdf')
+    def soffice():
+        import subprocess
+        exe = shutil.which('soffice') or shutil.which('libreoffice')
+        if not exe: sys.exit('pdf needs Microsoft Word (pywin32) or LibreOffice (soffice); neither was found')
+        subprocess.run([exe, '--headless', '--convert-to', 'pdf', '--outdir', os.path.dirname(out), inp], check=True)
+        made = os.path.join(os.path.dirname(out), os.path.splitext(os.path.basename(inp))[0] + '.pdf')
+        if os.path.abspath(made) != out: os.replace(made, out)
+        print('wrote', out, '(LibreOffice: contents field NOT updated, check it)')
+    try:
+        import win32com.client
+        w = win32com.client.DispatchEx('Word.Application')
+    except Exception:
+        return soffice()
+    w.Visible = False; w.DisplayAlerts = 0
+    try:
+        d = w.Documents.Open(inp)
+        for t in d.TablesOfContents: t.Update()
+        d.Fields.Update(); d.Save()
+        d.ExportAsFixedFormat(OutputFileName=out, ExportFormat=17, CreateBookmarks=1)
+        print('wrote', out, f'({d.ComputeStatistics(2)} pages)'); d.Close(False)
+    finally:
+        w.Quit()
+
 def main():
     try: sys.stdout.reconfigure(encoding='utf-8')
     except Exception: pass
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument('mode', choices=['brand', 'restyle', 'build', 'check']); ap.add_argument('inp', nargs='?'); ap.add_argument('out', nargs='?')
+    ap.add_argument('mode', choices=['brand', 'restyle', 'build', 'check', 'pdf']); ap.add_argument('inp', nargs='?'); ap.add_argument('out', nargs='?')
     ap.add_argument('--brand-file', help='brand profile JSON (default: ./.eng-report/brand.json, then ~/.eng-report/brand.json)')
     ap.add_argument('--plain', action='store_true', help='no brand profile: no logo, neutral accent')
     for k in ('company', 'tagline', 'logo', 'accent', 'head', 'link'): ap.add_argument('--' + k, help='brand mode only')
@@ -567,6 +785,7 @@ def main():
     if a.mode == 'brand': save_brand(a); return
     if not a.inp: ap.error('input file required')
     if a.mode == 'check': check(a.inp); return
+    if a.mode == 'pdf': to_pdf(a.inp, a.out); return
     if not a.out: ap.error('OUT path required')
     if os.path.abspath(a.inp) == os.path.abspath(a.out): ap.error('refusing to overwrite the input; write a new file')
     meta = {k: v for k, v in dict(title=a.title, subtitle=a.subtitle, doc_type=a.doc_type, doc_no=a.doc_no, rev=a.rev,

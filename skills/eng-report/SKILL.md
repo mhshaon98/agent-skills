@@ -12,7 +12,7 @@ procedures as one-action imperative steps. This skill applies that discipline in
 user's branding. The full rule set with sources is `references/house-rules.md`; how a
 brand profile works is `references/brand.md`.
 
-Needs Python with `python-docx` (`pip install python-docx`).
+Needs Python with `python-docx` (`pip install python-docx`); `callouts.py` also needs Pillow.
 
 ## Step 1: brand profile (first run: ask the user for it)
 
@@ -86,6 +86,15 @@ original:
    above tables, "Figure N - Title" below figures.
 6. Plain engineering prose. No AI label blocks ("Bottom line", "Key takeaways", "Why it
    matters"), no emoji, no marketing adjectives; a memo opens with a prose paragraph.
+7. Figures with numbered callouts: make them with `scripts/callouts.py` (rules in
+   `house-rules.md` §6). Markers print at 6.6 mm whatever the screenshot size, sit in clear
+   space and point at the control with a leader, so captions and values stay readable; the
+   callout table comes from the same spec, so the numbers cannot drift. Use one marker
+   style per document.
+8. Keep a manual lean and visual: navigation first, cropped and labelled close-ups, a
+   callout table per screen. Over-detailed manuals (one row per
+   object, tags on every row) are too long to use (§5 rule 27). Readers who work from the screen get no PLC
+   tags.
 
 ## Step 4: run the engine
 
@@ -95,6 +104,8 @@ E="$HOME/.claude/skills/eng-report/scripts/eng_report.py"; PY=$(command -v pytho
 "$PY" "$E" restyle in.docx out.docx --title "..." --doc-type "Test Report" \
       --doc-no TR-XXX-001 --rev A --date "October 2026" --author "..." [--cover] [--no-numbered] [--page a4|keep]
 "$PY" "$E" build   in.md   out.docx                         # Markdown + front matter -> new document
+"$PY" "$E" pdf     out.docx [out.pdf]                       # Word: update contents + fields, PDF with bookmarks
+"$PY" "$HOME/.claude/skills/eng-report/scripts/callouts.py" figs.json --proof proof/   # numbered figures + tables
 ```
 
 - `restyle` keeps the content and replaces the look: Arial type scale, decimal heading
@@ -108,6 +119,21 @@ E="$HOME/.claude/skills/eng-report/scripts/eng_report.py"; PY=$(command -v pytho
   pipe tables, `Table:` captions, and `[[revision-history]]`, `[[sign-off]]`,
   `[[page-break]]` blocks. Starters for a test report, a memo and a procedure:
   `references/templates.md`.
+- `build` handles manual layout directly; extend the engine rather than writing a
+  per-project post-processing script:
+  - images on their own line `![](figs/x.png){width=4.2}` or `@@img figs/x.png|4.2@@`
+    (default 6.5 in; also inside table cells);
+  - `[[toc]]` (Contents page, next chapter on a new page), `[[box]]`…`[[endbox]]`,
+    `[[include tables/x.md]]`, `<br>` in cells; an unknown `[[block]]` stops the build;
+  - a numbered list that starts at `1.` after other text restarts (`1. 1. 1.` counts on);
+    revision rows come from `history_B: October 2026 | <change> | J. Smith`, and By
+    defaults to the author;
+  - appendix headings are unnumbered;
+  - table rows never split, tables of 11 rows or fewer stay whole, No./Step tables get a
+    narrow first column, and manuals and guides get 8.5 pt table body text;
+  - an image stays with its caption, and a figure caption binds only to a table that
+    follows it;
+  - backticks in captions become a monospace run.
 - `--brand-file other.json` uses a different profile for one run; `--plain` uses none.
 - PDF input: extract the text, rebuild it as Markdown, then `build`.
 - Restyling a document the engine already produced: pass `--no-cover`, or it gains a
@@ -117,16 +143,28 @@ E="$HOME/.claude/skills/eng-report/scripts/eng_report.py"; PY=$(command -v pytho
 
 ## Step 5: verify, then stamp
 
-1. Re-run `check` on the output; fix what it lists or say why not.
-2. Render to PDF (Word, or `soffice --headless --convert-to pdf`) and look at every page:
-   cover, logo size, notices, tables breaking across pages, footer fields updated. Not
-   rendered: say NOT-VERIFIED.
+1. Re-run `check` on the output; fix what it lists or say why not. It also flags raw
+   Markdown left in the text (backticks, `**`, `@@`) and Figure/Table numbers that skip
+   or repeat.
+2. `pdf` (Word through pywin32; the LibreOffice fallback does not update the contents) and
+   look at every page as a 40 dpi contact sheet, then the figure pages at 100 dpi. Check:
+   - the cover, logo size, the notices, and the contents page numbers;
+   - no caption separated from its image, and no near-empty pages;
+   - the callouts readable at page size;
+   - the PDF has bookmarks.
+   Not rendered: say NOT-VERIFIED.
 3. Set author and company in the file properties and remove library fingerprints such as
-   "python-docx" (the `doc-metadata` skill does this if it is installed).
+   "python-docx" (the `doc-metadata` skill does this if it is installed), on the .docx
+   and the .pdf.
+4. Name deliverables with the project prefix and the document number. Working files meant
+   only for an agent (briefs, prompts) are never bound into a document written for people.
 
 ## Files
 
-- `scripts/eng_report.py`: brand / restyle / build / check engine (python-docx).
+- `scripts/eng_report.py`: brand / restyle / build / check / pdf engine (python-docx; pdf
+  needs Word + pywin32, or LibreOffice).
+- `scripts/callouts.py`: print-size numbered callouts with leader lines, the callout tables
+  from the same spec, page-size proof sheets (Pillow).
 - `references/house-rules.md`: the rule set and skeletons, with vendor sources.
 - `references/brand.md`: the brand profile, default palette, type and logo rules.
 - `references/templates.md`: Markdown starters per document type.

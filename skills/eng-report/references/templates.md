@@ -94,3 +94,58 @@ Result: <what the operator sees when it worked>.
 
 # Records
 ```
+
+## Manual / user guide (with screenshots)
+
+Build with `--cover`. Make figures and callout tables first with `scripts/callouts.py`
+(`print_in` = the width used below), then `build`, then `pdf`.
+
+```markdown
+---
+title: <Machine> <Topic>
+subtitle: User Manual
+doc_type: User Manual
+doc_no: <ask>
+rev: A
+author: <name>
+classification: Customer Use
+---
+
+# About this document
+<Purpose, audience, what the reader can do after reading it. One sentence: the screenshots
+come from a simulated controller, so some values are not real.>
+
+Table: Table 1 - Related documents
+| Document | Number |
+|---|---|
+
+[[revision-history]]
+
+[[toc]]
+
+# Safety
+> **WARNING:** <Hazard>. <Consequence>. <How to avoid it>.
+
+# Getting around
+![](figs/lineview.png){width=6.5}
+Figure: Figure 1 - Line View
+Table: Table 2 - Line View (Figure 1)
+[[include tables/lineview.md]]
+
+# <Procedure>
+Complete these steps to <task>.
+
+1. <Imperative verb, one action.> The screen shows <result> (Figure 2).
+2. <...>
+
+Result: <what the operator sees when it worked>.
+
+# Messages
+| Message | Where | Meaning |
+|---|---|---|
+```
+
+For a one- or two-page quick start, build with `--no-cover --no-numbered`. Put the steps
+in a `Step | Action | You see` table with a small crop in each row
+(`@@img figs/q_pump.png|1.6@@`), and add a `[[box]]` … `[[endbox]]` panel for the short
+reference.

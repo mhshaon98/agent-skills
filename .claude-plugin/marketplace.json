@@ -1,7 +1,7 @@
 {
   "name": "dev-discipline",
   "description": "Field-tested engineering-discipline skills: session continuity, verification, data safety, release review, delegation and formatting. One plugin per skill, plus one bundle per category.",
-  "version": "2026-10-29",
+  "version": "2026-10-30",
   "owner": {
     "name": "agent-skills maintainers",
     "url": "https://github.com/mhshaon98/agent-skills"
@@ -368,7 +368,7 @@
       "name": "eng-report",
       "source": "./",
       "description": "Apply an engineering house style (vendor-manual layout, the user's own logo and colours, ANSI safety notices, document-control blocks) to a Word, Markdown or PDF document. Use on /eng-report, \"make this a proper engineering report\", or \"format this like a vendor manual\"; on first use it asks for the company's logo and brand colours.",
-      "version": "8ce75749ac89",
+      "version": "68d278546f4a",
       "category": "formatting",
       "keywords": [
         "skill",
@@ -520,7 +520,7 @@
       "name": "formatting-pack",
       "source": "./",
       "description": "Bundle of every formatting skill: apply-richformat, doc-metadata, eng-report, slop-clean",
-      "version": "1daeae38498e",
+      "version": "a9c1944fd49d",
       "category": "bundle",
       "keywords": [
         "bundle",
