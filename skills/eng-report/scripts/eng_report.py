@@ -496,6 +496,14 @@ def toc_block(doc):
     except KeyError: style = 'Heading 1'
     h = doc.add_paragraph('Contents', style=style); h.paragraph_format.page_break_before = True
     set_num(h, '0')                  # TOC Heading inherits Heading 1 outline numbering: switch it off
+    from docx.enum.style import WD_STYLE_TYPE
+    for k, ind in (('toc 1', 0), ('toc 2', 0.2)):   # Word's default entries (5 pt after) push a full list onto 2 pages
+        st = next((x for x in doc.styles if x.style_id == k.upper().replace(' ', '')), None)
+        if st is None:                # must be Word's built-in id, or Word adds its own and ignores this one
+            st = doc.styles.add_style(k, WD_STYLE_TYPE.PARAGRAPH); st.base_style = doc.styles['Normal']
+            st.element.set(qn('w:styleId'), k.upper().replace(' ', '')); st.element.attrib.pop(qn('w:customStyle'), None)
+        st.paragraph_format.space_before = Pt(0); st.paragraph_format.space_after = Pt(1.5)
+        st.paragraph_format.left_indent = Inches(ind)
     p = doc.add_paragraph()
     for kind, val in (('begin', None), ('instr', ' TOC \\o "1-2" \\h \\z \\u '), ('separate', None),
                       ('text', 'Update this field to build the contents (eng_report.py pdf does it).'), ('end', None)):
@@ -507,6 +515,12 @@ def toc_block(doc):
         else:
             e = OxmlElement('w:fldChar'); e.set(qn('w:fldCharType'), kind)
         r.append(e); p._p.append(r)
+    # Word leaves the field end in this paragraph after the update; at full size it can spill onto a page
+    # of its own when the contents fill the page, and the next chapter's page break then adds a blank page
+    pPr = p._p.get_or_add_pPr()
+    sp = OxmlElement('w:spacing'); sp.set(qn('w:before'), '0'); sp.set(qn('w:after'), '0')
+    sp.set(qn('w:line'), '20'); sp.set(qn('w:lineRule'), 'exact'); pPr.append(sp)
+    rpr = OxmlElement('w:rPr'); sz = OxmlElement('w:sz'); sz.set(qn('w:val'), '2'); rpr.append(sz); pPr.append(rpr)
 
 def col_widths(t, widths):
     for gc, w in zip(t._tbl.tblGrid.findall(qn('w:gridCol')), widths): gc.set(qn('w:w'), str(int(w * 1440)))
@@ -521,6 +535,8 @@ def finish_table(t, text_w, small=True):
     whole, body rows in 8.5 pt, numbered-item tables get a narrow first column."""
     rows = t.rows; hdr = [c.text.strip() for c in rows[0].cells]
     for row in rows: cant_split(row)
+    for c in rows[0].cells:             # a header row never ends a page on its own
+        for p in c.paragraphs: p.paragraph_format.keep_with_next = True
     if len(rows) <= 11 and hdr[:1] != ['Step']:
         for row in list(rows)[:-1]:
             for c in row.cells:
