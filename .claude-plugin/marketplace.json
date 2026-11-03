@@ -45,7 +45,7 @@
       "name": "collect-reports",
       "source": "./",
       "description": "From the main session, collect a verified status report from every linked, forked and nested Claude Desktop session into one board. Use on \"collect reports\", \"get everyone's status\", or \"have the forks report back\".",
-      "version": "c8e4e70dd10f",
+      "version": "cd601101f812",
       "category": "workflow",
       "keywords": [
         "skill",
@@ -96,7 +96,7 @@
       "name": "report-back",
       "source": "./",
       "description": "Close out a forked or side session and send its verified status to the session that started it. Use on \"report back\", \"send your status to the main session\", or when collect-reports asks.",
-      "version": "434e507e5717",
+      "version": "05e19ef27655",
       "category": "workflow",
       "keywords": [
         "skill",
@@ -130,7 +130,7 @@
       "name": "update-handoff",
       "source": "./",
       "description": "End-of-session wrap in one pass: a detailed holistic handoff (this session plus every linked session and worktree), lessons, memory, bug ledger and NEXT-SESSION-PROMPT.md, then archives finished nested sessions and turns Remote Control off. Use on \"update handoff\", \"wrap up\", \"end the session\", or before context runs out.",
-      "version": "a4e43fbe42e8",
+      "version": "761e114f54ad",
       "category": "workflow",
       "keywords": [
         "skill",
@@ -453,7 +453,7 @@
       "name": "workflow-pack",
       "source": "./",
       "description": "Bundle of every workflow skill: bug-ledger, call-handoff, collect-reports, deepen, new-project, report-back, session-start, update-handoff",
-      "version": "9bb14ce26757",
+      "version": "e2948f9ffd64",
       "category": "bundle",
       "keywords": [
         "bundle",
