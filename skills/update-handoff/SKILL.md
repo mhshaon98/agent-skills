@@ -243,8 +243,9 @@ session-management tools are missing, and say so.
 
 - **Scope**: the rows from Step 1c whose `startedBy` chain leads back to this session
   (children, grandchildren, and forks of it). Never this session, its parent or a
-  sibling. A side session that took the `report-back` path archives nothing; its parent
-  does.
+  sibling. A side session that took the `report-back` path archives nothing else; it
+  archives itself once its parent's receipt arrives, when its user ran it (`report-back`
+  Step 5). Its parent archives it here only if it is still unarchived and eligible.
 - **Eligible** only when all of these hold, judged from Step 1c's checks, never from a
   session's own report:
   - idle: not running, no live background work;
@@ -283,5 +284,6 @@ as the LAST call of the final message: after Step 5's archive calls, so their ap
 prompts still reach the user's phone, or alone when there is nothing to archive. Report
 the returned state in the closing message. A refusal (phone-started sessions are
 locked), `unavailable`, or a declined/auto-mode-denied approval → one line saying which,
-never a retry. Skip it: plain CLI; a `report-back` side session (its parent switches it
-off in Step 5); or the user said to keep working or keep Remote Control on.
+never a retry. Skip it: plain CLI; a `report-back` side session whose `get_session self`
+already shows Remote Control off (it switches its own off right before archiving itself,
+`report-back` Step 5); or the user said to keep working or keep Remote Control on.
