@@ -22,7 +22,7 @@ targets and markers. Look at every placed marker at page size and pin the ones t
 From Python: `from callouts import annotate` (PIL image in, PIL image out).
 """
 import argparse, json, math, os, sys
-from PIL import Image, ImageDraw, ImageFilter, ImageFont, ImageStat
+from PIL import Image, ImageDraw, ImageFilter, ImageFont, ImageOps, ImageStat
 
 YELLOW, INK, FRAME = (253, 196, 24), (26, 26, 26), (150, 150, 150)
 DOT_IN = 0.26
@@ -36,7 +36,10 @@ def font(size):
             return ImageFont.truetype(f, size)
         except OSError:
             continue
-    return ImageFont.load_default(size)
+    try:
+        return ImageFont.load_default(size)
+    except TypeError:            # Pillow < 10.1
+        return ImageFont.load_default()
 
 
 def radius(img_w, print_in, dot_in=DOT_IN):
@@ -94,7 +97,7 @@ def place(edges, targets, fixed, r, e, W, H):
 def annotate(img, items, print_in, crop=None, dot_in=DOT_IN, frame=True):
     """img: PIL image; items: dicts with target [x, y] and optional marker [x, y] in source pixels.
     Returns the cropped, framed, annotated image (markers numbered 1..n in item order)."""
-    im = img.convert("RGB")
+    im = ImageOps.exif_transpose(img).convert("RGB")   # phone photos: pixels as the photo is shown
     x0, y0 = (crop[0], crop[1]) if crop else (0, 0)
     if crop:
         im = im.crop(tuple(crop))
