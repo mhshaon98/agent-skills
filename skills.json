@@ -5,7 +5,7 @@
   "repo": "https://github.com/mhshaon98/agent-skills",
   "raw_base": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/",
   "site": "https://mhshaon98.github.io/agent-skills/",
-  "updated": "2026-11-03",
+  "updated": "2026-11-05",
   "marketplace": {
     "name": "dev-discipline",
     "add": "/plugin marketplace add mhshaon98/agent-skills",
@@ -511,7 +511,7 @@
         "claude",
         "codex"
       ],
-      "version": "f26af4324c65",
+      "version": "0f5d6a74cf87",
       "path": "skills/doc-metadata",
       "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/doc-metadata/SKILL.md",
       "file_count": 2,
@@ -528,7 +528,7 @@
         "claude",
         "codex"
       ],
-      "version": "f31c5698b9ca",
+      "version": "1fb72879dab2",
       "path": "skills/eng-report",
       "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/eng-report/SKILL.md",
       "file_count": 6,
