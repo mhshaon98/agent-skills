@@ -34,7 +34,8 @@ document belongs to the same organisation (work, personal projects, customer tem
 ```
 
 The script refuses to run without `--company` (or `--strip-only`), so the choice is never
-made silently. Then confirm with `--check`; it must print `fingerprints: none`.
+made silently. Then confirm with `--check`; it must print `fingerprints: none` and `xml: ok`
+(it exits 1 on a broken docProps part; the stamp itself refuses to write one).
 (Installed somewhere other than `~/.claude/skills`? Adjust the path.)
 
 ## Rules

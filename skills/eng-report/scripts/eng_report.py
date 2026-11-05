@@ -21,6 +21,8 @@ Images on their own line: "![alt](figs/x.png){width=4.2}" or "@@img figs/x.png|4
 6.5, never wider than the text; paths relative to the .md); "@@img ...@@" also works inside a table cell.
 Blocks: "[[toc]]" (Contents page; the next chapter starts on a new page), "[[box]]" ... "[[endbox]]"
 (bordered summary panel), "[[include tables/x.md]]" (splice a file), "<br>" = line break.
+Tick-box task lists: a line starting "☐" becomes a task line (inline **bold** kept); a following line
+"@@sub short note@@" prints under it in small grey type.
 A numbered list that starts at "1." restarts at 1; one that starts at another number continues.
 Revision history rows from front matter: "history_A: October 2026 | Initial release | J. Smith"
 (By defaults to the author as "J. Smith"). Appendix headings and their sub-headings are unnumbered.
@@ -647,6 +649,17 @@ def build(inp, out, meta, a):
         if ln.strip() in ('[[box]]', '@@box@@', '[[endbox]]', '@@endbox@@'):
             doc.add_paragraph('@@endbox@@' if 'end' in ln else '@@box@@'); i += 1; continue
         if ln.strip() == '@@restart@@': cur_list.clear(); i += 1; continue
+        if ln.lstrip().startswith('☐'):          # tick-box task line; an optional "@@sub text@@" line under it
+            p = doc.add_paragraph(); pf = p.paragraph_format
+            pf.left_indent = Inches(0.32); pf.first_line_indent = Inches(-0.32)
+            pf.space_before = Pt(5); pf.space_after = Pt(0); pf.keep_with_next = True
+            pf.tab_stops.add_tab_stop(Inches(0.32)); set_font(p.add_run('☐\t'), 12)
+            add_inline(p, ln.lstrip()[1:].strip()); i += 1; continue
+        sm = re.fullmatch(r'\s*@@sub\s+(.*?)@@\s*', ln)
+        if sm:
+            p = doc.add_paragraph(); pf = p.paragraph_format
+            pf.left_indent = Inches(0.32); pf.space_before = Pt(0); pf.space_after = Pt(3)
+            set_font(p.add_run(sm.group(1)), 8.5, False, GREY); i += 1; continue
         if re.fullmatch(r'\[\[[^\]]*\]\]', ln.strip()) and ln.strip() not in ('[[sign-off]]', '[[page-break]]'):
             sys.exit(f'unknown block {ln.strip()} (line {i + 1}): use [[toc]], [[box]], [[endbox]], [[include path]], '
                      '[[revision-history]], [[sign-off]], [[page-break]]')
@@ -774,14 +787,25 @@ def to_pdf(inp, out=None):
     except Exception:
         return soffice()
     w.Visible = False; w.DisplayAlerts = 0
+    # Word works on a copy in %TEMP%: saving the .docx inside a synced cloud folder doubled the
+    # footer table row (a stale revision line on every page).
+    import tempfile
+    tmp = tempfile.mkdtemp(prefix='eng_report_pdf_')
+    work = os.path.join(tmp, os.path.basename(inp)); wpdf = os.path.splitext(work)[0] + '.pdf'
     try:
-        d = w.Documents.Open(inp)
-        for t in d.TablesOfContents: t.Update()
-        d.Fields.Update(); d.Save()
-        d.ExportAsFixedFormat(OutputFileName=out, ExportFormat=17, CreateBookmarks=1)
-        print('wrote', out, f'({d.ComputeStatistics(2)} pages)'); d.Close(False)
+        shutil.copy2(inp, work)
+        try:
+            d = w.Documents.Open(work)
+            for t in d.TablesOfContents: t.Update()
+            d.Fields.Update(); d.Save()
+            d.ExportAsFixedFormat(OutputFileName=wpdf, ExportFormat=17, CreateBookmarks=1)
+            pages = d.ComputeStatistics(2); d.Close(False)
+        finally:
+            w.Quit()
+        shutil.copy2(work, inp); shutil.copy2(wpdf, out)
     finally:
-        w.Quit()
+        shutil.rmtree(tmp, ignore_errors=True)
+    print('wrote', out, f'({pages} pages)')
 
 def main():
     try: sys.stdout.reconfigure(encoding='utf-8')
