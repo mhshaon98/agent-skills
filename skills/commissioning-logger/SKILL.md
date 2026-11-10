@@ -28,7 +28,7 @@ user override. Create this layout on first use:
    the value set, and the observed result. Record ONLY verified-working steps; mark
    anything unconfirmed **PENDING** — never assert an unverified step as done.
 3. **Screenshots/photos**: pasted images are NOT saved to disk — ask the user to save each
-   into `screenshots/`. Then run `"$HOME/.claude/skills/commissioning-logger/scripts/annotate_screenshot.py"` to draw boxes/arrows/
+   into `screenshots/`. Then run `"$(command -v python3 || command -v python)" "$HOME/.claude/skills/commissioning-logger/scripts/annotate_screenshot.py"` to draw boxes/arrows/
    labels on the exact control/item changed, output into `screenshots_annotated/`, and
    reference it in `log.md` as `![caption|w=NNN](screenshots_annotated/file.jpg)`
    (`w=` optional width in px; portraits ~380, screenshots ~620).
@@ -52,7 +52,7 @@ user override. Create this layout on first use:
 - Capture identifiers exactly (serial numbers, IPs, part numbers, channel mappings).
 
 ## Annotation helper
-`"$HOME/.claude/skills/commissioning-logger/scripts/annotate_screenshot.py" INPUT OUT --box "x,y,w,h,color,label" --arrow "x1,y1,x2,y2,color" --label "x,y,color,text"`
+`"$(command -v python3 || command -v python)" "$HOME/.claude/skills/commissioning-logger/scripts/annotate_screenshot.py" INPUT OUT --box "x,y,w,h,color,label" --arrow "x1,y1,x2,y2,color" --label "x,y,color,text"`
 (pixels on the input image; multiple allowed; needs Pillow — `pip install pillow`).
 Zoom into the saved screenshot first (Read the image) to get pixel coordinates right;
 re-check the annotated output visually before embedding it.

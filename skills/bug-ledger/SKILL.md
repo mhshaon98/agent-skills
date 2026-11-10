@@ -51,8 +51,6 @@ result → current fix with file:line → verification status.
 Sections in order: **OPEN / ACTIVE** (newest first) → **DEFERRED** → **FIXED**
 (grouped by area, keep the attempt history — that's the point) → **Cross-cutting
 lessons** (recurring traps, so a "new" bug can be matched to a known pattern).
-Add a header note telling every future session to read the file during session start
-and update it in the same session a bug is touched.
 
 ## Triage method (before writing the ledger entry)
 

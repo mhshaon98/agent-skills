@@ -14,7 +14,8 @@ independence**: a reviewer that does not share Claude's blind spots.
 
 Confirm the `/codex:*` commands actually exist in this session before promising
 anything. **If they are unavailable, STOP** — do not improvise a substitute, and do not
-shell out to `codex` directly. Tell the user the plugin isn't installed in this session,
+substitute `codex exec` for the missing plugin (`codex exec` is for the jobs in 0.5
+only, once the CLI is confirmed installed). Tell the user the plugin isn't installed in this session,
 that installing it requires the Codex CLI plus `/plugin` installation of the codex
 plugin, and that a session started before the plugin was installed won't see
 `/codex:*` until it is restarted. Then wait.

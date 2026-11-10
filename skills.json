@@ -5,7 +5,7 @@
   "repo": "https://github.com/mhshaon98/agent-skills",
   "raw_base": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/",
   "site": "https://mhshaon98.github.io/agent-skills/",
-  "updated": "2026-11-05",
+  "updated": "2026-11-10",
   "marketplace": {
     "name": "dev-discipline",
     "add": "/plugin marketplace add mhshaon98/agent-skills",
@@ -53,7 +53,7 @@
         "claude",
         "codex"
       ],
-      "version": "39651e118c8e",
+      "version": "28d7f8f99b86",
       "path": "skills/bug-ledger",
       "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/bug-ledger/SKILL.md",
       "file_count": 1,
@@ -349,7 +349,7 @@
         "claude",
         "codex"
       ],
-      "version": "f45c4d43fe4e",
+      "version": "8cc41bb9a005",
       "path": "skills/safe-data-write",
       "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/safe-data-write/SKILL.md",
       "file_count": 1,
@@ -429,7 +429,7 @@
       "targets": [
         "claude"
       ],
-      "version": "d5ee61cc84da",
+      "version": "4f961ecc4430",
       "path": "skills/codex-bridge",
       "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/codex-bridge/SKILL.md",
       "file_count": 4,
@@ -489,13 +489,13 @@
     },
     {
       "name": "apply-richformat",
-      "description": "Give any text-bearing surface (app screen, document, report, README, chat answer, CLI output, table) visible rank and separation. Use when building or reviewing one, or on \"rich formatting\", \"text vomit\", \"needs better structure\", \"make this readable\".",
+      "description": "Give a deliverable text surface (document, report, README, app screen, data table, designed CLI output) visible rank and separation; ordinary chat answers are out of scope. Use when building or reviewing one, or on \"rich formatting\", \"text vomit\", \"needs better structure\", \"make this readable\".",
       "category": "formatting",
       "targets": [
         "claude",
         "codex"
       ],
-      "version": "e3f8a4d59765",
+      "version": "9a75b1a8f105",
       "path": "skills/apply-richformat",
       "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/apply-richformat/SKILL.md",
       "file_count": 1,
@@ -582,7 +582,7 @@
         "claude",
         "codex"
       ],
-      "version": "52c753a9212a",
+      "version": "988ce3d8c2ec",
       "path": "skills/commissioning-logger",
       "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/commissioning-logger/SKILL.md",
       "file_count": 5,

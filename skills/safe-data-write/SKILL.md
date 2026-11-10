@@ -16,10 +16,15 @@ and the rollback story. If you can't state both, stop and design them first.
 2. **Test the upgrade path, not just fresh install** — with existing real-shaped
    data. A store misconfiguration once silently relocated the database and shipped
    a data-loss bug that fresh-install testing could not catch.
-3. **Files owned by another application** (Excel workbooks, Word docs): never
-   load+save them programmatically — write **through the owning application** (e.g.
-   xlwings→Excel) or don't write at all. Every naive-save approach tested (openpyxl,
-   LibreOffice headless, raw-XML zip editing) corrupted the file.
+3. **User-owned live Office files** (a workbook or document the owner maintains and
+   depends on, carrying live formulas, macros, pivots, external links, data validation,
+   charts or formatting, or one that is open in its app): write through the owning
+   application (e.g. xlwings to Excel) or not at all, because every naive-save approach
+   tested (openpyxl, LibreOffice headless, raw-XML zip editing) corrupted such a file.
+   Files the agent generates are outside this rule and may be edited with
+   python-docx/openpyxl (as `doc-metadata` and `eng-report` do); reopen the result in
+   the owning app before calling it done. A copy of a live file is still a live file:
+   it keeps the macros, pivots and charts that a naive save breaks.
 4. **Every write to user data**: capability check → lock → **backup** → write →
    **audit entry** (append-only JSONL with timestamps and old/new values). Prefer
    single small writes over bulk.

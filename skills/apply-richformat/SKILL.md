@@ -1,6 +1,6 @@
 ---
 name: apply-richformat
-description: Give any text-bearing surface (app screen, document, report, README, chat answer, CLI output, table) visible rank and separation. Use when building or reviewing one, or on "rich formatting", "text vomit", "needs better structure", "make this readable".
+description: Give a deliverable text surface (document, report, README, app screen, data table, designed CLI output) visible rank and separation; ordinary chat answers are out of scope. Use when building or reviewing one, or on "rich formatting", "text vomit", "needs better structure", "make this readable".
 ---
 
 # Apply Rich Formatting
@@ -9,8 +9,13 @@ The same request comes back on project after project, in the same words: *"it lo
 like someone vomited text"*, *"needs richer formatting and proper UI separation"*.
 This skill exists so nobody has to ask.
 
-**The standing instruction it encodes:** any surface you produce is formatted to the
-standard a reviewer would ask for, the first time, without being prompted.
+**The standing instruction it encodes:** any deliverable surface you produce (a
+document, report, README, app screen, data table, or CLI output you are designing) is
+formatted to the standard a reviewer would ask for, the first time, without being
+prompted. Ordinary conversational answers are out of scope: a frontier model already
+formats those well, and loading this skill for them pushes short replies toward
+over-structure. It still applies to a chat answer when the user uses one of the trigger
+phrases about it.
 
 ## The diagnosis — it is almost never density
 
