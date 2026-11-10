@@ -21,8 +21,10 @@ Top-tier models are reserved for:
 - Hard architecture decisions
 - Highly important or security-sensitive code
 
-If the conductor itself runs on a top-tier model, it must **delegate** research/scraping
-to subagents on lower tiers rather than doing that work inline.
+If the conductor itself runs on a top-tier model, it delegates research/scraping to
+subagents on lower tiers rather than doing that work inline. What else a top-tier session
+does inline or delegates is stated once, in `spawn-agent` ("Which session model are
+you?").
 
 ### 0b. Subagents INHERIT the session model — an explicit tier is mandatory
 
@@ -82,7 +84,7 @@ for judgment work AND for already-specified bounded execution.
 |---|---|---|
 | **Frontier** (current flagship, medium effort) — the DEFAULT, ~75–80% of delegated work | Anything carrying judgment or ambiguity — system/feature design, implementation in unfamiliar code, debugging, code review, security-sensitive surfaces, high-blast-radius migrations, research needing judgment, dense-document reasoning — AND execution where the plan is already decided: agreed spec, mechanical-but-nontrivial refactors, verification passes, careful sweeps, doc work needing care | Designing a sync/conflict model; the pre-release review that must not miss anything; root-causing a data-loss bug; applying a reviewed fix list across a codebase |
 | **Mid** (Sonnet-class) — genuinely simple tasks | Short copy generation, web scraping, simple multi-step sweeps, classification/filtering, summarizing already-gathered facts | Follow-up phrasing/summarization; briefing distillation |
-| **Fast** (Haiku-class) — the most mechanical tasks | Boilerplate, simple edits, formatting, file cleanup, asset drudgery, repetitive sweeps, straightforward tests, doc typo fixes | Feedback distillation; writing a handoff from a session record |
+| **Fast** (Haiku-class) — the most mechanical tasks | Boilerplate, simple edits, formatting, file cleanup, asset drudgery, repetitive sweeps, straightforward tests, doc typo fixes | Feedback distillation |
 
 **Drop** from the default to mid/fast only when the task is genuinely simple (copy,
 icons, scraping, mechanical sweeps, formatting, classification). "Specified and bounded"
@@ -103,8 +105,9 @@ top-tier conductor), it is **not conductor mode**: work inline, zero agents by d
 Spawn frontier-tier agents ONLY for (a) independent parallel workstreams or (b)
 fresh-eyes review of the session's own large diff; gathering (research, scraping,
 codebase sweeps) goes to the mid tier. **No percentage target** — the main model already
-equals the subagent tier, so a split adds nothing. Top-tier conductor sessions keep the
-§1 split.
+equals the subagent tier, so a split adds nothing. Top-tier conductor sessions run
+`fable-conductor` with selective delegation; the rule for both session models lives in
+`spawn-agent` ("Which session model are you?").
 
 ## 2. Pre-filter with code, not AI (the biggest quota saver)
 
@@ -125,6 +128,8 @@ meaningful change.
 ## 3. When to use agents at all
 
 Default answer: **don't**. One focused conductor pass with the right model beats a swarm.
+(A top-tier main session is the exception for gathering, separable parallel workstreams
+and large-diff review; see `spawn-agent`, "Which session model are you?".)
 Most sessions need zero subagents to ship verified work.
 
 Use agents when at least one of these is true:
@@ -149,14 +154,14 @@ verdict. Agents get bounded, self-contained briefs.
 | **Implementation Agent** | Well-specified, separable chunk of build work | Build exactly the brief; report what was done + what wasn't verified |
 | **Review/QA Agent** | **Always before a release/submission**; after any large diff | Independent pass over the full changed surface, hunting real bugs. Routinely catches shipping bugs; skipping it is the most common regret |
 | **Debugging Agent** | A reproducible bug resists two conductor attempts | Isolate root cause; propose minimal fix; no drive-by refactors |
-| **Docs/Handoff Agent** | End of a long session, cheap model is fine | Update the handoff from the session record |
 | **UI/UX Agent** | Only for large visual surfaces; visual taste is iterative — expect the conductor to do final rounds with the user directly | Implement to the exact idiom spec, screenshot evidence |
 | **Data/DB Agent** | Schema design, migration scripts, RLS policies | Additive migrations, rollback story, run security advisors |
 | **Security/Privacy Agent** | Live backend, auth, keys, anything user-data-exposed | Advisor runs, key hygiene, permission-prompt boundaries |
 
 Model per agent follows §0 and §1: investigator/research/scraping agents never run on the
-top tier (hard rule); docs/handoff agents run on fast models; every other agent in the
-roster takes the §1 default (the pinned frontier tier), review included, because review
+top tier (hard rule); handoffs are written by the main session itself (`update-handoff`),
+and doc typo sweeps may use a fast model; every other agent in the roster takes the §1
+default (the pinned frontier tier), review included, because review
 is judgment work.
 
 ## 5. Orchestration rules

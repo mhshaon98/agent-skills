@@ -44,8 +44,8 @@
     {
       "name": "collect-reports",
       "source": "./",
-      "description": "From the main session, collect a verified status report from every linked, forked and nested Claude Desktop session into one board. Use on \"collect reports\", \"get everyone's status\", or \"have the forks report back\".",
-      "version": "cd601101f812",
+      "description": "From the main session, collect a verified status report from every linked, forked and nested Claude Desktop session into one board. Use on \"collect reports\", \"get everyone's status\", or \"have the forks report back\", and whenever a \"RECEIPT REQUESTED\" message arrives.",
+      "version": "a96678c9d322",
       "category": "workflow",
       "keywords": [
         "skill",
@@ -61,8 +61,8 @@
     {
       "name": "deepen",
       "source": "./",
-      "description": "Before planning a substantial build, redesign, feature, research question or subagent brief, answer four questions (what a top professional would add, the rawest source, their methods, what outside check proves it right) and rewrite the brief to ask for exactly that. Deeper, not bigger; the outside checks become verify-work's done-criteria.",
-      "version": "67597c4247f0",
+      "description": "Before planning a substantial build, redesign, feature, research question or subagent brief, answer four questions (what a pro would add, rawest source, their methods, what outside check proves it) and rewrite the brief around them. Deeper, not bigger; the checks become verify-work's done-criteria.",
+      "version": "13a8ff5e7e01",
       "category": "workflow",
       "keywords": [
         "skill",
@@ -249,7 +249,7 @@
       "name": "antigravity-bridge",
       "source": "./",
       "description": "Delegate bounded work or get a third-provider opinion from Google's Antigravity CLI (agy, Gemini). Use on \"ask antigravity\", \"ask gemini\", \"send this to agy\", as a Claude-vs-Codex tie-breaker, or for cheap bounded research sweeps.",
-      "version": "81a08cecb455",
+      "version": "a71a02796902",
       "category": "delegation",
       "keywords": [
         "skill",
@@ -317,7 +317,7 @@
       "name": "spawn-agent",
       "source": "./",
       "description": "Use BEFORE spawning any subagent (research, implementation, review, debugging) or choosing a model for delegated work. Gate, brief-writing procedure, and model-tier routing; usage limits are a real budget.",
-      "version": "65fbbb6bf2f5",
+      "version": "43ca5fc2840d",
       "category": "delegation",
       "keywords": [
         "skill",
@@ -453,7 +453,7 @@
       "name": "workflow-pack",
       "source": "./",
       "description": "Bundle of every workflow skill: bug-ledger, call-handoff, collect-reports, deepen, new-project, report-back, session-start, update-handoff",
-      "version": "06c4b5f2ea8b",
+      "version": "173905aaf90b",
       "category": "bundle",
       "keywords": [
         "bundle",
@@ -499,7 +499,7 @@
       "name": "delegation-pack",
       "source": "./",
       "description": "Bundle of every delegation skill: antigravity-bridge, codex-bridge, cowork-relay, fable-conductor, spawn-agent",
-      "version": "8dad4b1f48b8",
+      "version": "630f37c10d0f",
       "category": "bundle",
       "keywords": [
         "bundle",

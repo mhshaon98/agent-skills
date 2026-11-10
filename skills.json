@@ -81,13 +81,13 @@
     },
     {
       "name": "collect-reports",
-      "description": "From the main session, collect a verified status report from every linked, forked and nested Claude Desktop session into one board. Use on \"collect reports\", \"get everyone's status\", or \"have the forks report back\".",
+      "description": "From the main session, collect a verified status report from every linked, forked and nested Claude Desktop session into one board. Use on \"collect reports\", \"get everyone's status\", or \"have the forks report back\", and whenever a \"RECEIPT REQUESTED\" message arrives.",
       "category": "workflow",
       "targets": [
         "claude",
         "codex"
       ],
-      "version": "cd601101f812",
+      "version": "a96678c9d322",
       "path": "skills/collect-reports",
       "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/collect-reports/SKILL.md",
       "file_count": 1,
@@ -97,13 +97,13 @@
     },
     {
       "name": "deepen",
-      "description": "Before planning a substantial build, redesign, feature, research question or subagent brief, answer four questions (what a top professional would add, the rawest source, their methods, what outside check proves it right) and rewrite the brief to ask for exactly that. Deeper, not bigger; the outside checks become verify-work's done-criteria.",
+      "description": "Before planning a substantial build, redesign, feature, research question or subagent brief, answer four questions (what a pro would add, rawest source, their methods, what outside check proves it) and rewrite the brief around them. Deeper, not bigger; the checks become verify-work's done-criteria.",
       "category": "workflow",
       "targets": [
         "claude",
         "codex"
       ],
-      "version": "67597c4247f0",
+      "version": "13a8ff5e7e01",
       "path": "skills/deepen",
       "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/deepen/SKILL.md",
       "file_count": 1,
@@ -397,7 +397,7 @@
         "claude",
         "codex"
       ],
-      "version": "81a08cecb455",
+      "version": "a71a02796902",
       "path": "skills/antigravity-bridge",
       "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/antigravity-bridge/SKILL.md",
       "file_count": 3,
@@ -479,7 +479,7 @@
         "claude",
         "codex"
       ],
-      "version": "65fbbb6bf2f5",
+      "version": "43ca5fc2840d",
       "path": "skills/spawn-agent",
       "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/spawn-agent/SKILL.md",
       "file_count": 1,

@@ -1,6 +1,6 @@
 ---
 name: deepen
-description: Before planning a substantial build, redesign, feature, research question or subagent brief, answer four questions (what a top professional would add, the rawest source, their methods, what outside check proves it right) and rewrite the brief to ask for exactly that. Deeper, not bigger; the outside checks become verify-work's done-criteria.
+description: Before planning a substantial build, redesign, feature, research question or subagent brief, answer four questions (what a pro would add, rawest source, their methods, what outside check proves it) and rewrite the brief around them. Deeper, not bigger; the checks become verify-work's done-criteria.
 ---
 
 # Deepen: the four-question pass before planning

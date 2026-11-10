@@ -6,7 +6,9 @@ description: Use BEFORE spawning any subagent (research, implementation, review,
 # Spawning Agents & Choosing Model Tiers
 
 Default answer: **don't spawn.** One focused conductor pass with the right model
-beats a swarm. Most successful sessions used zero subagents.
+beats a swarm. Most successful sessions used zero subagents. A top-tier
+(Fable/Mythos-class) main session delegates three kinds of work by default; see "Which
+session model are you?" below.
 
 ## The gate — spawn only when at least one is true
 
@@ -45,12 +47,30 @@ the change touches shipped user data. Reviewers and security agents get the fron
 tier — review is judgment work. Don't auto-upgrade the pin as newer models ship; move
 it deliberately.
 
+### Which session model are you?
+
+This is the one home for the session-model rules; `fable-conductor` and the
+model-and-agent-strategy playbook point here.
+
 **Session model already equals the frontier executor (e.g. an Opus main session, not
 Fable)?** Then this is NOT conductor mode — work inline, zero agents by default. Spawn
 the frontier executor only for independent parallel workstreams or a fresh-eyes review
 of your own large diff; gathering (research, scraping, codebase sweeps) goes to the mid
 tier. No percentage target here: the main model already equals the subagent tier, so a
 split adds nothing.
+
+**Session model is top-tier (Fable/Mythos-class)?** Run `fable-conductor` (selective
+delegation). Work inline on anything quick or sequential: a handful of tool calls, a
+lookup with a known target, a small edit whose design is settled, steps that each depend
+on the last. Delegate three kinds of work: gathering (research, scraping, broad codebase
+sweeps, data collection, which stays off the top tier because its usage limit runs out
+first), separable parallel workstreams, and fresh-eyes review of a large diff. Delegated
+work follows the tier table above.
+
+**Handoffs, on either model:** the main session writes them itself (`update-handoff`),
+because the content is already in its context; a handoff is not delegated.
+
+### Spawn mechanics
 
 **The alias trap — pin the tier you mean.** The Agent tool's `model` parameter takes
 aliases, and a family alias resolves to the *newest* model in that family. Pass one and
@@ -106,13 +126,18 @@ verification step so it leaves the system working at each checkpoint.
   occurrence of the same pattern and fix or report those too. (Real escape: a
   capture-loss guard was applied to the 2 reported drag handlers while 4 siblings —
   2 of them in the same file — kept the identical bug for a full release.)
-- **Bound every brief.** A task should finish in ≤~100 tool calls; bigger phases become
-  successive agents, each briefed from the previous one's checkpoint. No "read first:
-  <the whole design system>" — name the sections needed. An agent past ~30 min of
-  wall-time is re-sending a huge cached context every single turn, which is how a
-  delegation budget disappears without anything visibly going wrong. Consider a
-  `PreToolUse` hook that warns and then denies past a call/context threshold, so a
-  runaway agent returns a checkpoint instead of grinding.
+- **Bound every brief by context, not call count.** Size it so the agent adds at most
+  ~100k tokens of its own reading: roughly 40 heavy calls (whole files, long diffs, web
+  pages) or up to ~100 light ones (greps, small ranged reads, short commands). In
+  measured transcripts an agent's fixed context was ~57k and a ~95-call agent reached
+  ~170k. Bigger work becomes successive agents, each briefed from the previous one's
+  checkpoint. No "read first: <the whole design system>" — name sections and line
+  ranges, not whole large files. An agent past ~30 min of wall-time is re-sending a huge
+  cached context every single turn, which is how a delegation budget disappears without
+  anything visibly going wrong. Consider a `PreToolUse` hook that warns and then denies
+  past a call/context threshold (for example warn at 100 calls or ~100k of growth, deny
+  at 160 calls or 200k total), so a runaway agent returns a checkpoint instead of
+  grinding.
 - The conductor keeps: goal ownership, architecture, sequencing, merging findings,
   all user communication, the final verification verdict.
 - Conductor merges all reports into ONE coherent plan — never let agents negotiate

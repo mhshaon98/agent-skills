@@ -45,7 +45,7 @@ Windows behavior is unverified here.
 ## 1. The wrapper is the only entry point
 
 ```bash
-agy-run.sh [--model SLUG] [--timeout 600] [--format text|json|stream-json]
+agy-run.sh [--model SLUG | --effort low|medium] [--timeout 600] [--format text|json|stream-json]
            [--schema FILE] [--dir PATH] [--write]
            [--continue|--conversation ID] -- "<prompt>"
 ```
@@ -54,7 +54,8 @@ It exists because five things bite otherwise, all confirmed by hitting them:
 
 - **`-p` takes its prompt as a flag VALUE, not a positional.** `agy -p --effort medium "text"`
   silently swallows `--effort` as the prompt. The wrapper always emits `--print="$PROMPT"` last.
-- **`~/.local/bin` is not on the Bash tool's PATH.** The wrapper prepends it.
+- **`~/.local/bin` is not on the Bash tool's PATH.** The wrapper prepends it (and, on
+  Windows, `%LOCALAPPDATA%\agy\bin`) before it reports exit 125 "not installed".
 - **An open non-TTY stdin makes agent CLIs wait forever** (the `codex exec` lesson —
   it hangs silently with zero output). The wrapper always closes stdin.
 - **`agy` exits 0 even when its JSON envelope says `status:ERROR`, and even when every
@@ -71,12 +72,13 @@ the session for its whole duration.
 ## 2. Model policy (binding)
 
 **Claude picks the model — not the CLI's default.** Effort rules: **high is allowed on Flash models** (the cheap tier); everything
-else runs at medium or low. The wrapper enforces this — a non-Flash
-`-high` slug or any `claude-*` slug exits 2 before spending a token.
+else runs at medium or low, and nothing runs at max. The wrapper enforces this — a
+non-Flash `-high` slug, any `-max` slug, any `claude-*` slug, or `--effort high`/`max`
+(which would run agy's default model, not necessarily Flash) exits 2 before spending a
+token. High effort goes through an explicit Flash slug only.
 
 `agy` **bakes reasoning effort into the model slug**, so `--model` and `--effort` are
-mutually exclusive — passing both is a hard error. The wrapper drops `--effort` whenever
-a model is pinned.
+mutually exclusive. Pass `--model` or `--effort`, never both: the wrapper exits 2 on both.
 
 Slugs verified present at time of writing (`agy models` — re-check, they churn):
 

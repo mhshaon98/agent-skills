@@ -2,7 +2,8 @@
 # agy-run.sh - the ONLY sanctioned way for Claude Code to call Antigravity CLI.
 #
 # Why a wrapper and not a bare `agy -p`:
-#   1. agy lives in ~/.local/bin, which a non-login Bash tool shell may not have on PATH.
+#   1. agy lives in ~/.local/bin (Windows: %LOCALAPPDATA%\agy\bin), which a non-login
+#      Bash tool shell may not have on PATH.
 #   2. Issue #76: `agy -p` can silently emit NOTHING when stdout is not a TTY - exactly
 #      how Claude calls it. We detect that (rc=0 + empty stdout) and retry under a pty.
 #   3. An open non-TTY stdin makes CLI agents wait for input forever (the codex-exec
@@ -10,15 +11,20 @@
 #   4. Headless runs must never hang a session: hard timeout, always.
 #
 # Usage:
-#   agy-run.sh [--model M] [--effort low|medium|high] [--timeout 600]
+#   agy-run.sh [--model M | --effort low|medium] [--timeout 600]
 #              [--format text|json|stream-json] [--schema FILE] [--dir PATH]
 #              [--write] [--continue|--conversation ID] -- "<prompt>"
 #
-# Exit codes: 0 ok | 124 timeout | 125 not installed | 126 not signed in
+# Exit codes: 0 ok | 2 usage/policy refusal | 3 agy status ERROR | 4 denied + empty
+#             124 timeout | 125 not installed | 126 not signed in
 #             127 empty output even under a pty | else agy's own code.
 
 set -uo pipefail
 export PATH="$HOME/.local/bin:$PATH"
+# Windows (Git Bash): the documented install folder is %LOCALAPPDATA%\agy\bin.
+if [ -n "${LOCALAPPDATA:-}" ]; then
+  PATH="$(cygpath -u "$LOCALAPPDATA" 2>/dev/null || printf '%s' "$LOCALAPPDATA")/agy/bin:$PATH"
+fi
 
 MODEL=""; EFFORT=""; TIMEOUT=600; FORMAT="text"; SCHEMA=""; WRITE=0
 EXTRA=(); DIRS=()
@@ -41,17 +47,22 @@ PROMPT="${1:-}"
 [ -z "$PROMPT" ] && { echo "agy-run: no prompt given" >&2; exit 2; }
 
 # ---- Model policy ----
-# Medium or low effort - never max; high only on Flash. agy bakes effort into the slug.
-# Claude picks the model; Claude models via agy are banned (they share Claude's
-# blind spots, which destroys the only reason this bridge exists).
+# Medium or low effort; high ONLY on an explicit Flash slug; never max. agy bakes
+# effort into the slug. Claude picks the model; Claude models via agy are banned
+# (they share Claude's blind spots, which destroys the only reason this bridge exists).
 case "$MODEL" in
   claude-*)        echo "agy-run: POLICY - Claude models via agy are banned. Use a gemini-* slug." >&2; exit 2 ;;
   *flash*-high)    : ;;   # high IS allowed on Flash - it is the cheap tier
-  *-high)          echo "agy-run: POLICY - high effort is allowed on Flash models only. Pro/other: use -medium or -low." >&2; exit 2 ;;
+  *-high|*-max)    echo "agy-run: POLICY - high effort is allowed on Flash models only, max never. Pro/other: use -medium or -low." >&2; exit 2 ;;
+esac
+# --effort alone runs agy's DEFAULT model, which may not be Flash: only low/medium pass.
+case "$EFFORT" in
+  ''|low|medium)   : ;;
+  *)               echo "agy-run: POLICY - --effort must be low or medium. High effort only via an explicit Flash slug (--model gemini-*-flash-high)." >&2; exit 2 ;;
 esac
 
 command -v agy >/dev/null 2>&1 || {
-  echo "agy-run: Antigravity CLI not installed on this machine." >&2
+  echo "agy-run: Antigravity CLI not installed on this machine (checked PATH, ~/.local/bin and, on Windows, %LOCALAPPDATA%\\agy\\bin)." >&2
   echo "  curl -fsSL https://antigravity.google/cli/install.sh | bash" >&2
   exit 125; }
 
@@ -78,19 +89,24 @@ ARGS=(--output-format "$FORMAT" --print-timeout "${TIMEOUT}s")
 # Portable hard timeout (macOS has no coreutils `timeout`).
 run_with_timeout() {
   perl -e 'my $t=shift; my $pid=fork();
-           if(!$pid){ open(STDIN,"<","/dev/null"); exec @ARGV; exit 127 }
-           local $SIG{ALRM}=sub{ kill 9,$pid; waitpid $pid,0; exit 124 };
+           if(!$pid){ setpgrp(0,0); open(STDIN,"<","/dev/null"); exec @ARGV; exit 127 }
+           local $SIG{ALRM}=sub{ kill 9,-$pid; waitpid $pid,0; exit 124 };
            alarm $t; waitpid $pid,0; my $st=$?; alarm 0;
            exit(($st & 127) ? 128 + ($st & 127) : ($st >> 8))' "$@"
 }
 
-OUT="$(run_with_timeout "$((TIMEOUT+30))" agy "${ARGS[@]}" --print="$PROMPT" 2>/tmp/agy-run.err)"
+# Per-run stderr file: parallel runs (the tie-breaker use) must not share one.
+ERR="$(mktemp "${TMPDIR:-/tmp}/agy-run.XXXXXX")"
+trap 'rm -f "$ERR"' EXIT
+
+OUT="$(run_with_timeout "$((TIMEOUT+30))" agy "${ARGS[@]}" --print="$PROMPT" 2>"$ERR")"
 RC=$?
 
 if [ $RC -eq 124 ]; then
-  echo "agy-run: TIMEOUT after ${TIMEOUT}s. Partial stderr:" >&2; tail -5 /tmp/agy-run.err >&2; exit 124
+  echo "agy-run: TIMEOUT after ${TIMEOUT}s. Partial stderr:" >&2; tail -5 "$ERR" >&2; exit 124
 fi
-if grep -qi "sign in\|not authenticated\|please log in" /tmp/agy-run.err 2>/dev/null; then
+if { [ $RC -ne 0 ] || [ -z "${OUT//[[:space:]]/}" ]; } &&
+   grep -qi "sign in\|not authenticated\|please log in" "$ERR" 2>/dev/null; then
   echo "agy-run: not signed in. The user must run \`agy\` interactively once on this machine." >&2
   exit 126
 fi
@@ -100,18 +116,18 @@ if [ $RC -eq 0 ] && [ -z "${OUT//[[:space:]]/}" ]; then
   if command -v script >/dev/null 2>&1; then
     echo "agy-run: empty stdout on a pipe (issue #76) - retrying under a pty." >&2
     if script -q /dev/null true >/dev/null 2>&1; then           # BSD / macOS
-      OUT="$(run_with_timeout "$((TIMEOUT+30))" script -q /dev/null agy "${ARGS[@]}" --print="$PROMPT" 2>>/tmp/agy-run.err)"
+      OUT="$(run_with_timeout "$((TIMEOUT+30))" script -q /dev/null agy "${ARGS[@]}" --print="$PROMPT" 2>>"$ERR")"
     else                                                        # util-linux
-      OUT="$(run_with_timeout "$((TIMEOUT+30))" script -qec "agy $(printf '%q ' "${ARGS[@]}") --print=$(printf '%q' "$PROMPT")" /dev/null 2>>/tmp/agy-run.err)"
+      OUT="$(run_with_timeout "$((TIMEOUT+30))" script -qec "agy $(printf '%q ' "${ARGS[@]}") --print=$(printf '%q' "$PROMPT")" /dev/null 2>>"$ERR")"
     fi
     RC=$?
     OUT="$(printf '%s' "$OUT" | tr -d '\r')"
   fi
   if [ -z "${OUT//[[:space:]]/}" ]; then
     if [ "$RC" -eq 124 ]; then
-      echo "agy-run: TIMEOUT during the pty retry after ${TIMEOUT}s." >&2; tail -5 /tmp/agy-run.err >&2; exit 124
+      echo "agy-run: TIMEOUT during the pty retry after ${TIMEOUT}s." >&2; tail -5 "$ERR" >&2; exit 124
     fi
-    echo "agy-run: no output even under a pty. stderr:" >&2; tail -10 /tmp/agy-run.err >&2; exit 127
+    echo "agy-run: no output even under a pty. stderr:" >&2; tail -10 "$ERR" >&2; exit 127
   fi
 fi
 
