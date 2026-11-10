@@ -40,6 +40,8 @@
 #   APP_AUDIT_CODEX_LENIENT 1 = accept companion output that lacks a
 #                           "Turn completed" marker but shows no error markers
 #                           (diagnostic escape hatch only)
+#   APP_AUDIT_CODEX_TIMEOUT seconds per transport before it is killed
+#                           (default 900; a timeout counts as unavailable)
 
 set -uo pipefail
 
@@ -49,6 +51,22 @@ MODEL="${APP_AUDIT_CODEX_MODEL:-$DEFAULT_MODEL}"
 EFFORT="${APP_AUDIT_CODEX_EFFORT:-$DEFAULT_EFFORT}"
 PLUGIN_GLOB="${APP_AUDIT_PLUGIN_GLOB:-$HOME/.claude/plugins/cache/openai-codex/codex/*/scripts/codex-companion.mjs}"
 LENIENT="${APP_AUDIT_CODEX_LENIENT:-0}"
+TIMEOUT="${APP_AUDIT_CODEX_TIMEOUT:-900}"
+
+# Portable hard timeout (macOS has no coreutils `timeout`); stdin is always
+# /dev/null. Exit 124 on timeout. Without perl, runs untimed with stdin closed.
+run_with_timeout() {
+  if ! command -v perl >/dev/null 2>&1; then
+    shift
+    "$@" </dev/null
+    return
+  fi
+  perl -e 'my $t=shift; my $pid=fork();
+           if(!$pid){ setpgrp(0,0); open(STDIN,"<","/dev/null"); exec @ARGV; exit 127 }
+           local $SIG{ALRM}=sub{ kill 9,-$pid; waitpid $pid,0; exit 124 };
+           alarm $t; waitpid $pid,0; my $st=$?; alarm 0;
+           exit(($st & 127) ? 128 + ($st & 127) : ($st >> 8))' "$@" </dev/null
+}
 
 usage() {
   sed -n '2,12p' "$0" | sed 's/^# \{0,1\}//'
@@ -152,11 +170,13 @@ if [ -z "$COMPANION" ]; then
 elif ! command -v node >/dev/null 2>&1; then
   add_reason "node not found on PATH (companion $COMPANION unusable)"
 else
-  COMPANION_OUT="$(cd "$WORKDIR" && node "$COMPANION" task \
-    --model "$MODEL" --effort "$EFFORT" "$PROMPT" 2>&1)"
+  COMPANION_OUT="$(cd "$WORKDIR" && run_with_timeout "$TIMEOUT" node "$COMPANION" task \
+    --model "$MODEL" --effort "$EFFORT" "$PROMPT" </dev/null 2>&1)"
   COMPANION_RC=$?
 
-  if has_failure_marker "$COMPANION_OUT"; then
+  if [ "$COMPANION_RC" -eq 124 ]; then
+    add_reason "companion timed out after ${TIMEOUT}s"
+  elif has_failure_marker "$COMPANION_OUT"; then
     add_reason "companion turn failed: $(first_error_line "$COMPANION_OUT")"
   else
     BODY="$(printf '%s\n' "$COMPANION_OUT" | strip_progress)"
@@ -183,7 +203,7 @@ if ! command -v codex >/dev/null 2>&1; then
   fail_unavailable "$REASONS"
 fi
 
-CLI_OUT="$(cd "$WORKDIR" && codex exec --skip-git-repo-check -s read-only \
+CLI_OUT="$(cd "$WORKDIR" && run_with_timeout "$TIMEOUT" codex exec --skip-git-repo-check -s read-only \
   -c model="$MODEL" -c model_reasoning_effort="$EFFORT" \
   "$PROMPT" </dev/null 2>&1)"
 CLI_RC=$?

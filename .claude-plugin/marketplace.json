@@ -147,7 +147,7 @@
       "name": "app-audit",
       "source": "./",
       "description": "Automated technical and disclosure compliance-assistance audit of a project: profiling, read-only specialist subagents, fresh research, optional Codex peer review, one consolidated report. Use on /app-audit, \"audit this app\", or a pre-launch security/privacy/store check.",
-      "version": "0d5e04a602f8",
+      "version": "6ed12577fd86",
       "category": "safety",
       "keywords": [
         "skill",
@@ -164,7 +164,7 @@
       "name": "compliance-check",
       "source": "./",
       "description": "Check what is actually live (store listing and labels, published policies, deployed backend, retention jobs) against the code and published words, then work the remediation runbook. Use on /compliance-check, \"what's left on compliance\", \"close out the audit\", or before a store submission.",
-      "version": "080c47941d60",
+      "version": "e3815f5926b3",
       "category": "safety",
       "keywords": [
         "skill",
@@ -477,7 +477,7 @@
       "name": "safety-pack",
       "source": "./",
       "description": "Bundle of every safety skill: app-audit, compliance-check, pre-release-review, safe-data-write, security-pass, verify-work",
-      "version": "44b79147cd8a",
+      "version": "0633ba2f96fa",
       "category": "bundle",
       "keywords": [
         "bundle",

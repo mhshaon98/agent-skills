@@ -143,5 +143,23 @@
       "outcome": "UPHELD",
       "summary": "Challenged as a critical-control PASS; anonymous access to private objects stayed denied."
     }
+  },
+  {
+    "id": "SEC-004",
+    "module": "security",
+    "title": "Login endpoint had no rate limit; fix confirmed at closeout",
+    "status": "FAIL_TECHNICAL",
+    "remediation_status": "RESOLVED",
+    "severity": "HIGH",
+    "confidence": "HIGH",
+    "evidence": [
+      {
+        "kind": "file",
+        "file": "app/api/auth/login/route.ts",
+        "line": 9,
+        "description": "Handler had no limiter before the fix; the closeout re-test returned 429 after 10 attempts."
+      }
+    ],
+    "provenance": ["claude_discovery", "behavioral_test"]
   }
 ]

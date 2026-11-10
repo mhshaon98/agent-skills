@@ -70,8 +70,12 @@ the trip count, then output size.
 9. **Subagents multiply, don't divide, cost** — 3 subagents ≈ 4x one focused
    pass (each cold-starts the fixed context). Use them ONLY to quarantine
    verbose work (exploration, logs, scraping) where just the report returns;
-   route them to cheaper models. Trap: the `CLAUDE_CODE_SUBAGENT_MODEL` env var
-   silently overrides frontmatter model routing. Agent Teams cost several times a
+   route them to cheaper models. `CLAUDE_CODE_SUBAGENT_MODEL` now ranks below the
+   Agent tool's `model` parameter and the agent's frontmatter `model` (order:
+   parameter > frontmatter > env var > main model; before v2.1.251 the env var won),
+   unless `CLAUDE_CODE_SUBAGENT_MODEL_FORCE=1` (v2.1.257+) is set, which makes it
+   override everything [first-party sub-agents docs + changelog, checked 2026-11-09].
+   Agent Teams cost several times a
    standard session (official figure) — avoid on plan-limited accounts. [measured]
 10. **Diagnostics are not free:** each `/context` run pastes ~12–15k into the
     transcript. Run it once at session start, not mid-session. [verified by the author]
@@ -99,8 +103,12 @@ the trip count, then output size.
 
 ## Cache mechanics (why gaps and edits cost)
 
-- Prompt-cache TTL varies by plan and billing mode (e.g. 1h vs 5min); check current
-  docs and any env var that restores the longer TTL. A return-after-gap miss
+- On a Claude subscription within plan usage the main conversation already caches
+  for 1h by default; subagents, workflows, forks, compaction and titles get 5min.
+  API key, cloud or usage credits: 5min. `ENABLE_PROMPT_CACHING_1H=1` requests 1h
+  for both buckets: redundant for the main thread on a subscription and harmless;
+  it mainly lifts subagents and overage. [first-party prompt-caching docs, checked
+  2026-11-09] A return-after-gap miss
   reprocesses the ENTIRE context at full input price — wrap sessions rather than
   leaving them idle-open. [first-party]
 - Keep the prefix stable: no live timestamps in prompts/`CLAUDE.md`, no mid-

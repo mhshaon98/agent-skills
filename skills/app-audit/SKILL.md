@@ -166,11 +166,14 @@ the project's size justifies.
 
 **Briefs must state**: the single question, the evidence already known, the
 required return format (`references/orchestration.md` §structured returns), the
-read-only constraint, "no chain-of-thought — conclusions, evidence, sources,
-confidence only", and "never print secret values".
+read-only constraint (implementer: the one authorised finding only), "no
+chain-of-thought — conclusions, evidence, sources, confidence only", and "never print
+secret values". The full shared rules live in `references/agent-rules.md`, which every
+agent reads first.
 
-**Model tier.** Audit work is judgment work, so the 14 reviewer/researcher
-subagents ship on the `opus` alias (the current frontier Opus model) at medium effort
+**Model tier.** The pins live in each `agents/app-audit-*.md` frontmatter, which wins
+if this paragraph drifts. Audit work is judgment work, so the 14 Opus subagents (every
+app-audit agent except the Codex liaison, recon and the implementer included) ship on the `opus` alias (the current frontier Opus model) at medium effort
 (`app-audit-adversarial-reviewer` at high effort), so they keep working as models are
 retired. Pin an exact model id in each agent file's `model:` line instead if you need
 reproducible audits, or retune it to whatever your preferred frontier tier is — but keep the reviewers on a
@@ -273,7 +276,7 @@ one-at-a-time questions. If the user does not answer, the affected findings stay
    `codex_review.performed = false`, continue the Claude-side analysis, and say so
    in the report. **Never downgrade the model, never silently skip, never
    fabricate a Codex review.** Codex is never asked to write files.
-6. **Nothing irreversible without confirmation.** No deploys, no production
+6. **The user does the irreversible steps.** No deploys, no production
    data changes, no credential rotation, no store submissions, no git push —
    ever, in any mode.
 

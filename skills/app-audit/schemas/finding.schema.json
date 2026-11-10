@@ -35,6 +35,11 @@
       "enum": ["PASS", "FAIL_TECHNICAL", "REVIEW", "UNKNOWN", "N_A"],
       "description": "Uncertainty never becomes PASS. N_A only with established non-applicability."
     },
+    "remediation_status": {
+      "type": "string",
+      "enum": ["OPEN", "FIXED_UNVERIFIED", "PARTIALLY_FIXED", "RESOLVED", "RESOLVED_PARTIAL", "ACCEPTED_RISK"],
+      "description": "Optional closeout state, written by compliance-check after the audit. It records remediation progress and leaves `status` (audit certainty) unchanged."
+    },
     "severity": {
       "type": "string",
       "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW", "INFO"]
@@ -153,7 +158,8 @@
           "security_agent",
           "codex",
           "behavioral_test",
-          "static_scanner"
+          "static_scanner",
+          "compliance-check"
         ]
       }
     },
@@ -172,6 +178,10 @@
     "reproduction": { "type": "string" },
     "impact": { "type": "string" },
     "recommended_test": { "type": "string" },
+    "resolution": {
+      "type": "string",
+      "description": "One sentence on how the finding was closed, with commit hash or console evidence and the date (written by compliance-check)."
+    },
     "unknowns": {
       "type": "array",
       "items": { "type": "string" }

@@ -165,8 +165,11 @@ rarely approach it. Prefer a second wave over an oversized first wave.
 3. Evidence already known (so the agent does not re-derive it) — but **not**
    your conclusion, for any agent whose job is independent judgment.
 4. The required return format (§4 below).
-5. Constraints: read-only; no product-source edits; no state-changing shell
-   commands; no secret values in output; no chain-of-thought — conclusions,
+5. Constraints: every agent reads `references/agent-rules.md` first, so restate
+   only the essentials and anything brief-specific: read-only with no product-source
+   edits and no state-changing shell commands (the implementer instead changes only
+   the one authorised finding; the Codex liaison writes prompt files only where its
+   File rules allow); no secret values in output; no chain-of-thought — conclusions,
    evidence, sources, confidence only.
 6. The stopping rule (`research-policy.md`) so it does not spiral.
 
@@ -186,8 +189,12 @@ false_positive_conditions, recommended_test.
 scaling_constraints, unnecessary_complexity, recommended_changes, priority,
 evidence.
 
-**All agents also return:** findings, evidence, confidence, contradictory
-evidence, questions, recommended follow-up, sources.
+**Each agent's own `## Return format` is authoritative.** Reviewer agents use
+the generic finding fields (findings, evidence, confidence, contradictory
+evidence, questions, recommended follow-up, sources). Agents whose contract is
+a profile (recon), research (researchers), a verdict (adversarial reviewer,
+source verifier, verifier) or a diff (implementer) do not also return a
+findings list.
 
 Handling rules:
 

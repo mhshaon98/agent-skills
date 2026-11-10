@@ -94,27 +94,33 @@ For each APPLIES surface:
 
 ## 4. Reconciliation (statuses drift faster than code)
 
-Any finding in `findings.json` that is not `RESOLVED` / `ACCEPTED_RISK` gets re-checked
+Any finding in `findings.json` whose `remediation_status` is not `RESOLVED` /
+`ACCEPTED_RISK` (a missing field counts as `OPEN`) gets re-checked
 against CURRENT code by an independent read-only verifier (`app-audit-verifier`, or
 a general-purpose read-only subagent with the same brief if the fleet is not installed). The brief must ask
 for VERIFIED_FIXED / PARTIALLY_FIXED / NOT_FIXED per finding with `file:line`, plus a
-compile/test run. Update statuses only from that evidence. Expect surprises in both
+compile/test run. Update `remediation_status` only from that evidence. Expect surprises in both
 directions: in the source close-out a "fixed" migration still failed a fresh rebuild, and three
 "failing" findings were already fixed.
 
-Status vocabulary this skill adds on top of the app-audit schema, when evidence
-supports it: `PARTIALLY_FIXED`, `FIXED_UNVERIFIED`, `RESOLVED_PARTIAL`, `ACCEPTED_RISK`
-(owner decision, recorded with date and mitigation). Always write a one-sentence
-`resolution` with commit hash or console evidence and the date.
+Closeout states go in the finding's optional `remediation_status` field (app-audit
+`schemas/finding.schema.json`). Leave `status` as the audit wrote it, because `status`
+records audit certainty (PASS / FAIL_TECHNICAL / REVIEW / UNKNOWN / N_A) and a
+closeout value there fails schema validation. The values, when evidence supports them:
+`OPEN` (verifier NOT_FIXED), `FIXED_UNVERIFIED` (change made, no independent re-check
+yet), `PARTIALLY_FIXED` (verifier PARTIALLY_FIXED), `RESOLVED` (verifier
+VERIFIED_FIXED), `RESOLVED_PARTIAL` (closed with a documented residual), and
+`ACCEPTED_RISK` (owner decision, recorded with date and mitigation). Always write a
+one-sentence `resolution` with commit hash or console evidence and the date.
 
 ## 5. Output (check modes)
 
 Write `.app-audit/COMPLIANCE-CHECK.md` (overwrite; date in the title) and update
-`findings.json` statuses. The report, in this order:
+each finding's `remediation_status` in `findings.json`. The report, in this order:
 
 1. **Outcome line**: how many HIGH/MEDIUM items are open, and the single most important one.
 2. **Live facts read today** table: fact, value, source, retrieval date.
-3. **Findings ledger**: ID, status now, one-line evidence, what closes it.
+3. **Findings ledger**: ID, `remediation_status` now, one-line evidence, what closes it.
 4. **Ordered runbook** grouped by who acts: (a) owner-only console items, (b) production
    changes needing a yes, (c) code changes, (d) release-time items, (e) later versions.
    Each item: exact action, done-when test, rollback.

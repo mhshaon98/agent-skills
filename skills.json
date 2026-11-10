@@ -184,10 +184,10 @@
         "claude",
         "codex"
       ],
-      "version": "0d5e04a602f8",
+      "version": "6ed12577fd86",
       "path": "skills/app-audit",
       "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/app-audit/SKILL.md",
-      "file_count": 110,
+      "file_count": 111,
       "files": [
         "skills/app-audit/SKILL.md",
         "skills/app-audit/README.md",
@@ -262,6 +262,7 @@
         "skills/app-audit/fixtures/fixture-static/index.html",
         "skills/app-audit/fixtures/fixture-static/script.js",
         "skills/app-audit/fixtures/fixture-static/style.css",
+        "skills/app-audit/references/agent-rules.md",
         "skills/app-audit/references/codex-policy.md",
         "skills/app-audit/references/discovery.md",
         "skills/app-audit/references/domains-ai.md",
@@ -309,7 +310,7 @@
         "claude",
         "codex"
       ],
-      "version": "080c47941d60",
+      "version": "e3815f5926b3",
       "path": "skills/compliance-check",
       "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/compliance-check/SKILL.md",
       "file_count": 9,

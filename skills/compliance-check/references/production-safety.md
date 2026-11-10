@@ -63,6 +63,6 @@ the operations doc, and the session notes. "Command exited 0" is not verificatio
 
 ## 7. Staying on a free plan
 
-No backups and no staging are legitimate owner decisions. Record them as ACCEPTED_RISK with
+No backups and no staging are legitimate owner decisions. Record them as `remediation_status: ACCEPTED_RISK` with
 the mitigation: a manual `supabase db dump` (or equivalent) before any future DDL, and
 rolled-back transaction tests in place of a staging run.

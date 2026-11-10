@@ -136,7 +136,7 @@ Verification, data safety, security and release gates. Bundle: `safety-pack@dev-
 
 | Skill | What it does | Files |
 | --- | --- | --- |
-| [app-audit](skills/app-audit/SKILL.md) | Automated technical and disclosure compliance-assistance audit of a project: profiling, read-only specialist subagents, fresh research, optional Codex peer review, one consolidated report. Use on /app-audit, "audit this app", or a pre-launch security/privacy/store check. | 110 |
+| [app-audit](skills/app-audit/SKILL.md) | Automated technical and disclosure compliance-assistance audit of a project: profiling, read-only specialist subagents, fresh research, optional Codex peer review, one consolidated report. Use on /app-audit, "audit this app", or a pre-launch security/privacy/store check. | 111 |
 | [compliance-check](skills/compliance-check/SKILL.md) | Check what is actually live (store listing and labels, published policies, deployed backend, retention jobs) against the code and published words, then work the remediation runbook. Use on /compliance-check, "what's left on compliance", "close out the audit", or before a store submission. | 9 |
 | [pre-release-review](skills/pre-release-review/SKILL.md) | Independent fresh-context review before anything ships. Use on "ship it", "release", "submit", "deploy", "push to production", before any production push, and after a large diff, even when the diff looks fine. | 1 |
 | [safe-data-write](skills/safe-data-write/SKILL.md) | Use before any write, migration, or deletion touching user data: stores, schemas, user-owned files (Excel workbooks, databases, documents). Backup, audit and rollback rules learned from shipped data-loss bugs. | 1 |

@@ -20,5 +20,15 @@
     "applicability": { "result": "MAYBE_APPLIES", "reason": "unclear", "facts_required": "should be an array" },
     "safe_to_autofix": "yes",
     "sevrity": "typo field that must be rejected"
+  },
+  {
+    "id": "BAD-003",
+    "module": "security",
+    "title": "Otherwise valid finding with a remediation_status outside the enum",
+    "status": "FAIL_TECHNICAL",
+    "remediation_status": "BOGUS",
+    "severity": "MEDIUM",
+    "confidence": "HIGH",
+    "evidence": ["app/api/auth/login/route.ts:9 has no limiter"]
   }
 ]

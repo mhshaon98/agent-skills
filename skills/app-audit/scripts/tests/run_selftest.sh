@@ -111,7 +111,7 @@ done
 # ---------------------------------------------------------------------------
 section "2. finding validator"
 expect_rc "valid findings accepted" 0 "$PY" "$SCRIPTS/validate_finding.py" "$SAMPLES/finding.valid.json"
-expect_out "valid findings report 3 documents" "3 document(s)"
+expect_out "valid findings report 4 documents" "4 document(s)"
 
 expect_rc "invalid findings rejected" 1 "$PY" "$SCRIPTS/validate_finding.py" "$SAMPLES/finding.invalid.json"
 expect_out "rejects bad status enum" "FAILED"
@@ -122,6 +122,7 @@ expect_out "rejects codex_review without 'performed'" "missing required property
 expect_out "rejects missing required confidence" "missing required property 'confidence'"
 expect_out "rejects missing required evidence" "missing required property 'evidence'"
 expect_out "rejects typo'd unknown property" "sevrity"
+expect_out "rejects bad remediation_status enum" "BOGUS"
 
 expect_rc "finding validator usage error" 2 "$PY" "$SCRIPTS/validate_finding.py"
 expect_out "finding validator prints usage" "usage: validate_finding.py"
