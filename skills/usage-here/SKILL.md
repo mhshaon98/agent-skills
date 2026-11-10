@@ -104,6 +104,8 @@ the claude-api skill's model price table, cached 2026-10-06 (Sonnet 5 corrected 
 Haiku 5.5 with its >100K-prompt tier, and Opus 5.5 fast mode added). A model may list its
 own `cache_read` price (USD/MTok; Opus 5.5 and Sonnet 5.5 0.20, Fable 5.1 0.25) instead of the
 global multiplier, and a message whose `usage.speed` is `fast` bills at the `<model>-fast` row.
-Unknown model IDs fall
-back to Opus-tier rates — add missing models rather than trust the fallback. When prices
+Fable 5.2 and Mythos 5.2 (8/40, cache read 0.20) were added
+2026-11-09 from the claude-api skill's model table. Unknown model IDs fall back to
+Opus-tier rates and the script prints a `WARNING: no pricing.json row for ...` line naming
+them — add missing models rather than trust the fallback. When prices
 change, update `pricing.json` only; nothing else hard-codes a rate.

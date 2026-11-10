@@ -1,6 +1,6 @@
 ---
 name: update-handoff
-description: 'End-of-session wrap in one pass: a detailed holistic handoff (this session plus every linked session and worktree), lessons, memory, bug ledger and NEXT-SESSION-PROMPT.md, then archives finished nested sessions and turns Remote Control off. Use on "update handoff", "wrap up", "end the session", or before context runs out.'
+description: 'End-of-session wrap: holistic handoff (this and linked sessions, worktrees), lessons, memory, bug ledger and NEXT-SESSION-PROMPT.md; archives finished nested sessions, Remote Control off. Use on "update handoff", "wrap up", "end the session", or before context runs out.'
 ---
 
 # Update Handoff — end-of-session wrap in one pass
@@ -9,8 +9,8 @@ Closes out a session: handoff + retrospective + memory + a paste-ready prompt fo
 next session. **Efficiency rule: ≤3 tool round-trips to the written handoff** — the
 gather script (+ the ToolSearch below), the Step 1c session calls, then ALL file writes
 batched in one parallel message. Only what exists adds more: +1 worktree check when
-linked worktrees exist, Step 4's commit/push (nested sessions' Remote Control-off calls
-ride in it), +1 archive batch when nested sessions exist; Step 6 rides in the last message. Efficiency means few round-trips, never a
+linked worktrees exist, Step 4's commit (nested sessions' Remote Control-off calls
+ride in it) and its one push question, +1 archive batch when nested sessions exist; Step 6 rides in the last message. Efficiency means few round-trips, never a
 thin handoff: completeness of the handoff outranks its length. Most of what goes into these files is
 already in this session's context; never re-read files this session wrote or discussed.
 
@@ -24,14 +24,19 @@ of the invocation's arguments, which breaks shell and awk code.
 
 ```bash
 date "+NOW: %Y-%m-%d %H%M"
-W=_claude/WHERE-IS-THE-CODE.md; [ -f "$W" ] || W=WHERE-IS-THE-CODE.md
-if [ ! -d .git ] && [ -f "$W" ]; then T=$(grep -oE '([A-Za-z]:[\/]|~/)[^`"<>|*?]+' "$W" | head -1 | tr '\134' '/' | sed -e "s|^~|$HOME|" -e 's|[[:space:]]*$||'); case "$T" in [A-Za-z]:/*) T="/$(printf %s "${T%%:*}" | tr 'A-Z' 'a-z')${T#?:}";; esac; [ -d "$T" ] && { echo "ENTRY POINT -> writing into $T"; cd "$T"; }; fi; pwd
+S="${SKILLS_REPO:-}"; SP=; [ -n "$S" ] && SP=$(cd "$S" 2>/dev/null && pwd -P); SP="${SP:-/nonexistent-skills-clone}"; MV=$(find . -maxdepth 1 -name '_MOVED-TO-*.txt' 2>/dev/null | head -1); FZ=; T=; [ -n "$MV" ] && { echo "FROZEN COPY ($MV): never write here"; [ -n "$S" ] && [ -d "$S/.git" ] && [ "$(basename "$PWD")" = "$(basename "$S")" ] && [ "$(pwd -P)" != "$SP" ] && FZ=1; }
+if [ -n "$FZ" ]; then echo "ENTRY POINT -> writing into real clone $S"; cd "$S"; elif [ -n "$MV" ] || { [ -z "$(find _claude _claude/handoffs . docs handoffs -maxdepth 1 -name 'HANDOFF-*.md' 2>/dev/null | head -1)" ] && [ ! -d .git ] && ! grep -q '^## Topic table' CLAUDE.md 2>/dev/null; }; then for P in "$MV" _claude/WHERE-IS-THE-CODE.md WHERE-IS-THE-CODE.md CLAUDE.md; do [ -f "$P" ] || continue; T=$(grep -oE '(^|[[:space:]`"(])(%USERPROFILE%[\/]|[A-Za-z]:[\/]|~/)[^`"<>|*?]+' "$P" | sed -E -e 's/^[[:space:]`"(]+//' -e 's/[[:space:]]+\(.*//' -e 's/[).,;:[:space:]]+$//' -e p -e 's/[[:space:]].*//' | tr '\134' '/' | sed -e "s|^%USERPROFILE%|$HOME|" -e "s|^~|$HOME|" | while read -r c; do case "$c" in [A-Za-z]:/*) c="/$(printf %s "${c%%:*}" | tr 'A-Z' 'a-z')${c#?:}";; esac; [ -d "$c" ] || continue; c=$(cd "$c" && pwd -P); case "$c" in "$SP"|"$SP"/*|"$HOME/.claude"|"$HOME/.claude"/*) continue;; esac; echo "$c"; break; done); [ -n "$T" ] && { echo "ENTRY POINT ($P) -> writing into $T"; cd "$T" || true; break; }; done; [ -n "$MV" ] && [ -z "$T" ] && echo "FROZEN COPY - refusing to write here: stop the wrap and tell the user"; fi; pwd
 L=$(ls -d HANDOFF-*.md NEXT-SESSION-PROMPT.md BUG_LIST.md WHERE-IS-THE-CODE.md handoffs CODEX-FINDINGS.md ANTIGRAVITY-FINDINGS.md 2>/dev/null); [ -n "$L" ] && { echo "LEGACY ROOT FILES -> move into _claude/ (Step 1d):"; echo "$L"; git ls-files -- $L 2>/dev/null | head -3 | sed 's/^/  tracked: /'; }
-if grep -q '^## Topic table' CLAUDE.md 2>/dev/null; then echo "LAYERED: topic files:"; find _claude/handoffs -maxdepth 1 -name '*.md' 2>/dev/null | sort; else H=$( { find _claude . -maxdepth 1 -name 'HANDOFF-*.md'; find _claude/handoffs -mindepth 2 -maxdepth 2 -name 'HANDOFF-*.md'; } 2>/dev/null | while read -r f; do printf '%s|%s\n' "${f##*/}" "$f"; done | sort | tail -1 | cut -d'|' -f2); echo "CURRENT HANDOFF: ${H:-NONE}"; fi
+if grep -q '^## Topic table' CLAUDE.md 2>/dev/null; then echo "LAYERED: topic files:"; find _claude/handoffs -maxdepth 1 -name '*.md' 2>/dev/null | sort; else H=$( { find _claude . docs -maxdepth 1 -name 'HANDOFF-*.md'; find _claude/handoffs handoffs -maxdepth 2 -name 'HANDOFF-*.md'; } 2>/dev/null | while read -r f; do k=$(printf %s "${f##*/}" | sed -nE 's/^HANDOFF-([0-9]{4}-[0-9]{2}-[0-9]{2})(-([0-9]{4}))?.*/\1-\3/p'); case "$k" in *-) k="${k}0000";; '') m=$(stat -c %Y "$f" 2>/dev/null || stat -f %m "$f"); k="0000-$(date -d "@$m" +%F-%H%M 2>/dev/null || date -r "$m" +%F-%H%M)";; esac; printf '%s|%s|%s\n' "$k" "${f##*/}" "$f"; done | sort | tail -1 | cut -d'|' -f3); echo "CURRENT HANDOFF: ${H:-NONE}"; fi
 git status --porcelain=v1 2>/dev/null | head -20; git log --oneline -8 2>/dev/null || ls -t | head -10
 echo "WORKTREES:"; git worktree list 2>/dev/null; git for-each-ref --format='%(refname:short) %(upstream:track)' refs/heads 2>/dev/null | head -30
 [ -n "${SKILLS_REPO:-}" ] && { echo "SKILLS CLONE:"; git -C "$SKILLS_REPO" status -sb 2>/dev/null | head -1; git -C "$SKILLS_REPO" status --porcelain=v1 2>/dev/null | head -10; }
 ```
+
+`FROZEN COPY - refusing to write here` printed? The folder holds a `_MOVED-TO-*.txt`
+marker and no live target was found: write nothing (no `_claude/`, no handoff), tell
+the user, and stop the wrap. When the gather moved into another folder, every later step
+writes there.
 
 ## Step 1b — context sweep (ALWAYS; this is what makes the handoff detailed)
 
@@ -163,7 +168,9 @@ own commits gets a layout-only commit), and check every agent rules repo that na
   topic this session worked), using this skeleton — what
   the project is → current state → what this session did → decisions + **rejected
   alternatives with evidence** (one **decision record** per architectural choice —
-  Decision · Alternatives rejected · Evidence · Date) → **Verified / NOT-verified ledgers** → known issues →
+  Decision · Alternatives rejected · Evidence · Date) → **Verified / NOT-verified ledgers**
+  (each Verified line names the command or check from this session that showed it;
+  anything else goes under NOT verified) → known issues →
   ordered TODO → retrospective → how to run. Add a "supersedes" line naming the
   previous handoff; keep the old ones. **No secrets** (these files are long-lived and
   often synced — reference keys by name); every relative date converted to absolute.
@@ -207,14 +214,19 @@ lessons in the handoff marked "PROMOTE TO LESSONS".
 
 - [ ] **Lessons committed in the same pass** — not left uncommitted in the working tree
       for the next session to trip over.
-- [ ] **Skills repo committed AND pushed** — if you keep skills/lessons in a git clone and
-      anything in it changed this session: commit and push it, then `git status -sb` shows
-      neither `ahead` nor changes. An unpushed commit is invisible to every other machine.
-      Push failed (offline, rejected)? Say so explicitly in the handoff and the prompt
-      file; never force-push.
-- [ ] **Project pushed** — if the project has a remote, `git push` (ask the user first
-      before pushing anything public or production-facing; a private project remote at a
-      checkpoint is routine).
+- [ ] **Skills repo committed, pushed on the user's yes** — if you keep skills/lessons in
+      a git clone and anything in it changed this session: commit it. An unpushed commit is
+      invisible to every other machine, so offer the push every wrap and wait for the
+      user's go before it. Ask once for this item and the next together: one question
+      naming each repo, its branch and how many commits it would push. On yes, push; `git
+      status -sb` then shows neither `ahead` nor changes. On no, no answer, or a failed
+      push (offline, rejected), keep the commit local, set the state line of the handoff
+      and the prompt file to "committed, NOT pushed" with the reason, and commit that edit
+      locally. Never force-push. If the project IS the skills repo, one commit and one
+      question cover this item and the next.
+- [ ] **Project committed, pushed on the user's yes** — if the project has a remote, commit
+      the wrap and include the project in the same push question; push on yes, otherwise
+      record "committed, NOT pushed" exactly as above.
 - [ ] **Linked sessions covered**: every linked session and worktree from Step 1c is in
       the handoff's "Linked sessions & worktrees" table with a checked state (running
       ones marked RUNNING, not done); merged worktrees offered for cleanup, never deleted
@@ -238,7 +250,8 @@ rows), no half-applied changes, no `_v2`/`_final` duplicate files.
 
 Calling this skill is the user's standing go-ahead to archive every session nested under
 this one once its state is safely in the handoff. It runs LAST, after Step 4, so the
-handoff that records those sessions is already committed and pushed. Skip it when the
+handoff that records those sessions is already committed (and pushed, if the user said
+yes). Skip it when the
 session-management tools are missing, and say so.
 
 - **Scope**: the rows from Step 1c whose `startedBy` chain leads back to this session
@@ -262,7 +275,7 @@ session-management tools are missing, and say so.
   starts, and `archive_session` refuses a session while its Remote Control is on, even
   with nobody viewing it. So for each eligible session with `remoteControlActive` true,
   send `set_remote_control` (`enabled: false`, its session id) in the same message as
-  Step 4's commit/push call: one message earlier than the archive batch, never in it. A
+  Step 4's commit call: one message earlier than the archive batch, never in it. A
   refused switch (the session was started from the phone or claude.ai, so it is locked)
   → hold that row: "Remote Control locked: the user archives it from the sidebar".
 - **Archive** deepest first (grandchildren before children), one `archive_session` call
@@ -270,7 +283,7 @@ session-management tools are missing, and say so.
   the user to approve each call; that is expected. A refusal that names Remote Control
   (the Step 1c state was stale) → switch it off for that session and retry once. Any
   other refusal (the session started working again, is open on screen) → fix that row in
-  the handoff, commit and push.
+  the handoff and commit it (push only on the user's yes, as in Step 4).
 - Never stop a session, commit for it, discard its changes or answer its question to
   make it archivable. Archiving is reversible (`unarchive_session`); report the archived
   sessions as links so the user can reopen one.
@@ -278,7 +291,8 @@ session-management tools are missing, and say so.
 ## Step 6: Remote Control off for this session (ALWAYS, last)
 
 Calling this skill is the user's standing request to switch off the Remote Control that
-`call-handoff` switched on. After Step 4's push has succeeded, send
+`call-handoff` switched on. Once Step 4 is complete, whether the push happened, was
+declined or failed (a declined push must not leave Remote Control on), send
 `mcp__ccd_session_mgmt__set_remote_control` `{"session_id": "self", "enabled": false}`
 as the LAST call of the final message: after Step 5's archive calls, so their approval
 prompts still reach the user's phone, or alone when there is nothing to archive. Report

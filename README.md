@@ -128,7 +128,7 @@ Session continuity: start, hand off, track bugs, bootstrap projects. Bundle: `wo
 | [new-project](skills/new-project/SKILL.md) | Bootstrap a brand-new project with proven architecture defaults and continuity scaffolding. Use when starting a new project from scratch, or when touching a legacy project that has no handoff/git/structure yet. | 1 |
 | [report-back](skills/report-back/SKILL.md) | Close out a forked or side session and send its verified status to the session that started it. Use on "report back", "send your status to the main session", or when collect-reports asks. | 1 |
 | [session-start](skills/session-start/SKILL.md) | Old name for the session-start ritual, which now lives in call-handoff; run that skill instead. | 1 |
-| [update-handoff](skills/update-handoff/SKILL.md) | End-of-session wrap in one pass: a detailed holistic handoff (this session plus every linked session and worktree), lessons, memory, bug ledger and NEXT-SESSION-PROMPT.md, then archives finished nested sessions and turns Remote Control off. Use on "update handoff", "wrap up", "end the session", or before context runs out. | 2 |
+| [update-handoff](skills/update-handoff/SKILL.md) | End-of-session wrap: holistic handoff (this and linked sessions, worktrees), lessons, memory, bug ledger and NEXT-SESSION-PROMPT.md; archives finished nested sessions, Remote Control off. Use on "update handoff", "wrap up", "end the session", or before context runs out. | 2 |
 
 ### Safety
 
@@ -153,7 +153,7 @@ Subagents, model routing, and second opinions from other providers. Bundle: `del
 | [astra-conductor](skills/astra-conductor/SKILL.md) | Operating mode for the ENTIRE session whenever the session model is GPT-6-Astra: Astra acts only as architect/orchestrator, delegates ALL execution to gpt-5.6/5.4/5.3 subagents via spawn_agent, and verifies end-to-end. *(Codex CLI only)* | 1 |
 | [codex-bridge](skills/codex-bridge/SKILL.md) | Delegate a task to OpenAI Codex or get a non-Claude second review via the codex plugin. Use on "ask codex", "have codex review/check this", "send to codex", or before a release when a second provider is worth it. *(Claude Code only)* | 4 |
 | [cowork-relay](skills/cowork-relay/SKILL.md) | Split work between Claude Cowork and Claude Code on one project: each side does all it can and ends with a copy-paste relay prompt for the other. Use in a Cowork session or when a RELAY prompt is pasted. | 1 |
-| [fable-conductor](skills/fable-conductor/SKILL.md) | Session-long operating mode when the session model is Fable/Mythos-class: Fable plans, briefs and verifies; execution is delegated to Opus/Sonnet/Haiku subagents. *(Claude Code only)* | 1 |
+| [fable-conductor](skills/fable-conductor/SKILL.md) | Session-long operating mode when the session model is Fable/Mythos-class: Fable plans, briefs and verifies, works inline on quick or sequential steps, and delegates gathering, parallel workstreams and large-diff review. Not for sessions whose main model is the frontier executor tier. *(Claude Code only)* | 2 |
 | [spawn-agent](skills/spawn-agent/SKILL.md) | Use BEFORE spawning any subagent (research, implementation, review, debugging) or choosing a model for delegated work. Gate, brief-writing procedure, and model-tier routing; usage limits are a real budget. | 1 |
 
 ### Formatting

@@ -38,15 +38,16 @@ to skip the sync block).
 S="${SKILLS_REPO:-}"; echo "=== SKILLS SYNC (${S:-none configured})"
 if [ -n "$S" ] && [ -d "$S/.git" ]; then D=$(git -C "$S" status --porcelain=v1 | head -3); if [ -n "$D" ]; then echo "DIRTY skills clone - not pulling:"; echo "$D"; else B=$(git -C "$S" rev-parse HEAD); git -C "$S" pull --ff-only 2>&1 | tail -1; git -C "$S" diff --name-only "$B" HEAD | grep -qE '^(skills|agents|hooks)/' && echo "SKILLS CHANGED -> re-install needed"; fi; git -C "$S" log -1 --format='skills @ %h %ad %s' --date=short; git -C "$S" status -sb | head -1
 elif [ -n "$S" ]; then echo "NO CLONE at $S - clone your skills repo there first"; fi
-echo "=== ENTRY POINT?"; if [ -z "$(find _claude _claude/handoffs . docs handoffs -maxdepth 1 -name 'HANDOFF-*.md' 2>/dev/null | head -1)" ] && [ ! -d .git ] && ! grep -q '^## Topic table' CLAUDE.md 2>/dev/null; then for P in _claude/WHERE-IS-THE-CODE.md WHERE-IS-THE-CODE.md CLAUDE.md; do [ -f "$P" ] || continue; T=$(grep -oE '([A-Za-z]:[\/]|~/)[^`"<>|*?]+' "$P" | head -1 | tr '\134' '/' | sed -e "s|^~|$HOME|" -e 's|[[:space:]]*$||'); case "$T" in [A-Za-z]:/*) T="/$(printf %s "${T%%:*}" | tr 'A-Z' 'a-z')${T#?:}";; esac; [ -n "$T" ] && [ -d "$T" ] && { echo "pointer $P -> $T (cd there; this folder is the entry point only)"; cd "$T" || true; break; }; done; fi; pwd
-echo "=== PROJECT SYNC"; if git remote get-url origin >/dev/null 2>&1; then if [ -z "$(git status --porcelain=v1 -uno)" ]; then git pull --ff-only 2>&1 | tail -1; else echo "dirty tree - not pulling"; fi; git status -sb | head -1; else echo "no remote"; fi
+echo "=== ENTRY POINT?"; SP=; [ -n "$S" ] && SP=$(cd "$S" 2>/dev/null && pwd -P); SP="${SP:-/nonexistent-skills-clone}"; MV=$(find . -maxdepth 1 -name '_MOVED-TO-*.txt' 2>/dev/null | head -1); FZ=; T=; [ -n "$MV" ] && { echo "FROZEN COPY ($MV): never write here"; [ -n "$S" ] && [ -d "$S/.git" ] && [ "$(basename "$PWD")" = "$(basename "$S")" ] && [ "$(pwd -P)" != "$SP" ] && FZ=1; }
+if [ -n "$FZ" ]; then echo "-> real clone $S (cd there)"; cd "$S"; elif [ -n "$MV" ] || { [ -z "$(find _claude _claude/handoffs . docs handoffs -maxdepth 1 -name 'HANDOFF-*.md' 2>/dev/null | head -1)" ] && [ ! -d .git ] && ! grep -q '^## Topic table' CLAUDE.md 2>/dev/null; }; then for P in "$MV" _claude/WHERE-IS-THE-CODE.md WHERE-IS-THE-CODE.md CLAUDE.md; do [ -f "$P" ] || continue; T=$(grep -oE '(^|[[:space:]`"(])(%USERPROFILE%[\/]|[A-Za-z]:[\/]|~/)[^`"<>|*?]+' "$P" | sed -E -e 's/^[[:space:]`"(]+//' -e 's/[[:space:]]+\(.*//' -e 's/[).,;:[:space:]]+$//' -e p -e 's/[[:space:]].*//' | tr '\134' '/' | sed -e "s|^%USERPROFILE%|$HOME|" -e "s|^~|$HOME|" | while read -r c; do case "$c" in [A-Za-z]:/*) c="/$(printf %s "${c%%:*}" | tr 'A-Z' 'a-z')${c#?:}";; esac; [ -d "$c" ] || continue; c=$(cd "$c" && pwd -P); case "$c" in "$SP"|"$SP"/*|"$HOME/.claude"|"$HOME/.claude"/*) continue;; esac; echo "$c"; break; done); [ -n "$T" ] && { echo "pointer $P -> $T (cd there; this folder is the entry point only)"; cd "$T" || true; break; }; done; [ -n "$MV" ] && [ -z "$T" ] && echo "FROZEN COPY: no live target found - write nothing here"; fi; pwd
+echo "=== PROJECT SYNC"; if [ "$(pwd -P)" = "$SP" ]; then echo "this is the skills clone (synced above)"; elif git remote get-url origin >/dev/null 2>&1; then if [ -z "$(git status --porcelain=v1 -uno)" ]; then git pull --ff-only 2>&1 | tail -1; else echo "dirty tree - not pulling"; fi; git status -sb | head -1; else echo "no remote"; fi
 C=_claude; if [ ! -d _claude ]; then C=.; [ -n "$(ls -d HANDOFF-*.md NEXT-SESSION-PROMPT.md BUG_LIST.md WHERE-IS-THE-CODE.md handoffs 2>/dev/null)" ] && echo "LEGACY LAYOUT: continuity files at project root -> update-handoff moves them into _claude/"; fi
 if grep -q '^## Topic table' CLAUDE.md 2>/dev/null; then echo "=== LAYERED HANDOFFS (router = CLAUDE.md topic table, already in context - read ONE topic file)"; find "$C/handoffs" -maxdepth 1 -name '*.md' 2>/dev/null | sort | while read -r f; do echo "$f · $(grep -m1 -i '^Last updated' "$f")"; done
 else
-HL=$( { find "$C" docs -maxdepth 1 -name 'HANDOFF-*.md'; find "$C/handoffs" -maxdepth 2 -name 'HANDOFF-*.md'; } 2>/dev/null | while read -r f; do printf '%s|%s\n' "${f##*/}" "$f"; done | sort)
-H=$(printf '%s\n' "$HL" | tail -1 | cut -d'|' -f2)
-echo "=== NEWEST HANDOFF: ${H:-NONE} · prior: $(printf '%s\n' "$HL" | tail -3 | sed '$d' | cut -d'|' -f2 | tr '\n' ' ')"
-[ -n "$H" ] && sed -n '1,600p' "$H"; fi
+HL=$( { find _claude . docs -maxdepth 1 -name 'HANDOFF-*.md'; find _claude/handoffs handoffs -maxdepth 2 -name 'HANDOFF-*.md'; } 2>/dev/null | while read -r f; do k=$(printf %s "${f##*/}" | sed -nE 's/^HANDOFF-([0-9]{4}-[0-9]{2}-[0-9]{2})(-([0-9]{4}))?.*/\1-\3/p'); case "$k" in *-) k="${k}0000";; '') m=$(stat -c %Y "$f" 2>/dev/null || stat -f %m "$f"); k="0000-$(date -d "@$m" +%F-%H%M 2>/dev/null || date -r "$m" +%F-%H%M)";; esac; printf '%s|%s|%s\n' "$k" "${f##*/}" "$f"; done | sort)
+H=$(printf '%s\n' "$HL" | tail -1 | cut -d'|' -f3); HP=; [ -n "$H" ] && HP=" · prior: $(printf '%s\n' "$HL" | tail -3 | sed '$d' | cut -d'|' -f3 | tr '\n' ' ')"
+echo "=== NEWEST HANDOFF: ${H:-NONE}$HP"
+if [ -n "$H" ]; then sed -n '1,600p' "$H"; elif [ -f README.md ]; then echo "=== README (no handoff)"; sed -n '1,60p' README.md; fi; fi
 echo "=== RECENCY"; git log --oneline -5 2>/dev/null; git status --porcelain=v1 -uno 2>/dev/null | head -10; ls -t | head -8
 B="$C/BUG_LIST.md"; [ -f "$B" ] || B=BUG_LIST.md; echo "=== OPEN BUGS ($B)"; [ -f "$B" ] && grep -n "^## \|Status:" "$B" | head -40 || echo "no BUG_LIST.md"
 N="$C/NEXT-SESSION-PROMPT.md"; [ -f "$N" ] || N=NEXT-SESSION-PROMPT.md; echo "=== NEXT SESSION PROMPT ($N)"; [ -f "$N" ] && cat "$N" || echo "none"
@@ -87,9 +88,12 @@ echo "=== USAGE BASELINE"; "$(command -v python3 || command -v python)" "$HOME/.
 - **Flat handoff juggling several independent issues** (≥2 unrelated threads — different
   devices, vendors, customer contacts, or source folders — each with its own TODO)?
   Mention once in the briefing that `update-handoff` can split it into layered topic files.
-- **No handoff at all?** The script output already shows it: orient from `README.md`
-  (one Read) + the git log, say plainly there is no handoff, note one must be created
-  before session end (`update-handoff` skill).
+- **`FROZEN COPY` printed?** This folder is a frozen copy (it has a `_MOVED-TO-*.txt`
+  marker). Brief from the folder the script moved to; if it printed `no live target
+  found`, say so and write nothing here, not even a handoff.
+- **No handoff at all?** The script already printed README's head (if there is one) and
+  the git log: orient from those, say plainly there is no handoff, note one must be
+  created before session end (`update-handoff` skill).
 
 ## Output — the briefing (≤200 words; written once Step 3's first message has returned, so the title and Remote Control lines are real; then the other renames, then STOP)
 
@@ -98,7 +102,8 @@ echo "=== USAGE BASELINE"; "$(command -v python3 || command -v python)" "$HOME/.
 - **Open now:** unfinished work, open bugs, NOT-verified items.
 - **Highest-value next item.** · **Dead paths / must-not-break** (constraints, not
   suggestions). · **Session title:** `<topic> · <YYYY-MM-DD>` · **Remote Control:**
-  the state the Step-3 call returned.
+  the state the Step-3 call returned. · **Fable guardrails** (Fable/Mythos sessions
+  only): `on (hook)` or `on (read)`.
 - **Ready — what do you want to work on?**
 
 ## Step 3 — Remote Control on + session-title hygiene (desktop app only; skip in the plain CLI)
@@ -117,6 +122,13 @@ session from claude.ai/code and the phone: call
 `connecting`); a refusal (phone-started sessions have it on and locked), `unavailable`, or
 a declined/auto-mode-denied approval → one line saying which, never a retry. THIS
 session only; `update-handoff` Step 6 switches it off.
+
+**Fable/Mythos session.** When the system prompt names a Fable or Mythos model, the
+guardrails in `~/.claude/skills/fable-conductor/guardrails.md` (Anthropic's Fable
+prompting guidance: finish the task, evidence per claim, check the last paragraph) apply
+from this turn. If a session-start hook already injected them (a system reminder
+starting "# Fable session guardrails"), skip the read; otherwise add a Read of the file
+to the Step-3 message. Either way, the session follows `fable-conductor`.
 
 Skill-started sessions all get auto-titled "Call handoff", making the session list
 unsortable. `mcp__ccd_session_mgmt__set_session_title` renames the CURRENT session

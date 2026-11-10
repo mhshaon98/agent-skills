@@ -40,6 +40,19 @@ Climb as high as the change warrants, and **state which rung you reached**:
 by name, as Verified (with output) or NOT verified (with the reason). A check that
 vanished between plan and report is a failure.
 
+## Claims audit (before any "done", every model)
+
+From Anthropic's Fable prompting guide, where it nearly eliminated fabricated status
+reports in testing. Before reporting progress, audit each claim against a tool result
+from this session. Only report work you can point to evidence for; if something is not
+yet verified, say so explicitly. "Done", "fixed" and "works" need a command that ran
+after the last edit. A file edited but never run is "implemented, NOT verified".
+
+Then check your last paragraph. If it is a plan, a list of next steps or a promise
+("I'll...", "next I will...") about work you can do now, do that work with tool calls
+before ending the turn. End only when the task is complete or blocked on the user's
+input.
+
 ## Honesty rules
 
 - Failing tests are reported as failing, with output.

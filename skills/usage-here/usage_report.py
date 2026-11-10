@@ -22,6 +22,17 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+UNPRICED: set[str] = set()  # model IDs billed at unknown_model_fallback this run
+
+
+def _warn_unpriced() -> None:
+    if UNPRICED:
+        print(f"WARNING: no pricing.json row for {', '.join(sorted(UNPRICED))}: billed at "
+              "unknown_model_fallback (Opus-tier) rates; add the row.", file=sys.stderr)
+
+
+import atexit  # noqa: E402
+atexit.register(_warn_unpriced)
 
 
 # ---------------------------------------------------------------- locating
@@ -79,7 +90,10 @@ def price_row(usage: dict, model: str, pricing: dict) -> tuple[float, dict]:
     # Fast mode bills at its own rate, recorded per message as usage.speed.
     if usage.get("speed") == "fast" and (model + "-fast") in models:
         model = model + "-fast"
-    rates = models.get(model) or pricing["unknown_model_fallback"]
+    rates = models.get(model)
+    if rates is None:
+        UNPRICED.add(model)
+        rates = pricing["unknown_model_fallback"]
     inp, out = rates["input"], rates["output"]
     prompt = (usage.get("input_tokens", 0) + usage.get("cache_read_input_tokens", 0)
               + usage.get("cache_creation_input_tokens", 0))

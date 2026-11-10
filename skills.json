@@ -69,7 +69,7 @@
         "claude",
         "codex"
       ],
-      "version": "1015c05c85d9",
+      "version": "175656f468ae",
       "path": "skills/call-handoff",
       "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/call-handoff/SKILL.md",
       "file_count": 3,
@@ -161,13 +161,13 @@
     },
     {
       "name": "update-handoff",
-      "description": "End-of-session wrap in one pass: a detailed holistic handoff (this session plus every linked session and worktree), lessons, memory, bug ledger and NEXT-SESSION-PROMPT.md, then archives finished nested sessions and turns Remote Control off. Use on \"update handoff\", \"wrap up\", \"end the session\", or before context runs out.",
+      "description": "End-of-session wrap: holistic handoff (this and linked sessions, worktrees), lessons, memory, bug ledger and NEXT-SESSION-PROMPT.md; archives finished nested sessions, Remote Control off. Use on \"update handoff\", \"wrap up\", \"end the session\", or before context runs out.",
       "category": "workflow",
       "targets": [
         "claude",
         "codex"
       ],
-      "version": "761e114f54ad",
+      "version": "d5ce122034b9",
       "path": "skills/update-handoff",
       "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/update-handoff/SKILL.md",
       "file_count": 2,
@@ -381,7 +381,7 @@
         "claude",
         "codex"
       ],
-      "version": "fdeb8e9013a7",
+      "version": "d477ff78e055",
       "path": "skills/verify-work",
       "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/verify-work/SKILL.md",
       "file_count": 1,
@@ -458,17 +458,18 @@
     },
     {
       "name": "fable-conductor",
-      "description": "Session-long operating mode when the session model is Fable/Mythos-class: Fable plans, briefs and verifies; execution is delegated to Opus/Sonnet/Haiku subagents.",
+      "description": "Session-long operating mode when the session model is Fable/Mythos-class: Fable plans, briefs and verifies, works inline on quick or sequential steps, and delegates gathering, parallel workstreams and large-diff review. Not for sessions whose main model is the frontier executor tier.",
       "category": "delegation",
       "targets": [
         "claude"
       ],
-      "version": "15ac26eb688c",
+      "version": "e6d9f7cff0a4",
       "path": "skills/fable-conductor",
       "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/fable-conductor/SKILL.md",
-      "file_count": 1,
+      "file_count": 2,
       "files": [
-        "skills/fable-conductor/SKILL.md"
+        "skills/fable-conductor/SKILL.md",
+        "skills/fable-conductor/guardrails.md"
       ]
     },
     {
@@ -602,7 +603,7 @@
         "claude",
         "codex"
       ],
-      "version": "955d5d51816b",
+      "version": "0ed6a01c376a",
       "path": "skills/usage-here",
       "raw_url": "https://raw.githubusercontent.com/mhshaon98/agent-skills/main/skills/usage-here/SKILL.md",
       "file_count": 4,
